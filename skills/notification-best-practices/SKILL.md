@@ -1,3 +1,8 @@
+---
+name: Notification best practices
+description: Comprehensive guidelines for designing, writing, and implementing effective notification systems across email, push, SMS, in-app, and chat channels.
+---
+
 # Notification best practices skill
 
 This skill provides comprehensive guidelines and best practices for designing, writing, and implementing effective notification systems across all channels.
