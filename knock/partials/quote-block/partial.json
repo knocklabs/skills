@@ -1,0 +1,57 @@
+{
+  "description": "A styled blockquote for testimonials, customer quotes, or highlighted text. Supports optional author attribution with avatar.",
+  "icon_name": "BellDot",
+  "input_schema": [
+    {
+      "key": "quote",
+      "label": "Quote",
+      "settings": {
+        "default": "",
+        "description": "The quote text to display",
+        "required": true
+      },
+      "type": "markdown"
+    },
+    {
+      "key": "author_name",
+      "label": "Author name",
+      "settings": {
+        "default": "",
+        "description": "Name of the person being quoted",
+        "required": false
+      },
+      "type": "text"
+    },
+    {
+      "key": "author_title",
+      "label": "Author title",
+      "settings": {
+        "default": "",
+        "description": "Title or role of the author (e.g. CEO at Acme)",
+        "required": false
+      },
+      "type": "text"
+    },
+    {
+      "key": "author_avatar_url",
+      "label": "Author avatar URL",
+      "settings": {
+        "default": "",
+        "description": "URL to the author's avatar image",
+        "required": false
+      },
+      "type": "url"
+    }
+  ],
+  "name": "Quote block",
+  "type": "html",
+  "visual_block_enabled": true,
+  "content@": "content.html",
+  "__readonly": {
+    "environment": "development",
+    "key": "quote-block",
+    "valid": true,
+    "created_at": "2026-02-16T17:47:33.386190Z"
+  },
+  "$schema": "https://schemas.knock.app/cli/partial.json"
+}

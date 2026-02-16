@@ -1,0 +1,43 @@
+<!--
+  Quote block partial
+  Variables:
+    - quote: The quote text to display
+    - author_name: (optional) Name of the person being quoted
+    - author_title: (optional) Title or role of the author (e.g. "CEO at Acme")
+    - author_avatar_url: (optional) URL to the author's avatar image
+-->
+<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin: 16px 0;">
+  <tr>
+    <td style="background-color: #F9FAFB; border-left: 4px solid #E5E7EB; border-radius: 8px; padding: 24px 28px;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
+        <tr>
+          <td style="padding-bottom: {% if author_name %}16px{% else %}0{% endif %};">
+            <span style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 20px; line-height: 18px; color: #D1D5DB; vertical-align: top;">&ldquo;</span>
+            <span style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 16px; font-style: italic; line-height: 26px; color: #374151;">{{ quote }}</span>
+          </td>
+        </tr>
+        {% if author_name %}
+        <tr>
+          <td>
+            <table cellpadding="0" cellspacing="0" border="0" role="presentation">
+              <tr>
+                {% if author_avatar_url %}
+                <td style="vertical-align: middle; padding-right: 12px;">
+                  <img src="{{ author_avatar_url }}" alt="{{ author_name }}" width="36" height="36" style="border-radius: 50%; display: block;" />
+                </td>
+                {% endif %}
+                <td style="vertical-align: middle;">
+                  <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 600; color: #111827; display: block; line-height: 20px;">{{ author_name }}</span>
+                  {% if author_title %}
+                  <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #6B7280; display: block; line-height: 18px;">{{ author_title }}</span>
+                  {% endif %}
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        {% endif %}
+      </table>
+    </td>
+  </tr>
+</table>

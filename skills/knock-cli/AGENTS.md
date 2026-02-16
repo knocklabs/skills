@@ -929,10 +929,12 @@ guides/{guide-key}/
 ```json
 {
   "name": "Welcome Modal",
+  "channel_key": "knock-guide",
   "steps": [
     {
       "ref": "step_1",
       "schema_key": "modal",
+      "schema_semver": "0.0.1",
       "schema_variant_key": "single-action",
       "values": {
         "title": "Welcome!",
@@ -948,16 +950,24 @@ guides/{guide-key}/
 }
 ```
 
+**Guide-level fields:**
+
+| Field | Description | Required |
+|-------|-------------|----------|
+| `name` | Display name for the guide | Yes |
+| `channel_key` | The key of the `in_app_guide` channel. Discover with `knock channel list` and use the key where `Type` is `in_app_guide`. | Yes |
+
 **Step fields:**
 
-| Field | Description |
-|-------|-------------|
-| `ref` | Unique step reference |
-| `schema_key` | Message type key (e.g., `banner`, `modal`, `card`) |
-| `schema_variant_key` | Variant key from the message type (e.g., `default`, `single-action`) |
-| `values` | Object matching the variant's field keys |
+| Field | Description | Required |
+|-------|-------------|----------|
+| `ref` | Unique step reference | Yes |
+| `schema_key` | Message type key (e.g., `banner`, `modal`, `card`, or a custom key) | Yes |
+| `schema_semver` | Semver of the message type (e.g., `"0.0.1"`). Find this in the message type's `__readonly.semver` field after pulling it, or default to `"0.0.1"` for newly created types. | Yes |
+| `schema_variant_key` | Variant key from the message type (e.g., `default`, `single-action`) | Yes |
+| `values` | Object matching the variant's field keys | Yes |
 
-The `values` object must include every field defined in the selected variant. Use empty strings or defaults for optional fields if needed.
+The `values` object must include every field defined in the selected variant. For `button` fields, both `text` and `action` must be non-empty strings.
 
 ## Personalization
 
@@ -1015,17 +1025,43 @@ Example:
 
 Do not treat guides like workflows. They have no steps that send notifications, no triggers, and no channel steps. They are rendered by your application via the guides API.
 
+### `knock guide new` scaffold is incomplete
+
+The `knock guide new` command generates a `guide.json` that is **missing two required fields**: `channel_key` (on the guide) and `schema_semver` (on each step). Pushing or validating the scaffold as-is will fail. Always add both fields before pushing. See the [guide.json](#guidejson) section for the correct structure.
+
+### `channel_key` is required on every guide
+
+Every guide must include a `channel_key` pointing to an `in_app_guide` channel. Without it, the API returns `"channel_key" can't be blank`. Run `knock channel list` and use the key where the `Type` column shows `in_app_guide` (commonly `knock-guide`).
+
+### `schema_semver` is required on every guide step
+
+Every guide step must include `schema_semver` matching the message type's version. Without it, the API returns a **misleading** error: `"steps[0].schema_key" template schema not found` — even though the message type key is correct and exists. This error does **not** mean the key is wrong; it means the semver is missing.
+
+To find the correct semver:
+1. Pull the message type: `knock message-type pull <key> --force`
+2. Look at `__readonly.semver` in `message_type.json` (e.g., `"0.0.1"`)
+
+For newly created message types, the semver is always `"0.0.1"`.
+
+### Custom message types must be committed before guides can reference them
+
+A pushed-but-uncommitted custom message type cannot be used by guides. The API will return `"schema_key" template schema not found`. You must commit the message type first (via the dashboard or `knock commit`), then push the guide.
+
 ### Message types must exist first
 
 Before creating a guide, ensure the message type it references exists. Run `knock message-type list` to discover available message type keys. Use `-m <message-type-key>` when running `knock guide new`.
 
 ### Built-in types are immutable
 
-The `banner`, `modal`, and `card` message types cannot be edited. To customize, clone in the dashboard and use the clone's key.
+The `banner`, `modal`, and `card` message types cannot be edited. To customize, clone the message type in the dashboard and use the clone's key.
 
 ### Guide values must match the schema
 
 Each guide step's `values` object must match the fields of the selected `schema_key` + `schema_variant_key`. Missing or extra keys can cause validation errors.
+
+### Button field values must be non-empty
+
+When a message type variant includes a `button` field (e.g., `primary_button`), the guide's `values` must provide both `text` and `action` as **non-empty strings**. An empty `action` (e.g., `"action": ""`) will cause a validation error: `"fields[N].action.value" can't be blank`. Use a meaningful action URL or a placeholder like `"submit"` or `"dismiss"`.
 
 ### Always push after modifying
 
@@ -1043,19 +1079,54 @@ Before creating guides or message types:
 ```bash
 knock message-type list   # See available message type keys
 knock guide list          # See existing guides
+knock channel list        # Find the in_app_guide channel key
 ```
 
 Use the exact keys from this output—don't assume keys from examples or other projects.
+
+## Creating a guide end-to-end
+
+The recommended workflow for creating a guide from the CLI:
+
+```bash
+# 1. Discover available message types and channels
+knock message-type list
+knock channel list
+
+# 2. Create (or pull) the message type
+knock message-type new -k my-type -n "My type" --force
+# Edit the message_type.json with your fields and variants
+knock message-type push my-type
+
+# 3. Commit the message type (required before guides can reference it)
+knock commit -m "Add my-type message type" --force
+
+# 4. Find the schema_semver after pushing
+knock message-type pull my-type --force
+# Check __readonly.semver in message_type.json (e.g., "0.0.1")
+
+# 5. Scaffold the guide
+knock guide new -k my-guide -n "My guide" -m my-type --force
+
+# 6. Fix the scaffolded guide.json (add missing required fields)
+#    - Add "channel_key": "<your-in_app_guide-channel-key>" at the guide level
+#    - Add "schema_semver": "<semver>" to each step
+
+# 7. Push the guide
+knock guide push my-guide
+```
 
 ## Best practices summary
 
 1. **Understand the model** — Guides are for lifecycle messaging; workflows are for notifications
 2. **Message type first** — Create or pull the message type before creating guides that use it
-3. **Match the schema** — Guide step `values` must align with the variant's fields
-4. **Use built-ins when possible** — Banner, modal, and card cover many use cases
-5. **Discover keys** — Run `knock message-type list` and `knock guide list` before creating
-6. **Push after changes** — Local edits are not persisted until pushed
-7. **Validate before push** — Use `knock guide validate` and `knock message-type validate` to catch errors early
+3. **Commit before referencing** — Custom message types must be committed before guides can use them
+4. **Always add `channel_key` and `schema_semver`** — The CLI scaffold omits these required fields; add them manually before pushing
+5. **Match the schema** — Guide step `values` must align with the variant's fields; button `action` values must be non-empty
+6. **Use built-ins when possible** — Banner, modal, and card cover many use cases
+7. **Discover keys** — Run `knock message-type list`, `knock guide list`, and `knock channel list` before creating
+8. **Push after changes** — Local edits are not persisted until pushed
+9. **Validate before push** — Use `knock guide validate` and `knock message-type validate` to catch errors early
 
 ---
 
@@ -1302,6 +1373,289 @@ knock email-layout push default
 knock guide push welcome-modal
 knock message-type push banner
 ```
+
+---
+
+
+
+# Partials
+
+## What partials are
+
+**Partials** are reusable template snippets that can be inserted into email templates via the visual block editor. They serve as building blocks for an email design system—callout cards, quote blocks, comment cards, footers, headers, and other repeatable components.
+
+Partials are:
+
+- Stored in `knock/partials/{key}/`
+- Rendered with Liquid; they receive variables from the block editor or from the workflow context
+- Available in the email visual block editor when `visual_block_enabled` is true
+- Defined by a `partial.json` schema and a content file (HTML, markdown, text, or JSON)
+
+## File structure
+
+Partials live under `knock/partials/{key}/`:
+
+```
+partials/{partial-key}/
+├── partial.json      # Schema, metadata, and input_schema
+└── content.html      # Or content.md, content.txt, content.json
+```
+
+The partial key is the directory name and is used in CLI commands: `knock partial push callout-card`.
+
+## partial.json schema
+
+```json
+{
+  "name": "Callout card",
+  "description": "A highlighted callout box for tips and important information.",
+  "type": "html",
+  "visual_block_enabled": true,
+  "content@": "content.html",
+  "icon_name": "BellDot",
+  "input_schema": [
+    {
+      "type": "text",
+      "key": "title",
+      "label": "Title",
+      "settings": { "required": false }
+    },
+    {
+      "type": "markdown",
+      "key": "body",
+      "label": "Body",
+      "settings": { "required": true }
+    }
+  ]
+}
+```
+
+**Key fields:**
+
+| Field | Description |
+|-------|-------------|
+| `name` | Display name in the dashboard and block editor |
+| `description` | Optional description (max 280 characters) |
+| `type` | Content type: `html`, `json`, `markdown`, or `text` |
+| `visual_block_enabled` | When true, the partial appears in the email visual block editor |
+| `content@` | File path to the content template (relative to the partial directory) |
+| `icon_name` | Icon shown in the block editor (e.g., BellDot, Flag) |
+| `input_schema` | Array of field definitions for the block editor; same format as a message type variant's `fields` |
+
+## input_schema
+
+The `input_schema` defines the fields that editors see when adding or editing a partial block in the email visual block editor. It uses the **exact same field format** as a message type variant's `fields` array.
+
+Each field has:
+
+- `type` — One of the supported field types
+- `key` — Variable name passed to the Liquid template (must match `{{ key }}` in content)
+- `label` — Display label in the editor
+- `settings` — Object with `required`, `default`, `description`, and type-specific options
+
+### Supported field types
+
+| Type | Description | Settings |
+|------|-------------|----------|
+| `text` | Single-line text | `required`, `default`, `description`, `min_length`, `max_length` |
+| `textarea` | Multi-line plain text | `required`, `default`, `description`, `min_length`, `max_length` |
+| `markdown` | Markdown editor (rendered as HTML) | `required`, `default`, `description` |
+| `boolean` | Checkbox (true/false) | `required`, `default`, `description` |
+| `select` | Single-select from options | `required`, `default`, `description`, `options` (array of `{ label, value }`) |
+| `multi_select` | Multi-select from options | `required`, `default`, `description`, `options` |
+| `url` | URL field | `required`, `default`, `description` |
+| `button` | Button with `text` and `action` subfields | `required`, `text`, `action` (each with `key`, `label`, `settings`) |
+| `image` | Image with `url`, `alt`, `action` subfields | `required`, `url`, `alt`, `action` |
+
+### input_schema example
+
+```json
+{
+  "input_schema": [
+    {
+      "type": "text",
+      "key": "title",
+      "label": "Title",
+      "settings": {
+        "required": false,
+        "description": "Optional heading"
+      }
+    },
+    {
+      "type": "markdown",
+      "key": "body",
+      "label": "Body",
+      "settings": {
+        "required": true,
+        "description": "The main content"
+      }
+    },
+    {
+      "type": "select",
+      "key": "type",
+      "label": "Type",
+      "settings": {
+        "required": false,
+        "default": "info",
+        "options": [
+          { "label": "Info", "value": "info" },
+          { "label": "Warning", "value": "warning" }
+        ]
+      }
+    }
+  ]
+}
+```
+
+The field `key` values become Liquid variables in the content template: `{{ title }}`, `{{ body }}`, `{{ type }}`.
+
+## Partial types
+
+| Type | Content file | Use case |
+|------|--------------|----------|
+| `html` | `content.html` | Email design system components (callouts, cards, blocks) |
+| `markdown` | `content.md` | Markdown snippets |
+| `text` | `content.txt` | Plain text snippets |
+| `json` | `content.json` | Structured data blocks |
+
+For email design systems, `html` is the most common type. Use inline styles for email client compatibility.
+
+## CLI commands
+
+### List partials
+
+```bash
+knock partial list
+```
+
+### Create a new partial
+
+```bash
+# Interactive; use flags to skip prompts
+knock partial new -k <partial-key> -n "Partial name" -t html --force
+```
+
+| Flag | Description |
+|------|-------------|
+| `-k`, `--key` | The partial key (directory name) |
+| `-n`, `--name` | Display name |
+| `-t`, `--type` | `html`, `json`, `markdown`, or `text` |
+| `--force` | Skip confirmation prompts |
+| `-p`, `--push` | Push to Knock after creation |
+
+### Pull partials
+
+```bash
+# Pull all partials
+knock partial pull --all --force
+
+# Pull a specific partial
+knock partial pull <partial-key> --force
+```
+
+Use `--force` to skip "Create a new partial directory?" prompts when the directory does not exist locally.
+
+### Push partials
+
+```bash
+# Push all partials
+knock partial push --all
+
+# Push a specific partial
+knock partial push <partial-key>
+```
+
+### Validate partials
+
+```bash
+knock partial validate <partial-key>
+knock partial validate --all
+```
+
+### Other commands
+
+```bash
+knock partial get <partial-key>    # Display a single partial
+knock partial open <partial-key>   # Open in Knock dashboard
+```
+
+## Creating a partial end-to-end
+
+1. **Create the partial locally**
+
+   ```bash
+   knock partial new -k callout-card -n "Callout card" -t html --force
+   ```
+
+2. **Edit partial.json** — Add `description`, `visual_block_enabled`, and `input_schema` with fields matching the variables your content template expects.
+
+3. **Edit the content file** — Write the Liquid template (e.g., `content.html`) using `{{ key }}` for each input_schema field.
+
+4. **Validate**
+
+   ```bash
+   knock partial validate callout-card
+   ```
+
+5. **Push**
+
+   ```bash
+   knock partial push callout-card
+   ```
+
+6. **Commit** (optional) — Use `knock commit -m "Add callout-card partial" --force` to commit the change in Knock.
+
+## Using partials in templates
+
+When a partial is added as a visual block in an email template, Knock renders it with the values editors provide in the block editor. Those values come from the `input_schema` fields and are passed as Liquid variables.
+
+In your partial content, reference them by key:
+
+```liquid
+<table>
+  <tr>
+    <td>{{ body }}</td>
+  </tr>
+</table>
+```
+
+Partials can also use workflow context: `data`, `vars`, `recipient`, `actor`, `tenant`. Use `data.` for trigger payload values, not `vars.`.
+
+## Key gotchas
+
+### Push after every change
+
+Local edits to partials are not synced to Knock until you push. Run `knock partial push <key>` after modifying any partial file.
+
+### Use --force on pulls
+
+When pulling a partial that does not exist locally, the CLI prompts for confirmation. Pass `--force` to skip the prompt in automated contexts.
+
+### visual_block_enabled required for email editor
+
+Only partials with `visual_block_enabled: true` appear in the email visual block editor. HTML partials without this flag are not available as blocks.
+
+### input_schema keys must match content variables
+
+Each `input_schema` field's `key` must correspond to a variable used in the content template. A field with `key: "author_name"` should be referenced as `{{ author_name }}` in the content.
+
+### Path resolution for content@
+
+The `content@` path is relative to the partial directory. Use `"content@": "content.html"` for a file in the same directory.
+
+## Best practices
+
+1. **Design system thinking** — Build partials as reusable components (callouts, quotes, cards, dividers) that enforce consistent styling across emails.
+
+2. **Keep partials focused** — One partial, one purpose. Avoid monolithic partials that try to handle many use cases.
+
+3. **Use input_schema** — Always define `input_schema` for partials used in the visual block editor so editors get proper form fields instead of raw Liquid.
+
+4. **Email-safe HTML** — Use inline styles and table-based layouts for HTML partials. Avoid external CSS, flexbox, or grid for broad email client support.
+
+5. **Provide defaults** — Use Liquid defaults for optional values: `{{ title | default: "Untitled" }}`.
+
+6. **Discover before creating** — Run `knock partial list` to see existing partials and avoid key collisions.
 
 ---
 

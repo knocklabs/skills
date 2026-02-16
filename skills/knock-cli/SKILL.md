@@ -16,6 +16,7 @@ The Knock CLI skill includes detailed rule sets covering:
 3. **CLI commands reference** - Pull, push, and resource management commands
 4. **Workflow templates** - Structures, patterns, and best practices for workflows and templates
 5. **Guides and message types** - Working with in-app guides for lifecycle messaging and message types as their schema
+6. **Partials** - Reusable template building blocks for email design systems
 
 ## How to use this skill
 
@@ -60,6 +61,19 @@ When working with in-app guides (banners, modals, announcements):
    - Run `knock guide list` to see existing guides
    - Use exact keys from output when creating new guides
 
+### For working with partials
+
+When building reusable email components (callouts, quote blocks, comment cards):
+
+1. **Start with partials** (`rules/partials.md`)
+   - Understand partial file structure and `partial.json` schema
+   - Define `input_schema` for block editor fields (same format as message type variant fields)
+   - Use `visual_block_enabled: true` for partials that appear in the email visual block editor
+
+2. **Create and push**
+   - Run `knock partial new -k <key> -n "Name" -t html --force` to scaffold
+   - Add `input_schema` and edit content; validate and push with `knock partial push <key>`
+
 ### For modifying workflows and templates
 
 When making changes to workflows or templates:
@@ -77,6 +91,7 @@ When making changes to workflows or templates:
 - `rules/cli-commands-reference.md` - CLI commands for resource management
 - `rules/workflow-templates.md` - Workflow and template structures and best practices
 - `rules/guides-and-message-types.md` - Guides and message types for lifecycle messaging
+- `rules/partials.md` - Partials and reusable template building blocks
 
 ## Quick reference
 
@@ -109,6 +124,13 @@ knock message-type list          # Discover message type keys before creating gu
 knock guide list                 # List existing guides
 knock guide push <guide-key>     # Push a guide after modifying
 knock message-type push <key>    # Push a message type after modifying
+
+# Partial commands (email design system building blocks)
+knock partial list               # List existing partials
+knock partial new -k <key> -n "Name" -t html --force   # Create a new partial
+knock partial pull <key> --force # Pull a partial from Knock
+knock partial push <key>         # Push a partial after modifying
+knock partial validate <key>     # Validate a partial locally
 ```
 
 ### Key concepts
