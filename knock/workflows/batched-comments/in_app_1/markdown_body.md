@@ -1,1 +1,0 @@
-{% if total_activities > 1 %}**{{ total_actors }} people** left {{ total_activities }} comments on {{ data.content_title | default: 'your content' }}{% else %}**{{ actors[0].name | default: 'Someone' }}** left a comment on {{ data.content_title | default: 'your content' }}{% endif %}
