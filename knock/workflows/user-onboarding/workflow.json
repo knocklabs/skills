@@ -1,0 +1,189 @@
+{
+  "categories": [
+    "onboarding",
+    "engagement"
+  ],
+  "description": "Onboarding email sequence that branches by plan type, sending free users feature setup guidance and paid users getting-started tips",
+  "name": "User onboarding",
+  "steps": [
+    {
+      "name": "Fetch user data",
+      "ref": "fetch_user",
+      "settings": {
+        "headers": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{ vars.internal_api_key }}"
+          }
+        ],
+        "method": "get",
+        "url": "https://api.knock-internal.com/v1/users/{{ recipient.id }}"
+      },
+      "type": "http_fetch"
+    },
+    {
+      "channel_key": "knock-email",
+      "channel_type": "email",
+      "name": "Welcome email",
+      "ref": "welcome_email",
+      "template": {
+        "settings": {
+          "attachment_key": "attachments",
+          "layout_key": "default"
+        },
+        "subject": "Welcome to {{ vars.app_name | default: 'our platform' }}!",
+        "visual_blocks@": "welcome_email/visual_blocks.json"
+      },
+      "type": "channel"
+    },
+    {
+      "name": "Wait 1 day",
+      "ref": "delay_1_day",
+      "settings": {
+        "delay_for": {
+          "unit": "days",
+          "value": 1
+        }
+      },
+      "type": "delay"
+    },
+    {
+      "branches": [
+        {
+          "conditions": {
+            "all": [
+              {
+                "argument": "free",
+                "operator": "equal_to",
+                "variable": "recipient.plan_type"
+              }
+            ]
+          },
+          "name": "Free plan",
+          "steps": [
+            {
+              "channel_key": "knock-email",
+              "channel_type": "email",
+              "name": "Feature setup email",
+              "ref": "free_setup_email",
+              "template": {
+                "settings": {
+                  "attachment_key": "attachments",
+                  "layout_key": "default"
+                },
+                "subject": "Set up your first feature in {{ vars.app_name | default: 'our platform' }}",
+                "visual_blocks@": "free_setup_email/visual_blocks.json"
+              },
+              "type": "channel"
+            },
+            {
+              "name": "Wait 2 days",
+              "ref": "free_delay_2_days",
+              "settings": {
+                "delay_for": {
+                  "unit": "days",
+                  "value": 2
+                }
+              },
+              "type": "delay"
+            },
+            {
+              "channel_key": "knock-email",
+              "channel_type": "email",
+              "name": "Explore more features email",
+              "ref": "free_explore_email",
+              "template": {
+                "settings": {
+                  "attachment_key": "attachments",
+                  "layout_key": "default"
+                },
+                "subject": "Unlock more with {{ vars.app_name | default: 'our platform' }}",
+                "visual_blocks@": "free_explore_email/visual_blocks.json"
+              },
+              "type": "channel"
+            }
+          ],
+          "terminates": false
+        },
+        {
+          "name": "Paid plan",
+          "steps": [
+            {
+              "channel_key": "knock-email",
+              "channel_type": "email",
+              "name": "Getting started email",
+              "ref": "paid_getting_started_email",
+              "template": {
+                "settings": {
+                  "attachment_key": "attachments",
+                  "layout_key": "default"
+                },
+                "subject": "Getting started with your {{ recipient.plan_type | default: 'paid' }} plan",
+                "visual_blocks@": "paid_getting_started_email/visual_blocks.json"
+              },
+              "type": "channel"
+            },
+            {
+              "name": "Wait 2 days",
+              "ref": "paid_delay_2_days",
+              "settings": {
+                "delay_for": {
+                  "unit": "days",
+                  "value": 2
+                }
+              },
+              "type": "delay"
+            },
+            {
+              "channel_key": "knock-email",
+              "channel_type": "email",
+              "name": "Tips and best practices email",
+              "ref": "paid_tips_email",
+              "template": {
+                "settings": {
+                  "attachment_key": "attachments",
+                  "layout_key": "default"
+                },
+                "subject": "Tips to get the most out of your account",
+                "visual_blocks@": "paid_tips_email/visual_blocks.json"
+              },
+              "type": "channel"
+            }
+          ],
+          "terminates": false
+        }
+      ],
+      "name": "Branch by plan type",
+      "ref": "plan_branch",
+      "type": "branch"
+    }
+  ],
+  "trigger_data_json_schema": {
+    "properties": {
+      "dashboard_url": {
+        "description": "URL to the user's dashboard",
+        "format": "uri",
+        "type": "string"
+      },
+      "getting_started_url": {
+        "description": "URL to the getting started guide",
+        "format": "uri",
+        "type": "string"
+      }
+    },
+    "required": [
+      "getting_started_url",
+      "dashboard_url"
+    ],
+    "type": "object"
+  },
+  "trigger_frequency": "every_trigger",
+  "__readonly": {
+    "environment": "development",
+    "key": "user-onboarding",
+    "active": true,
+    "valid": true,
+    "created_at": "2026-02-16T17:04:44.381161Z"
+  },
+  "$schema": "https://schemas.knock.app/cli/workflow.json"
+}

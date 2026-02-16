@@ -1,0 +1,14 @@
+{
+  "icon_name": "BellDot",
+  "name": "Help footer",
+  "type": "html",
+  "visual_block_enabled": true,
+  "content@": "content.html",
+  "__readonly": {
+    "environment": "development",
+    "key": "help-footer",
+    "valid": true,
+    "created_at": "2026-02-16T16:33:31.614324Z"
+  },
+  "$schema": "https://schemas.knock.app/cli/partial.json"
+}

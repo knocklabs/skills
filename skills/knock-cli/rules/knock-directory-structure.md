@@ -10,7 +10,7 @@ tags:
   - workflows
   - layouts
 category: knock-cli
-last_updated: 2026-02-01
+last_updated: 2026-02-16
 ---
 
 # Knock directory structure
@@ -54,6 +54,15 @@ knock/
 │   └── {layout-key}/
 │       ├── layout.json           # Layout configuration
 │       └── ...                   # Layout template files
+│
+├── guides/                       # In-app guides (lifecycle messaging)
+│   └── {guide-key}/
+│       └── guide.json            # Guide definition and content
+│
+├── message-types/                # Message type schemas for guides
+│   └── {message-type-key}/
+│       ├── message_type.json     # Schema and metadata
+│       └── preview.html          # Optional; Liquid template for dashboard preview
 │
 ├── translations/                 # Translation files
 │   └── {locale}/
@@ -158,6 +167,33 @@ email-layouts/{layout-key}/
 }
 ```
 
+## Guides
+
+Guides are in-app UI components for lifecycle messaging (banners, modals, announcements). Each guide lives in its own directory:
+
+```
+guides/{guide-key}/
+└── guide.json                    # Guide definition with steps and content
+```
+
+### guide.json
+
+A guide contains a `name` and a `steps` array. Each step references a message type via `schema_key` and `schema_variant_key`, with content in `values`. See the guides and message types rule file for full details.
+
+## Message types
+
+Message types define the schema for guide content. They live under `message-types/`:
+
+```
+message-types/{message-type-key}/
+├── message_type.json             # Schema with variants and fields
+└── preview.html                  # Optional; Liquid template for dashboard preview
+```
+
+### message_type.json
+
+The message type schema defines `name`, `description`, `icon_name`, and `variants`. Each variant has `key`, `name`, and `fields`. The `preview@` field references the preview HTML file. See the guides and message types rule file for schema details.
+
 ## File path references
 
 Knock uses the `@` suffix convention to indicate file path references:
@@ -206,6 +242,8 @@ Resources are identified by their directory name (the key):
 |---------------|--------------|---------|
 | Workflow | Directory name under `workflows/` | `workflows/order-confirmation/` → key: `order-confirmation` |
 | Email Layout | Directory name under `email-layouts/` | `email-layouts/default/` → key: `default` |
+| Guide | Directory name under `guides/` | `guides/welcome-modal/` → key: `welcome-modal` |
+| Message Type | Directory name under `message-types/` | `message-types/banner/` → key: `banner` |
 | Partial | Directory name under `partials/` | `partials/footer/` → key: `footer` |
 
 This key is used in CLI commands:
@@ -213,4 +251,6 @@ This key is used in CLI commands:
 ```bash
 knock workflow push order-confirmation
 knock email-layout push default
+knock guide push welcome-modal
+knock message-type push banner
 ```

@@ -17,6 +17,10 @@ last_updated: 2026-02-01
 
 ## Core concepts
 
+### Push required after changes
+
+Local edits to Knock resources (workflows, layouts, partials, etc.) are not synced to Knock until you push. Always run the appropriate push command after modifying files—otherwise Knock continues using the previous version.
+
 ### Resource types
 
 The Knock CLI manages several resource types:
@@ -25,6 +29,9 @@ The Knock CLI manages several resource types:
 |----------|-------------|----------------|
 | `workflow` | Notification workflows | `knock workflow` |
 | `email-layout` | Email layout templates | `knock email-layout` |
+| `guide` | In-app guides (lifecycle messaging) | `knock guide` |
+| `message-type` | Message type schemas for guides | `knock message-type` |
+| `channel` | Notification channels | `knock channel` |
 | `translation` | Localization files | `knock translation` |
 | `partial` | Reusable template partials | `knock partial` |
 | `commit` | Version control for changes | `knock commit` |
@@ -65,6 +72,12 @@ knock email-layout pull --all
 
 # Pull only translations
 knock translation pull --all
+
+# Pull only guides
+knock guide pull --all
+
+# Pull only message types
+knock message-type pull --all
 ```
 
 ### Pull a specific resource
@@ -119,6 +132,12 @@ knock email-layout push --all
 
 # Push only translations
 knock translation push --all
+
+# Push only guides
+knock guide push --all
+
+# Push only message types
+knock message-type push --all
 ```
 
 ### Push a specific resource
@@ -230,6 +249,122 @@ knock email-layout push --all
 knock email-layout push <layout-key>
 ```
 
+## Guide commands
+
+### List guides
+
+```bash
+knock guide list
+```
+
+### Create a new guide
+
+```bash
+knock guide new -k <guide-key> -n "Guide name" -m <message-type-key>
+```
+
+### Pull guide
+
+```bash
+# Pull all guides
+knock guide pull --all
+
+# Pull specific guide
+knock guide pull <guide-key>
+```
+
+### Push guide
+
+```bash
+# Push all guides
+knock guide push --all
+
+# Push specific guide
+knock guide push <guide-key>
+```
+
+### Validate guide
+
+```bash
+knock guide validate <guide-key>
+```
+
+### Activate or deactivate guide
+
+```bash
+knock guide activate <guide-key> --environment <env> --status true
+knock guide activate <guide-key> --environment <env> --status false
+```
+
+### Other guide commands
+
+```bash
+knock guide get <guide-key>      # Display a single guide
+knock guide open <guide-key>     # Open in dashboard
+knock guide generate-types --output-file types.ts  # Generate TypeScript types
+```
+
+## Message type commands
+
+### List message types
+
+```bash
+knock message-type list
+```
+
+Lists all message types with their keys. Use these keys when creating guides. Message type keys are project-specific—discover them before creating guides.
+
+### Create a new message type
+
+```bash
+knock message-type new -k <message-type-key> -n "Message type name"
+```
+
+### Pull message type
+
+```bash
+# Pull all message types
+knock message-type pull --all
+
+# Pull specific message type
+knock message-type pull <message-type-key>
+```
+
+### Push message type
+
+```bash
+# Push all message types
+knock message-type push --all
+
+# Push specific message type
+knock message-type push <message-type-key>
+```
+
+Message type push operates only in the development environment.
+
+### Validate message type
+
+```bash
+knock message-type validate <message-type-key>
+```
+
+### Other message type commands
+
+```bash
+knock message-type get <message-type-key>   # Display a single message type
+knock message-type open <message-type-key>  # Open in dashboard
+```
+
+## Channel commands
+
+### List channels
+
+```bash
+knock channel list
+```
+
+Lists all channels configured in the project with their keys. Channel keys are project-specific—they vary per project and must be discovered, not assumed. Use the keys from this output for `channel_key` in workflow steps.
+
 ## Commit commands
 
 ### List commits
@@ -313,6 +448,30 @@ knock init
 knock pull --all
 ```
 
+### Discover before creating
+
+Before creating workflows that use channels or layouts, discover the project's configuration:
+
+```bash
+# List available channel keys (use these for channel_key in workflow steps)
+knock channel list
+
+# List available email layout keys (use these for layout_key in template settings)
+knock email-layout list
+```
+
+Before creating guides, discover available message types:
+
+```bash
+# List available message type keys (use these when creating guides)
+knock message-type list
+
+# List existing guides
+knock guide list
+```
+
+Use the exact keys from this output—don't assume keys from schema examples or other projects.
+
 ### Make changes and deploy
 
 ```bash
@@ -352,6 +511,7 @@ knock push --all --commit -m "Updated templates"
 - The resource has structural errors
 - Check the error message for specific field issues
 - Reference the JSON schema for correct structure
+- If the error mentions `channel_key` does not exist (e.g., `'knock-in-app' does not exist`), run `knock channel list` to find valid channel keys for this project
 
 **"Uncommitted changes exist"**
 - There are pending changes that haven't been committed
