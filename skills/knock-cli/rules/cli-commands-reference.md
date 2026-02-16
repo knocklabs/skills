@@ -17,6 +17,57 @@ last_updated: 2026-02-01
 
 ## Core concepts
 
+### Interactive prompts and the `--force` flag
+
+Many Knock CLI commands display interactive confirmation prompts that require user input. This is critical for AI agents and automated scripts, because commands will hang or default to "no" if input is not provided.
+
+**Commands that prompt for confirmation (and support `--force`):**
+
+| Command | Prompt | When |
+|---------|--------|------|
+| `knock workflow pull <key>` | `Create a new workflow directory? (y/N)` | When the local directory doesn't exist yet |
+| `knock email-layout pull <key>` | `Create a new email layout directory? (y/N)` | When the local directory doesn't exist yet |
+| `knock guide pull <key>` | `Create a new guide directory? (y/N)` | When the local directory doesn't exist yet |
+| `knock message-type pull <key>` | `Create a new message type directory? (y/N)` | When the local directory doesn't exist yet |
+| `knock partial pull <key>` | `Create a new partial directory? (y/N)` | When the local directory doesn't exist yet |
+| `knock pull --all` | Multiple directory creation prompts | When pulling resources that don't exist locally yet |
+| `knock commit promote` | Confirmation prompt | When promoting changes between environments |
+| `knock commit` | Confirmation prompt | When committing changes |
+| `knock workflow activate` | Confirmation prompt | When activating/deactivating a workflow |
+| `knock guide activate` | Confirmation prompt | When activating/deactivating a guide |
+
+**Handling prompts:** Pass `--force` to skip all confirmation prompts. Always use `--force` when running commands from agents or automated scripts:
+
+```bash
+# Pull without confirmation prompts
+knock workflow pull <workflow-key> --force
+knock pull --all --force
+
+# Commit and promote without prompts
+knock commit -m "message" --force
+knock commit promote --to=production --force
+```
+
+**Commands that are interactive and cannot use `--force`:**
+
+| Command | Behavior |
+|---------|----------|
+| `knock init` | Multi-step interactive wizard for project setup. Use `--knock-dir` to skip the directory prompt. If a `knock.json` already exists, there is no need to run `knock init`. |
+| `knock auth login` | Opens a browser window for authentication. Must be run manually by the user. |
+| `knock workflow new` | Interactive step selection. Use `--key` and `--steps` flags to skip prompts. |
+| `knock guide new` | Interactive message type selection. Use `--key` and `--message-type` flags to skip prompts. |
+| `knock message-type new` | Interactive setup. Use `--key` and `--name` flags to skip prompts. |
+| `knock partial new` | Interactive setup. Use `--key` and `--type` flags to skip prompts. |
+
+**Commands that never prompt (safe for direct execution):**
+
+- All `list` commands (`knock workflow list`, `knock channel list`, etc.)
+- All `push` commands (`knock workflow push <key>`, `knock push --all`, etc.)
+- All `validate` commands (`knock workflow validate <key>`, etc.)
+- `knock whoami` / `knock auth whoami`
+- `knock workflow run` (trigger)
+- Pull commands when the local directory already exists (updates in place without prompting)
+
 ### Push required after changes
 
 Local edits to Knock resources (workflows, layouts, partials, etc.) are not synced to Knock until you push. Always run the appropriate push command after modifying files—otherwise Knock continues using the previous version.
@@ -49,12 +100,14 @@ These options work with most commands:
 
 ## Pulling resources
 
+**Note:** Pull commands prompt for confirmation when creating new local directories. Use `--force` to skip these prompts (see [Interactive prompts and the `--force` flag](#interactive-prompts-and-the---force-flag)).
+
 ### Pull all resources
 
 Sync all resources from Knock to your local project:
 
 ```bash
-knock pull --all
+knock pull --all --force
 ```
 
 This pulls all resource types into the configured `knockDir`.
@@ -65,19 +118,19 @@ Pull only specific resource types:
 
 ```bash
 # Pull only workflows
-knock workflow pull --all
+knock workflow pull --all --force
 
 # Pull only email layouts
-knock email-layout pull --all
+knock email-layout pull --all --force
 
 # Pull only translations
-knock translation pull --all
+knock translation pull --all --force
 
 # Pull only guides
-knock guide pull --all
+knock guide pull --all --force
 
 # Pull only message types
-knock message-type pull --all
+knock message-type pull --all --force
 ```
 
 ### Pull a specific resource
@@ -86,18 +139,20 @@ Pull a single resource by its key:
 
 ```bash
 # Pull a specific workflow
-knock workflow pull <workflow-key>
+knock workflow pull <workflow-key> --force
 
 # Pull a specific email layout
-knock email-layout pull <layout-key>
+knock email-layout pull <layout-key> --force
 ```
 
 **Example:**
 
 ```bash
-knock workflow pull order-confirmation
-knock email-layout pull default
+knock workflow pull order-confirmation --force
+knock email-layout pull default --force
 ```
+
+**Note:** If the local directory already exists, pull commands update in place without prompting. The `--force` flag is only needed for the first pull of a given resource, but is safe to always include.
 
 ### Pull options
 
@@ -106,6 +161,7 @@ knock email-layout pull default
 | `--all` | Pull all resources of this type |
 | `--environment`, `-e` | Target environment |
 | `--hide-uncommitted-changes` | Don't include uncommitted changes |
+| `--force` | Skip confirmation prompts (always use in automated/agent contexts) |
 
 ## Pushing resources
 
@@ -187,10 +243,10 @@ knock workflow list
 
 ```bash
 # Pull all workflows
-knock workflow pull --all
+knock workflow pull --all --force
 
 # Pull specific workflow
-knock workflow pull <workflow-key>
+knock workflow pull <workflow-key> --force
 ```
 
 ### Push workflow
@@ -233,10 +289,10 @@ knock email-layout list
 
 ```bash
 # Pull all layouts
-knock email-layout pull --all
+knock email-layout pull --all --force
 
 # Pull specific layout
-knock email-layout pull <layout-key>
+knock email-layout pull <layout-key> --force
 ```
 
 ### Push email layout
@@ -267,10 +323,10 @@ knock guide new -k <guide-key> -n "Guide name" -m <message-type-key>
 
 ```bash
 # Pull all guides
-knock guide pull --all
+knock guide pull --all --force
 
 # Pull specific guide
-knock guide pull <guide-key>
+knock guide pull <guide-key> --force
 ```
 
 ### Push guide
@@ -324,10 +380,10 @@ knock message-type new -k <message-type-key> -n "Message type name"
 
 ```bash
 # Pull all message types
-knock message-type pull --all
+knock message-type pull --all --force
 
 # Pull specific message type
-knock message-type pull <message-type-key>
+knock message-type pull <message-type-key> --force
 ```
 
 ### Push message type
@@ -388,7 +444,8 @@ knock commit create -m "Commit message"
 Promote changes between environments:
 
 ```bash
-knock commit promote --to=production
+# Prompts for confirmation; use --force to skip
+knock commit promote --to=production --force
 ```
 
 ## Translation commands
@@ -441,11 +498,11 @@ knock whoami
 # 1. Authenticate
 export KNOCK_SERVICE_TOKEN=<your-token>
 
-# 2. Initialize project
-knock init
+# 2. Initialize project (interactive wizard — use --knock-dir to skip prompts, or run manually)
+knock init --knock-dir=./knock
 
-# 3. Pull existing resources
-knock pull --all
+# 3. Pull existing resources (--force skips confirmation prompts)
+knock pull --all --force
 ```
 
 ### Discover before creating
@@ -490,12 +547,12 @@ knock commit promote --to=production
 ### Sync before editing
 
 ```bash
-# Always pull latest before making changes
-knock pull --all
+# Always pull latest before making changes (--force skips any new directory prompts)
+knock pull --all --force
 
 # Make edits...
 
-# Push and commit
+# Push and commit (push does not prompt)
 knock push --all --commit -m "Updated templates"
 ```
 

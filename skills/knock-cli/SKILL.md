@@ -83,13 +83,16 @@ When making changes to workflows or templates:
 ### Common commands
 
 ```bash
-# Initialize a new project
-knock init
+# Initialize a new project (interactive; use --knock-dir to skip prompts)
+knock init --knock-dir=./knock
 
-# Pull all resources from Knock
-knock pull --all
+# Pull all resources from Knock (--force skips confirmation prompts)
+knock pull --all --force
 
-# Push all resources to Knock
+# Pull a specific workflow
+knock workflow pull <workflow-key> --force
+
+# Push all resources to Knock (push never prompts)
 knock push --all
 
 # Push a specific workflow
@@ -118,13 +121,14 @@ knock message-type push <key>    # Push a message type after modifying
 
 ### Important patterns
 
-1. **Push after every change** - Local edits stay local until pushed. No push = no update in Knock.
-2. **File path references use `@` suffix**: `"content@": "visual_blocks/1.content.md"`
-3. **Paths are relative to containing file**: Don't double the step directory
-4. **Always use `data.` for trigger payload values**, not `vars.`
-5. **Read existing files before modifying** to preserve structure
-6. **Discover channel keys before creating workflows** - Run `knock channel list` to get valid `channel_key` values
-7. **Discover message type keys before creating guides** - Run `knock message-type list` to get valid message type keys
+1. **Use `--force` on commands with prompts** - Many CLI commands (pull, commit, promote, activate) display interactive confirmation prompts. Always pass `--force` to skip them in automated/agent contexts.
+2. **Push after every change** - Local edits stay local until pushed. No push = no update in Knock.
+3. **File path references use `@` suffix**: `"content@": "visual_blocks/1.content.md"`
+4. **Paths are relative to containing file**: Don't double the step directory
+5. **Always use `data.` for trigger payload values**, not `vars.`
+6. **Read existing files before modifying** to preserve structure
+7. **Discover channel keys before creating workflows** - Run `knock channel list` to get valid `channel_key` values
+8. **Discover message type keys before creating guides** - Run `knock message-type list` to get valid message type keys
 
 ## Best practices summary
 

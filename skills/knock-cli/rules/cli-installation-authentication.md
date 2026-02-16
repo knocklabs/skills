@@ -48,6 +48,22 @@ When working with a project that uses Knock, the CLI should already be installed
 2. If npm is not available, try Homebrew on macOS
 3. If installation fails, inform the user that the Knock CLI needs to be installed
 
+### Important: Interactive prompts and the `--force` flag
+
+Many Knock CLI commands use interactive prompts (y/N confirmations, multi-step wizards, browser-based auth). These prompts will cause commands to hang or default to "no" if not handled.
+
+**For agents and scripts:** Most commands that prompt support a `--force` flag that skips all confirmation prompts. Always use `--force` when running commands non-interactively:
+
+```bash
+knock workflow pull <workflow-key> --force
+knock pull --all --force
+knock commit promote --to=production --force
+```
+
+Some commands like `knock init`, `knock auth login`, and `knock workflow new` are fully interactive and don't support `--force`. Use their explicit flags (e.g., `--knock-dir`, `--key`, `--steps`) to avoid prompts, or have the user run them manually.
+
+See the CLI commands reference (`rules/cli-commands-reference.md`) for a full table of which commands prompt, which support `--force`, and which are safe to run directly.
+
 ## Authentication
 
 The Knock CLI supports two authentication methods: service tokens (recommended for CI/CD and automation) and interactive dashboard login (for local development).
@@ -86,13 +102,13 @@ knock pull --all --service-token=<your-service-token>
 
 For local development, you can authenticate using your Knock dashboard account.
 
-**Interactive login:**
+**Interactive login (requires browser — cannot be automated by agents):**
 
 ```bash
 knock auth login
 ```
 
-This opens a browser window for authentication. Once authenticated, credentials are stored locally.
+This opens a browser window for authentication. Once authenticated, credentials are stored locally. Because this requires browser interaction, it must be run manually by the user—agents cannot complete this flow.
 
 **Check authentication status:**
 
