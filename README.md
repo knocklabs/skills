@@ -1,63 +1,82 @@
-# Knock skills repository
+# Knock skills
 
-This repository contains structured skills and best practices for AI agents. Each skill is a self-contained module with rules, guidelines, and examples.
+A collection of skills for AI coding agents working with Knock. Skills are packaged instructions and rules that extend agent capabilities for notification design, copy writing, and Knock CLI workflows.
 
-```
-                       ┌─────────────────────────┐
-                       │   Notification System   │
-                       └────────────┬────────────┘
-                                    │
-          ┌──────────┬──────────────┴──────────────┬──────────┐
-          │          │              │              │          │
-      ┌───┴───┐  ┌───┴───┐     ┌────┴────┐    ┌────┴────┐  ┌──┴───┐
-      │ Email │  │  SMS  │     │  Push   │    │ In-app  │  │ Chat │
-      └───────┘  └───────┘     └─────────┘    └─────────┘  └──────┘
-```
+Skills follow the [Agent Skills](https://agentskills.io/) format.
 
-## Structure
-
-```
-skills/
-├── build.sh               # Root-level script to build all AGENTS.md files
-└── notification-best-practices/
-    ├── SKILL.md          # Human-readable guide for using the skill
-    ├── AGENTS.md         # Complete content for AI agents (auto-generated)
-    └── rules/            # Individual rule files
-        ├── *.md          # Rule files in markdown format
-```
-
-## Skills
+## Available skills
 
 ### notification-best-practices
 
 Comprehensive guidelines for designing, writing, and implementing effective notification systems across all channels (email, push, SMS, in-app, chat).
 
-**Includes:**
-- Channel-specific guidelines and constraints
-- Copy writing best practices
-- System implementation rules
-- Template examples
-- Transactional email best practices
-- Welcome email patterns
+**Use when:**
+- Writing notification copy for any channel
+- Designing notification systems or workflows
+- Implementing transactional or welcome emails
+- Reviewing notification templates for best practices
+- Choosing channels and timing for notifications
 
-## Adding new skills
+**Categories covered:**
+- Channel-specific guidelines (character limits, structure, tone)
+- Copy best practices (specificity, context, active voice)
+- System implementation (timing, preferences, error handling, compliance)
+- Template examples (signup, payment, collaboration, alerts)
+- Transactional email (deliverability, componentized templates, localization)
+- Welcome email patterns (founder-led, quick start, value-first)
 
-See `AGENTS.md` for detailed instructions on how to add new skills and rules to this repository.
+### knock-cli
+
+Guidelines for working with the Knock CLI to manage workflows, templates, guides, partials, and other notification resources in a Knock project.
+
+**Use when:**
+- Setting up a new Knock project or initializing the CLI
+- Pulling or pushing workflows, email layouts, guides, or partials
+- Modifying workflow templates (visual blocks vs HTML)
+- Working with in-app guides (banners, modals, announcements)
+- Creating reusable email partials for design systems
+- Managing message types and their schema
+
+**Categories covered:**
+- CLI installation and authentication (npm, Homebrew, service tokens)
+- Knock directory structure (knock.json, workflows, email-layouts, partials)
+- CLI commands reference (pull, push, validate, run)
+- Workflow templates (visual blocks, HTML mode, Liquid namespaces)
+- Guides and message types (lifecycle messaging vs notifications)
+- Partials (reusable blocks, input_schema, visual block editor)
+
+## Installation
+
+```bash
+npx skills add knocklabs/skills
+```
+
+Or reference skills directly by path when configuring your agent.
 
 ## Usage
 
-### For AI agents
+Skills are automatically available once installed. The agent will use them when relevant tasks are detected.
 
-Reference skills using their path:
-- `skills/notification-best-practices/AGENTS.md` - Complete skill content
-- `skills/notification-best-practices/SKILL.md` - Skill overview and usage guide
+**Examples:**
+```
+Help me write a welcome email for new signups
+```
+```
+Push my workflow changes to Knock
+```
+```
+Review this notification template for best practices
+```
+```
+Create a new partial for our email design system
+```
 
-### For humans
+## Skill structure
 
-Each skill includes:
-- `SKILL.md` - Overview and how to use the skill
-- `rules/*.md` - Individual rule files organized by topic
-- `AGENTS.md` - Complete concatenated content (auto-generated)
+Each skill contains:
+- `SKILL.md` - Human-readable guide and usage instructions
+- `AGENTS.md` - Complete content for AI agents (auto-generated)
+- `rules/` - Individual rule files in markdown format
 
 ## Building skills
 
@@ -67,21 +86,8 @@ Run the root-level build script to generate `AGENTS.md` files for all skills:
 ./build.sh
 ```
 
-This script:
-- Finds all skill directories in `skills/`
-- Concatenates all rule files from each skill's `rules/` directory
-- Generates `AGENTS.md` for each skill
-- Extracts skill titles and descriptions from `SKILL.md` files
+The script finds all skill directories, concatenates rule files, and generates `AGENTS.md` for each skill.
 
-The build script automatically processes all skills, so you only need to run it once to update all `AGENTS.md` files.
+## Adding new skills
 
-## Contributing
-
-When adding new skills:
-1. Create a new directory under `skills/`
-2. Add rule files in a `rules/` subdirectory
-3. Create `SKILL.md` with usage instructions
-4. Optionally create `build.sh` to generate `AGENTS.md`
-5. Follow the sentence case convention for all titles and headings
-
-See `AGENTS.md` for complete guidelines.
+See `AGENTS.md` for detailed instructions on how to add new skills and rules to this repository.
