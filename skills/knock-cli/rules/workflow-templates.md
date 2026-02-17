@@ -345,6 +345,74 @@ These step types control workflow logic and never have step directories. Functio
 
 **Important:** The HTTP fetch step type is `http_fetch`, not `fetch`. The API will reject `fetch` as an invalid type.
 
+## Delay steps
+
+Delay steps pause the workflow for a specified duration before continuing to the next step. Use them to space out notifications, wait for user action windows, or time follow-up messages.
+
+### Delay step configuration
+
+```json
+{
+  "ref": "delay_1",
+  "name": "Wait 5 minutes",
+  "type": "delay",
+  "settings": {
+    "delay_for": {
+      "unit": "minutes",
+      "value": 5
+    }
+  }
+}
+```
+
+| Setting | Description |
+|---------|-------------|
+| `delay_for` | Object with `unit` and `value` specifying how long to wait |
+| `delay_until_field_path` | Path to a recipient or data field containing a datetime to wait until (alternative to `delay_for`) |
+
+Valid `unit` values for `delay_for`: `seconds`, `minutes`, `hours`, `days`, `weeks`.
+
+### delay_until example
+
+To delay until a datetime stored on the recipient or in the trigger payload:
+
+```json
+{
+  "ref": "delay_until_appointment",
+  "type": "delay",
+  "settings": {
+    "delay_until_field_path": "data.appointment_at"
+  }
+}
+```
+
+### Common mistake: Using a duration string
+
+The `settings` object requires a `delay_for` key with a nested `unit`/`value` object. A flat `duration` string is **not** a valid format and will be rejected by the API.
+
+**Wrong:**
+
+```json
+{
+  "settings": {
+    "duration": "5 minutes"
+  }
+}
+```
+
+**Correct:**
+
+```json
+{
+  "settings": {
+    "delay_for": {
+      "unit": "minutes",
+      "value": 5
+    }
+  }
+}
+```
+
 ## Batch steps
 
 Batch steps collect multiple triggers over a time window before continuing. Use them for commenting, likes, or any high-volume activity where you want to send one notification instead of many.
@@ -431,6 +499,62 @@ Use `run.total_activities` in branch step conditions to branch on batch size:
   "argument": 1
 }
 ```
+
+## Throttle steps
+
+Throttle steps limit how often a workflow run proceeds for a given recipient within a time window. When a recipient has already passed a throttle step `throttle_limit` times within the `throttle_window`, subsequent runs are stopped at that step. Use throttle steps at the beginning of workflows to prevent over-notification.
+
+### Throttle step configuration
+
+```json
+{
+  "name": "Throttle 1 per 24 hours",
+  "ref": "throttle_1",
+  "type": "throttle",
+  "settings": {
+    "throttle_limit": 1,
+    "throttle_window": {
+      "unit": "hours",
+      "value": 24
+    }
+  }
+}
+```
+
+| Setting | Description |
+|---------|-------------|
+| `throttle_limit` | Maximum number of times a recipient can pass this step within the window. Almost always `1`. |
+| `throttle_window` | Duration object with `unit` and `value` specifying the rolling window length. |
+| `throttle_key` | Optional. A data path (e.g. `"object_key"`) to segment the throttle beyond per-recipient. Useful when throttling per-recipient-per-object rather than globally per recipient. |
+
+Valid `unit` values for `throttle_window`: `seconds`, `minutes`, `hours`, `days`, `weeks`.
+
+### Throttle key: per-object throttling
+
+By default, a throttle step is scoped per recipient. Add `throttle_key` to further segment by a data value—for example, to allow one notification per recipient per content item rather than one notification per recipient globally:
+
+```json
+{
+  "ref": "throttle_1",
+  "type": "throttle",
+  "settings": {
+    "throttle_key": "data.content_id",
+    "throttle_limit": 1,
+    "throttle_window": {
+      "unit": "hours",
+      "value": 24
+    }
+  }
+}
+```
+
+### Placement
+
+Place throttle steps at the **beginning** of the workflow so that throttled runs are stopped before any channel steps execute. Placing a throttle mid-workflow is valid but means earlier steps will still fire on throttled runs.
+
+### Common mistake: Using throttle instead of trigger_frequency
+
+`throttle` steps control frequency at runtime within a workflow run. `trigger_frequency` in `workflow.json` is a separate setting that controls whether a workflow can be triggered at all for a recipient (`every_trigger` vs `once_per_recipient`). Use both when appropriate—`trigger_frequency` for enrollment gating, throttle steps for send-rate limiting.
 
 ## Branch steps
 
@@ -743,7 +867,10 @@ Use Knock secret variables (`vars`) for API keys and tokens in headers to keep t
       "ref": "delay-step",
       "type": "delay",
       "settings": {
-        "duration": "1 hour"
+        "delay_for": {
+          "unit": "hours",
+          "value": 1
+        }
       }
     },
     {
