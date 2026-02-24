@@ -1,5 +1,7 @@
 # Knock skills
 
+![Knock Skills](header.png)
+
 A collection of skills for AI coding agents working with Knock. Skills are packaged instructions and rules that extend agent capabilities for notification design, copy writing, and Knock CLI workflows.
 
 Skills follow the [Agent Skills](https://agentskills.io/) format.
@@ -47,11 +49,24 @@ Guidelines for working with the Knock CLI to manage workflows, templates, guides
 
 ## Installation
 
+### Cursor
+
 ```bash
 npx skills add knocklabs/skills
 ```
 
 Or reference skills directly by path when configuring your agent.
+
+### Claude Code
+
+Clone the repository and load it as a plugin:
+
+```bash
+git clone https://github.com/knocklabs/skills
+claude --plugin-dir ./skills
+```
+
+This loads both the skills and the Knock MCP server, giving you access to notification best practices and Knock API tools.
 
 ## Usage
 
