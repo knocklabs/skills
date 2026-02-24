@@ -1,0 +1,22 @@
+{
+  "name": "knock",
+  "version": "1.0.0",
+  "description": "Skills and MCP tools for building notifications with Knock",
+  "author": {
+    "name": "Knock Labs",
+    "email": "support@knock.app"
+  },
+  "homepage": "https://knock.app",
+  "repository": "https://github.com/knocklabs/cursor-plugin",
+  "license": "MIT",
+  "keywords": [
+    "knock",
+    "notifications",
+    "email",
+    "sms",
+    "push",
+    "in-app",
+    "mcp"
+  ],
+  "logo": "assets/logo.svg"
+}

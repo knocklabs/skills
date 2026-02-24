@@ -1,5 +1,7 @@
 # Knock skills
 
+![Knock Skills](header.png)
+
 A collection of skills for AI coding agents working with Knock. Skills are packaged instructions and rules that extend agent capabilities for notification design, copy writing, and Knock CLI workflows.
 
 Skills follow the [Agent Skills](https://agentskills.io/) format.
