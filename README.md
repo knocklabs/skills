@@ -74,19 +74,8 @@ Create a new partial for our email design system
 ## Skill structure
 
 Each skill contains:
-- `SKILL.md` - Human-readable guide and usage instructions
-- `AGENTS.md` - Complete content for AI agents (auto-generated)
+- `SKILL.md` - Human-readable guide and usage instructions (with frontmatter)
 - `rules/` - Individual rule files in markdown format
-
-## Building skills
-
-Run the root-level build script to generate `AGENTS.md` files for all skills:
-
-```bash
-./build.sh
-```
-
-The script finds all skill directories, concatenates rule files, and generates `AGENTS.md` for each skill.
 
 ## Adding new skills
 
