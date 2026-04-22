@@ -36,55 +36,65 @@ Follow these steps in order. Do not skip the confirmation step at the end.
 
 ## 3. House style (customize this section)
 
-Edit this block to match your team's style guide. The values here override anything else in this file. Defaults are sensible but opinionated — change what you disagree with.
+Edit this section to match your team's style guide. Write in plain English — the agent will respect whatever you put here. Delete anything that doesn't apply, add anything that does. If this section looks untouched from the defaults below, note that in the report summary so the user knows the review used defaults.
 
-```yaml
-house_style:
-  voice_and_tone: "Friendly-professional. Warm but not casual. No exclamation marks in subject lines. Avoid hype."
-  oxford_comma: true                # true = use it, false = drop it
-  sentence_case:
-    subject_lines: true             # "Your order has shipped" not "Your Order Has Shipped"
-    buttons: true                   # "View order" not "View Order"
-    headings: true
-  contractions: allowed             # allowed | disallowed
-  emoji_policy: sparing             # none | sparing | per-channel
-  emoji_per_channel:                # only applied if emoji_policy = per-channel
-    email: none
-    push: sparing
-    sms: none
-    in_app: sparing
-    chat: sparing
-  reserved_terms:
-    # Canonical casing for product terms. Flag any deviation.
-    - "Knock"
-    - "in-app feed"
-    - "workflow"
-    - "guide"
-  forbidden_phrases:
-    - "click here"
-    - "please find attached"
-    - "as per"
-    - "kindly"
-    - "hit us up"
-  formats:
-    date: "Mon, Jan 23, 2026"       # or ISO, or locale-aware
-    time: "2:30 PM EST"             # include timezone for transactional
-    currency: "$1,234.56 USD"
-    default_locale: "en-US"
-  links:
-    style: "descriptive"            # descriptive text only; never "click here"
-    require_https: true
-  cta:
-    max_primary_per_message: 1
-    button_verbs_preferred:
-      - "View"
-      - "Open"
-      - "Confirm"
-      - "Reply"
-      - "Track"
-```
+### Voice and tone
 
-If the user hasn't customized this block, note that in the report summary so they know the review used defaults.
+- Friendly-professional. Warm but not casual.
+- No exclamation marks in subject lines.
+- Avoid hype and marketing superlatives ("amazing", "revolutionary", "game-changing").
+
+### Grammar and punctuation
+
+- Use the Oxford comma.
+- Use contractions ("you're", "we'll") — they sound more human.
+- Prefer em-dashes over parentheses for asides.
+- Use curly quotes, not straight.
+- No double spaces after periods.
+
+### Casing
+
+- Sentence case for subject lines, buttons, and headings ("Your order has shipped", not "Your Order Has Shipped").
+- Preserve product term casing exactly — see the glossary below.
+
+### Emoji
+
+- Use sparingly. Never more than one per message.
+- None in SMS.
+- Never in subject lines.
+
+### Links and CTAs
+
+- One primary CTA per message.
+- Anchor text must describe the destination. Never "click here", "this link", or bare URLs.
+- All links must use `https://`.
+- Preferred button verbs: View, Open, Confirm, Reply, Track.
+
+### Formats
+
+- Dates: `Mon, Jan 23, 2026`
+- Times: `2:30 PM EST` (always include timezone for transactional)
+- Currency: `$1,234.56 USD`
+- Default locale: `en-US`
+
+### Glossary (canonical casing)
+
+| Correct       | Also flag                         |
+|---------------|-----------------------------------|
+| Knock         | knock, KNOCK                      |
+| in-app feed   | In-App Feed, inapp feed, in app feed |
+| workflow      | Workflow, work flow               |
+| guide         | Guide (when used generically)     |
+
+### Forbidden phrases
+
+Flag any occurrence of these:
+
+- click here
+- please find attached
+- as per
+- kindly
+- hit us up
 
 ## 4. Universal copy-editing checklist
 
@@ -92,13 +102,13 @@ Apply to every channel:
 
 - **Typos and misspellings**, including doubled words ("the the") and homophones (their/there/they're, your/you're, its/it's, affect/effect, then/than).
 - **Grammar**: subject-verb agreement, pronoun agreement, consistent tense, no dangling or misplaced modifiers, parallel structure in lists.
-- **Punctuation**: correct comma usage per `house_style.oxford_comma`, consistent quote style (straight vs. curly), proper ellipses, correct em-dash / en-dash usage, no double spaces.
-- **Capitalization**: title vs. sentence case per house style; correct casing for product names, features, and proper nouns from `house_style.reserved_terms`.
+- **Punctuation**: comma usage matches the Oxford comma rule in house style, consistent quote style (straight vs. curly), proper ellipses, correct em-dash / en-dash usage, no double spaces.
+- **Capitalization**: sentence case vs. title case per house style; product names, features, and proper nouns match the casing in the house style glossary.
 - **Voice**: prefer active voice. Flag passive constructions unless they're intentional (e.g., when the actor is unknown or irrelevant).
 - **Specificity and context**: every notification should answer "what happened, why does it matter to me, and what can I do next?" Vague subjects like "Update available" are always a finding.
 - **Consistent terminology**: names of features and objects match the product UI and each other throughout the template.
 - **Reading level**: plain language unless the audience is technical. Avoid jargon, acronyms without expansion, and marketing fluff.
-- **Forbidden phrases**: flag any match against `house_style.forbidden_phrases`.
+- **Forbidden phrases**: flag any match against the forbidden phrases list in house style.
 - **Internationalization risks**: concatenated strings that assume English word order, hard-coded dates or currencies, missing pluralization branches, gendered assumptions.
 - **Inclusive language**: avoid gendered defaults ("he/she"), ableist metaphors, and culturally narrow idioms.
 
@@ -119,7 +129,7 @@ For each channel the template targets, verify:
 
 ### SMS
 - Under 160 characters when possible; if longer, segments cleanly.
-- No links unless shortened and branded; no HTML; no emoji unless `house_style.emoji_policy` allows.
+- No links unless shortened and branded; no HTML; no emoji unless house style explicitly allows it in SMS.
 - Includes sender identity (users can't see a "from" name).
 - Includes opt-out instructions for non-transactional messages ("Reply STOP to unsubscribe").
 
@@ -150,7 +160,7 @@ Email has the most surface area, so apply this additional checklist whenever the
 - Works when the recipient reads only the first screen.
 
 ### Links
-- Every `href` is present, non-empty, and uses `https://` (per `house_style.links.require_https`).
+- Every `href` is present, non-empty, and uses `https://`.
 - No `#`, `example.com`, `localhost`, or unresolved `{{ }}` placeholders shipped to production.
 - Anchor text is descriptive — no "click here", "this link", or bare URLs.
 - Tracked/redirect links resolve to the intended destination.
