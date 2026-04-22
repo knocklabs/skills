@@ -27,6 +27,24 @@ Comprehensive guidelines for designing, writing, and implementing effective noti
 - Transactional email (deliverability, componentized templates, localization)
 - Welcome email patterns (founder-led, quick start, value-first)
 
+### template-review
+
+A self-contained reviewer for notification templates across all channels, with a deeper checklist for email. Produces a severity-grouped report (blocker / recommended / nit) and asks before applying fixes.
+
+**Use when:**
+- Proofreading or QA-ing a notification template before a send
+- Checking subject lines, preheaders, CTAs, and body copy
+- Validating variables, conditionals, and links inside a template
+- Reviewing email deliverability, accessibility, and dark-mode behavior
+
+**Categories covered:**
+- Customizable house style (Oxford commas, casing, emoji policy, reserved terms, forbidden phrases)
+- Universal copy editing (typos, grammar, voice, specificity, terminology)
+- Channel checks (email, push, SMS, in-app, chat)
+- Email deep-dive (headers, structure, links, images, dark mode, accessibility, deliverability, localization, HTML/MJML hygiene)
+- Variables, conditionals, and link verification
+- Severity-graded output format
+
 ### knock-cli
 
 Guidelines for working with the Knock CLI to manage workflows, templates, guides, partials, and other notification resources in a Knock project.
@@ -91,6 +109,8 @@ Create a new partial for our email design system
 Each skill contains:
 - `SKILL.md` - Human-readable guide and usage instructions (with frontmatter)
 - `rules/` - Individual rule files in markdown format
+
+**Exception:** `template-review` intentionally ships as a single `SKILL.md` with no `rules/` directory so it can be pasted into Knock as one self-contained text blob. This is a deliberate portability choice, not an oversight.
 
 ## Adding new skills
 
