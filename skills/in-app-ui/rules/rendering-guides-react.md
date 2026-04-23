@@ -20,6 +20,70 @@ References:
 - https://docs.knock.app/in-app-ui/guides/render-guides
 - https://docs.knock.app/in-app-ui/react/headless/guide
 
+## First guide: discover real guides via CLI before writing code
+
+When finishing a first-time setup (providers just wired up), the goal is the shortest path to the user actually seeing a guide render. **Do not scaffold a component against a placeholder `type` string like `"changelog-card"`** — that component renders nothing until a matching guide is created in the dashboard, and it leaves the user with a broken "first guide" experience. Instead, use the Knock CLI to find a real guide that already exists in the chosen environment, then build the component against its actual values.
+
+Use the same `<env-slug>` confirmed during provider setup (see `setup-guide-providers-react.md` → "Confirm the target Knock environment") for every CLI command below.
+
+**Step 1 — List guides in the chosen environment:**
+
+```bash
+knock guide list --environment <env-slug> --json
+```
+
+Each entry includes the guide's `key`, `name`, `channel_key`, and `steps[]`. Each step has a `schema_key` (the message type key the hook filters on when called with `{ type }`) and a `schema_variant_key`.
+
+**Step 2 — Pick a guide to render, or create a test one if the environment is empty.**
+
+- **If `knock guide list` returned one or more guides:** show the user the list (`key`, `name`, each step's `schema_key`) and ask which one to use as the first working example. Skip to step 3.
+
+- **If `knock guide list` returned nothing:** do not stop and wait for the user to go create something in the dashboard. Offer to create a test guide on the fly so they reach a rendering state quickly. The default guide channel (`knock-guide`) and the built-in system message types (`card`, `banner`, `modal`) ship with every Knock account, so no upstream setup is required.
+
+  1. Ask which built-in message type the test guide should use: **`card`** (inline, least intrusive — good default), **`banner`** (top/bottom bar), or **`modal`** (blocking overlay). If the user has no preference, default to `card`.
+
+  2. Pull the chosen message type's schema to see its variants and required fields:
+
+     ```bash
+     knock message-type get <card|banner|modal> --environment <env-slug> --json
+     ```
+
+     Pick the simplest variant (typically `default`) and plan to fill every required field with **obvious placeholder** content so the user can tell it's a scaffold they should edit — e.g., `title: "Hello from Knock"`, `body: "This is a test guide. Edit me in the Knock dashboard."`, CTA text `"Got it"` with action `"#"`. Placeholder-sounding copy is intentional; polished copy on a demo guide looks like real content and invites confusion.
+
+  3. Create the guide via the **Knock MCP** (whichever `create_guide`-style tool the environment exposes). Use a clearly test-ish `name` and `key` like `hello-knock-guide` so the guide is easy to find and delete later. Set `channel_key` to the guide channel the app is pointing at (the default is `knock-guide`; confirm against the `channelId` picked during provider setup). Leave targeting at the default "All users" and omit activation rules so it renders on any page.
+
+  4. **Activate** the new guide in the chosen environment. Prefer the MCP if it exposes activation; otherwise ask the user to flip the toggle in the dashboard. Rendering requires an active guide — a created-but-inactive guide will silently not appear and send you back to debugging.
+
+  5. Re-run `knock guide list --environment <env-slug> --json` to confirm the new guide appears, then continue to step 3 with its `key`.
+
+  **If the Knock MCP is not available** in the current environment, fall back to either: (a) scaffolding with the CLI (`knock guide new` → edit the JSON → `knock guide push --environment <env-slug>`), or (b) asking the user to create a guide in the dashboard. Do not proceed until a guide exists and is active.
+
+**Step 3 — Choose `{ key }` vs `{ type }` for the hook.**
+
+- Use `{ key }` (the guide's unique key) for a first-render smoke test. It targets exactly one guide and avoids ambiguity if several guides share the same message type.
+- Use `{ type }` (the step's `schema_key`) when the surface should render *any* current or future guide of that message type — typical for long-lived slots like a banner or modal container.
+
+For the initial setup, default to `{ key }`. It maps one-to-one with what the user just picked from the list.
+
+**Step 4 — Pull the message type schema so the content is typed.** The step's `schema_key` names the message type; fetch its schema and mirror it in the component's TypeScript generic so `step.content.<field>` is type-checked:
+
+```bash
+knock message-type get <schema_key> --environment <env-slug> --json
+```
+
+Use the variant's fields (e.g., `title`, `body`, CTA fields) to define the type passed to `useGuide<T>` — see the minimal example below for the pattern.
+
+**Step 5 — Build the component** with the real `key` (or `type`), the typed content, and engagement wired up (`markAsSeen`, `markAsInteracted`, `markAsArchived`). Drop it into a stable location in the app tree (not inside a `Suspense` boundary that remounts).
+
+**Step 6 — Flag what still needs the user.** After the component compiles, some things cannot be automated — call these out explicitly rather than letting the user discover them by absence:
+
+- `pk_...` public API key from **Platform → API keys** for the chosen environment, pasted into `.env` (not discoverable via CLI).
+- The chosen guide must be **active** in this environment (dashboard toggle).
+- The current user and current route must match the guide's targeting and activation rules. The defaults ("All users", no page rules) are usually permissive enough for the first render.
+- Restart the dev server if `.env` was just edited.
+
+If nothing renders after all of the above, go to `debugging-guides.md` and work the triage checklist.
+
 ## Pick the right hook
 
 | Hook | Returns | Use for |

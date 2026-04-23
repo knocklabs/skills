@@ -144,7 +144,7 @@ If exactly one `in_app_guide` channel is returned, use its `id`. If multiple are
 
 **Step 3 — Only if both steps above fail, ask the user.** The CLI can fail for legitimate reasons: not installed, not authenticated, pointed at the wrong account, wrong environment slug, or no network. In that case, pause and ask the user to paste the UUID from either:
 
-- **Knock dashboard** → **Integrations → Channels** → the in-app **guide** channel → channel ID (UUID) on the detail page, or
+- **Knock dashboard** → **Settings → Integrations → Channels** → the in-app **guide** channel → channel ID (UUID) on the detail page, or
 - **Management API** → `GET /v1/channels` returns `Channel[]`, each with `id`, `key`, and `type`.
 
 Never guess, never substitute the channel key, and never leave a placeholder in `.env`. A wrong or missing `channelId` causes silent rendering failure that is painful to trace back from the UI.

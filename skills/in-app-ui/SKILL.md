@@ -38,13 +38,16 @@ Start with `rules/feeds-vs-guides.md`:
 4. Ask the user only for values that can't be auto-discovered — primarily the public `apiKey` for the chosen environment (and confirm `user.id` is coming from the app's auth context). Do not bundle the `apiKey` ask with `channelId`.
 5. Wire `KnockProvider` + `KnockGuideProvider` at the top of the tree.
 6. Gate `readyToTarget` on any async data your targeting depends on.
+7. **Get a real guide rendering before stopping.** Run `knock guide list --environment <env-slug> --json`, show the user the options (`key`, `name`, each step's `schema_key`), and build the first component against a real guide's actual values. Do not scaffold with placeholder strings like `"changelog-card"`. Fetch the message type schema with `knock message-type get <schema_key> --environment <env-slug> --json` so the content is typed. **If the environment has no guides, offer to create a test one via the Knock MCP** using a built-in message type (`card`, `banner`, or `modal`) with obvious-placeholder content — don't stall waiting for manual dashboard setup. See `rules/rendering-guides-react.md` → "First guide: discover real guides via CLI before writing code" for the full procedure including the empty-environment branch.
+8. Flag anything that still needs the user (paste `pk_` key, flip the guide to active in the dashboard, restart dev server) explicitly — don't leave them to discover it by absence.
 
 ### When building a new guide component in React
 
 1. Follow the workflow in `rules/rendering-guides-react.md`
-2. Pick `useGuide` for single-guide surfaces, `useGuides` for lists
-3. Define a TypeScript type that mirrors the Knock message type schema
-4. Wire `markAsSeen`, `markAsInteracted`, and `markAsArchived` — custom components must do this themselves
+2. **Discover the target guide (or message type) via the Knock CLI before picking values.** `knock guide list --environment <env-slug> --json` for the guide's `key` / step `schema_key`; `knock message-type get <schema_key> --environment <env-slug> --json` for the content schema. Avoid placeholder strings.
+3. Pick `useGuide` for single-guide surfaces, `useGuides` for lists
+4. Define a TypeScript type that mirrors the message type schema you just pulled
+5. Wire `markAsSeen`, `markAsInteracted`, and `markAsArchived` — custom components must do this themselves
 
 ### When a guide isn't rendering
 
@@ -91,7 +94,7 @@ The examples below are React. For any other client SDK, see the note at the top 
   knock channel list --environment <env-slug> --json | jq -r '.[] | select(.key == "knock-guide") | .id'
   ```
 
-  If this prints a UUID, use it directly — don't prompt for confirmation. The default guide channel key is `knock-guide` (type `in_app_guide`). Fall back to the dashboard (**Integrations → Channels**) only if the CLI returns nothing or errors. See `rules/setup-guide-providers-react.md` for the full procedure.
+  If this prints a UUID, use it directly — don't prompt for confirmation. The default guide channel key is `knock-guide` (type `in_app_guide`). Fall back to the dashboard (**Settings → Integrations → Channels**) only if the CLI returns nothing or errors. See `rules/setup-guide-providers-react.md` for the full procedure.
 
 ### Hooks at a glance
 
@@ -118,5 +121,4 @@ Append `?knock_guides_toolbar=true` to any URL. The toolbar shows all guides, wh
 4. **Gate `readyToTarget` on async data** your targeting rules depend on.
 5. **Type your content.** `useGuide<T>` should mirror the Knock message type schema.
 6. **Always handle engagement.** Custom components must call `markAsSeen`, `markAsInteracted`, and `markAsArchived` themselves.
-7. **Lock targeting data types.** `"true"` and `true` are different to the rule engine.
-8. **Use the toolbar first.** Most "the guide isn't showing" questions are answered in seconds.
+7. **Use the toolbar first.** Most "the guide isn't showing" questions are answered in seconds.
