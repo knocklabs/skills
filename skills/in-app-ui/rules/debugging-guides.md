@@ -71,7 +71,7 @@ Call the Guides API directly with that user's id if you want ground truth: if th
 
 ### 5. Is engagement tracking wired up?
 
-Custom guide components *must* call `markAsSeen`, `markAsInteracted`, and `archive` themselves. Pre-built components do this for you; headless ones do not. If the dashboard shows zero engagement on a guide that is obviously rendering, this is almost always the reason.
+Custom guide components *must* call `markAsSeen`, `markAsInteracted`, and `markAsArchived` themselves. Pre-built components do this for you; headless ones do not. If the dashboard shows zero engagement on a guide that is obviously rendering, this is almost always the reason.
 
 ## Testing new guides
 
