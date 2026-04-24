@@ -27,6 +27,22 @@ Comprehensive guidelines for designing, writing, and implementing effective noti
 - Transactional email (deliverability, componentized templates, localization)
 - Welcome email patterns (founder-led, quick start, value-first)
 
+### in-app-ui
+
+Guidance for implementing Knock in-app UI in a web app, with a focus on setting up, rendering, and debugging Knock guides in React.
+
+**Use when:**
+- Adding Knock guides to a React app for the first time
+- Building guide components with `useGuide` / `useGuides`
+- Debugging why a guide isn't rendering
+- Wiring engagement tracking (seen, interacted, archived)
+
+**Categories covered:**
+- Feeds vs. guides product selection (framework-agnostic)
+- Provider setup for guides in React (`KnockProvider`, `KnockGuideProvider`)
+- Rendering guides with hooks and typed content (React)
+- Debugging guides with the toolbar and triage checklist (framework-agnostic)
+
 ### knock-cli
 
 Guidelines for working with the Knock CLI to manage workflows, templates, guides, partials, and other notification resources in a Knock project.
@@ -84,6 +100,9 @@ Review this notification template for best practices
 ```
 ```
 Create a new partial for our email design system
+```
+```
+Add Knock guides to my React app
 ```
 
 ## Skill structure
