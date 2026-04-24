@@ -33,12 +33,12 @@ Start with `rules/feeds-vs-guides.md`:
 ### When adding guides to a React app for the first time
 
 1. Read `rules/setup-guide-providers-react.md`
-2. **Before running any CLI commands, confirm which Knock environment this setup is for.** Run `knock environment list` and ask the user to pick (the CLI defaults to `development`, but most real integrations target `production`). Remember that slug as `<env-slug>` and pass `--environment <env-slug>` on every subsequent `knock` command.
-3. **Before asking the user anything about the channel, discover `channelId` via the Knock CLI:** run `knock channel list --environment <env-slug> --json | jq -r '.[] | select(.key == "knock-guide") | .id'`. If it prints a UUID, use it — do not ask the user to confirm or re-paste. Only ask the user if the CLI returns nothing or errors. See the rule file's "Where to get `channelId`" procedure for the full fallback order.
+2. **Before running any CLI commands, confirm the CLI is authenticated and which Knock environment this setup is for.** First run `knock whoami` — if it errors with something like "not authenticated" or "no user session," run `knock login` and ask the user to complete the browser flow before continuing (the CLI persists the session so this is a one-time step per machine). Only after `knock whoami` succeeds, run `knock environment list` and ask the user to pick (the CLI defaults to `development`, but most real integrations target `production`). Remember that slug as `<env-slug>` and pass `--environment <env-slug>` on every subsequent environment-scoped `knock` command.
+3. **Before asking the user anything about the channel, discover `channelId` via the Knock CLI:** run `knock channel list --json | jq -r '.[] | select(.key == "knock-guide") | .id'`. Channels are account-scoped, so this command does **not** take `--environment`. If it prints a UUID, use it — do not ask the user to confirm or re-paste. Only ask the user if the CLI returns nothing or errors. See the rule file's "Where to get `channelId`" procedure for the full fallback order.
 4. Ask the user only for values that can't be auto-discovered — primarily the public `apiKey` for the chosen environment (and confirm `user.id` is coming from the app's auth context). Do not bundle the `apiKey` ask with `channelId`.
 5. Wire `KnockProvider` + `KnockGuideProvider` at the top of the tree.
 6. Gate `readyToTarget` on any async data your targeting depends on.
-7. **Get a real guide rendering before stopping.** Run `knock guide list --environment <env-slug> --json`, show the user the options (`key`, `name`, each step's `schema_key`), and build the first component against a real guide's actual values. Do not scaffold with placeholder strings like `"changelog-card"`. Fetch the message type schema with `knock message-type get <schema_key> --environment <env-slug> --json` so the content is typed. **If the environment has no guides, offer to create a test one via the Knock MCP** using a built-in message type (`card`, `banner`, or `modal`) with obvious-placeholder content — don't stall waiting for manual dashboard setup. See `rules/rendering-guides-react.md` → "First guide: discover real guides via CLI before writing code" for the full procedure including the empty-environment branch.
+7. **Get a real guide rendering before stopping.** Run `knock guide list --environment <env-slug> --json`, show the user the options (`key`, `name`, each step's `schema_key`), and build the first component against a real guide's actual values. Do not scaffold with placeholder strings like `"changelog-card"`. Fetch the message type schema with `knock message-type get <schema_key> --environment <env-slug> --json` so the content is typed. **If the environment has no guides, offer to scaffold a test one via the Knock CLI** (`knock guide new` → edit the JSON → `knock guide push --environment <env-slug>`) using a built-in message type (`card`, `banner`, or `modal`) with obvious-placeholder content — don't stall waiting for manual dashboard setup. See `rules/rendering-guides-react.md` → "First guide: discover real guides via CLI before writing code" for the full procedure including the empty-environment branch.
 8. Flag anything that still needs the user (paste `pk_` key, flip the guide to active in the dashboard, restart dev server) explicitly — don't leave them to discover it by absence.
 
 ### When building a new guide component in React
@@ -52,7 +52,7 @@ Start with `rules/feeds-vs-guides.md`:
 ### When a guide isn't rendering
 
 1. Open `rules/debugging-guides.md` and work the triage checklist top to bottom
-2. Turn on the guides toolbar (`?knock_guides_toolbar=true`) first — it answers most questions in seconds
+2. Turn on the guides toolbar (`?knock_guide_toolbar=true`) first — it answers most questions in seconds
 3. Distinguish server-side (targeting/eligibility) from client-side (provider/component) failures before digging deeper
 
 ## Rule files reference
@@ -85,13 +85,13 @@ The examples below are React. For any other client SDK, see the note at the top 
 
 ### Where to source each value
 
-- **Environment first** — Knock is environment-scoped. Before any CLI command, run `knock environment list` and confirm the target slug (`production`, `development`, …) with the user. Pass `--environment <env-slug>` on every subsequent `knock` command. Don't rely on the CLI's `development` default.
+- **Auth first, then environment** — Knock is environment-scoped. Before any CLI command, verify the CLI is authenticated with `knock whoami`; if it errors, run `knock login` and wait for the user to complete the browser flow. Then run `knock environment list` and confirm the target slug (`production`, `development`, …) with the user. Pass `--environment <env-slug>` on every subsequent environment-scoped `knock` command. Don't rely on the CLI's `development` default.
 - `apiKey` — Knock dashboard → **Platform → API keys** → public `pk_...` key **from the tab for the chosen environment** (switch envs via the dashboard's environment selector first; remind the user to copy the key for the right env)
 - `user.id` — your auth context; must match the id used when identifying the user from your backend
-- `channelId` — the **UUID** of the guide channel, not its key. **Always attempt CLI discovery before asking the user:**
+- `channelId` — the **UUID** of the guide channel, not its key. Channels are account-scoped, so `knock channel list` does **not** take `--environment`. **Always attempt CLI discovery before asking the user:**
 
   ```bash
-  knock channel list --environment <env-slug> --json | jq -r '.[] | select(.key == "knock-guide") | .id'
+  knock channel list --json | jq -r '.[] | select(.key == "knock-guide") | .id'
   ```
 
   If this prints a UUID, use it directly — don't prompt for confirmation. The default guide channel key is `knock-guide` (type `in_app_guide`). Fall back to the dashboard (**Settings → Integrations → Channels**) only if the CLI returns nothing or errors. See `rules/setup-guide-providers-react.md` for the full procedure.
@@ -111,7 +111,7 @@ The examples below are React. For any other client SDK, see the note at the top 
 
 ### First stop when something's wrong
 
-Append `?knock_guides_toolbar=true` to any URL. The toolbar shows all guides, which are active, which this user is eligible for, and why the rest were filtered out.
+Append `?knock_guide_toolbar=true` to any URL. The toolbar shows all guides, which are active, which this user is eligible for, and why the rest were filtered out.
 
 ## Best practices summary
 

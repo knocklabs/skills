@@ -30,6 +30,14 @@ npm install @knocklabs/react
 
 Knock is environment-scoped: the public API key, the "active" state of each guide, and most CLI operations all differ between environments (typically `development` and `production`, sometimes `staging` or custom slugs). **Before running any `knock` command, confirm with the user which environment they're setting guides up for.** The CLI defaults to `development`, but most real integrations target `production` — do not assume, ask.
 
+**Step 0 — Verify the CLI is authenticated.** The Knock CLI persists a user session locally, but a fresh machine (or a teammate who hasn't used the CLI before) will have none. Run `knock whoami` first:
+
+```bash
+knock whoami
+```
+
+If it errors (e.g., "not authenticated," "no user session"), run `knock login` and pause until the user finishes the browser flow — the command opens a browser tab and waits for the OAuth callback before persisting the session. Only continue to Step 1 once `knock whoami` returns the expected account. Don't try to auto-discover environments or channels before this check passes; every subsequent command will fail with an auth error and send you into a debugging loop.
+
 **Step 1 — List available environments:**
 
 ```bash
@@ -38,19 +46,20 @@ knock environment list
 
 Present the slugs to the user and ask which one this setup is for. Remember their choice as `<env-slug>` for the rest of the session.
 
-**Step 2 — Pass `--environment <env-slug>` on every subsequent Knock CLI command** (channel discovery, guide list, guide push, etc.). Do not rely on the CLI's default. Example:
+**Step 2 — Pass `--environment <env-slug>` on every subsequent Knock CLI command that is environment-scoped** (guide list, guide push, guide activate, message-type get, etc.). Do not rely on the CLI's default. Example:
 
 ```bash
-knock channel list --environment <env-slug> --json
+knock guide list --environment <env-slug> --json
 ```
+
+Note: `knock channel list` is **account-scoped** and does not accept `--environment` — passing the flag will error. Channels are defined at the account level; only per-environment guide/activation state is environment-scoped.
 
 This single choice drives:
 
 - Which `pk_...` public API key the user should paste (each environment has its own — see **Where to get `apiKey`**)
-- Which channel state the CLI returns from `knock channel list` (the channel UUID itself is account-scoped, but per-env settings differ — see **Where to get `channelId`**)
 - Which environment subsequent guide pushes, activations, and promotions target
 
-If the user changes environments later (e.g., promoting from dev to prod), re-run the discovery commands with the new `--environment` slug and update the `.env` values that are environment-specific (the `pk_` API key; the `channelId` normally stays the same across envs).
+If the user changes environments later (e.g., promoting from dev to prod), re-run the environment-scoped discovery commands with the new `--environment` slug and update the `.env` values that are environment-specific (the `pk_` API key; the `channelId` stays the same across envs since channels are account-scoped).
 
 See the `knock-cli` skill for broader CLI setup and authentication.
 
@@ -124,12 +133,12 @@ The prop takes the guide channel's **UUID**, not its key. Knock channels are acc
 
 **Procedure — always do step 1 first. Do not ask the user to choose a sourcing strategy or to paste a UUID until step 1 has actually been attempted and failed.** Prompting the user upfront wastes their time and risks a typo; the CLI is the canonical source and, for the default guide channel, it's a one-liner.
 
-**Step 1 — Attempt CLI discovery (default channel key `knock-guide`).** Every Knock account ships with a default guide channel whose key is `knock-guide` and whose `type` is `in_app_guide`. Run (replace `<env-slug>` with the environment the user picked — `production`, `development`, etc.):
+**Step 1 — Attempt CLI discovery (default channel key `knock-guide`).** Every Knock account ships with a default guide channel whose key is `knock-guide` and whose `type` is `in_app_guide`. Channels are account-scoped, so this command does **not** take `--environment`:
 
 ```bash
 # Requires the Knock CLI authenticated to the right account.
 # See the knock-cli skill for install/auth.
-knock channel list --environment <env-slug> --json | jq -r '.[] | select(.key == "knock-guide") | .id'
+knock channel list --json | jq -r '.[] | select(.key == "knock-guide") | .id'
 ```
 
 If this prints a UUID, **use it directly** — write it to `.env` as `NEXT_PUBLIC_KNOCK_GUIDE_CHANNEL_ID` (Next.js) or `VITE_KNOCK_GUIDE_CHANNEL_ID` (Vite) and move on. Do not ask the user to confirm, re-paste, or choose a strategy. The channel ID is not a secret, and for the default channel it is stable — human confirmation adds no value.
@@ -137,7 +146,7 @@ If this prints a UUID, **use it directly** — write it to `.env` as `NEXT_PUBLI
 **Step 2 — If step 1 prints nothing, try discovery by channel type.** This catches the rare case of a non-default guide channel key:
 
 ```bash
-knock channel list --environment <env-slug> --json | jq -r '.[] | select(.type == "in_app_guide")'
+knock channel list --json | jq -r '.[] | select(.type == "in_app_guide")'
 ```
 
 If exactly one `in_app_guide` channel is returned, use its `id`. If multiple are returned, show the user the list (`id`, `key`, `name` for each) and ask which one the app should point at — that is a real ambiguity only the user can resolve.
@@ -196,6 +205,6 @@ Keep the *shape* of this data stable across environments; `"true"` (string) and 
 - [ ] `apiKey` is the public `pk_` key for the chosen environment.
 - [ ] `user.id` matches the id you use on the server when identifying users.
 - [ ] `KnockGuideProvider` is inside `KnockProvider`.
-- [ ] `channelId` is the UUID of the `in_app_guide` channel (not its key). Discovered via `knock channel list --environment <env-slug> --json`.
+- [ ] `channelId` is the UUID of the `in_app_guide` channel (not its key). Discovered via `knock channel list --json` (account-scoped — no `--environment` flag).
 - [ ] `readyToTarget` is gated on any async data your targeting rules depend on.
 - [ ] `listenForUpdates` is on (it is by default).

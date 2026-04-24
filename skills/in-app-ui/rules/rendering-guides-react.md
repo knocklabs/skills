@@ -50,13 +50,22 @@ Each entry includes the guide's `key`, `name`, `channel_key`, and `steps[]`. Eac
 
      Pick the simplest variant (typically `default`) and plan to fill every required field with **obvious placeholder** content so the user can tell it's a scaffold they should edit — e.g., `title: "Hello from Knock"`, `body: "This is a test guide. Edit me in the Knock dashboard."`, CTA text `"Got it"` with action `"#"`. Placeholder-sounding copy is intentional; polished copy on a demo guide looks like real content and invites confusion.
 
-  3. Create the guide via the **Knock MCP** (whichever `create_guide`-style tool the environment exposes). Use a clearly test-ish `name` and `key` like `hello-knock-guide` so the guide is easy to find and delete later. Set `channel_key` to the guide channel the app is pointing at (the default is `knock-guide`; confirm against the `channelId` picked during provider setup). Leave targeting at the default "All users" and omit activation rules so it renders on any page.
+  3. Scaffold the guide with the **Knock CLI** non-interactively by passing every required value as a flag — do **not** let the command drop into its interactive prompts:
 
-  4. **Activate** the new guide in the chosen environment. Prefer the MCP if it exposes activation; otherwise ask the user to flip the toggle in the dashboard. Rendering requires an active guide — a created-but-inactive guide will silently not appear and send you back to debugging.
+     ```bash
+     knock guide new \
+       --environment <env-slug> \
+       --key hello-knock-guide \
+       --name "Hello Knock Guide" \
+       --message-type <card|banner|modal> \
+       --force
+     ```
+
+     Use a clearly test-ish `--key` / `--name` like `hello-knock-guide` so the guide is easy to find and delete later. `--message-type` is the built-in chosen in step 1 (`card`, `banner`, or `modal`). `--force` skips the "create this directory?" confirmation. The command writes the scaffold to `./guides/<guide-key>/` (or the project's configured guides directory). Edit the generated files to fill in the message type's required fields with placeholder content and confirm `channel_key` matches the guide channel the app is pointing at (the default is `knock-guide`; cross-check against the `channelId` picked during provider setup). Leave targeting at the default "All users" and omit activation rules so it renders on any page. Push **and publish** it with `knock guide push <guide-key> --environment <env-slug> --commit --commit-message "scaffold test guide"`. The `--commit` flag is required — without it the guide is uploaded but not published, so the guide API (and therefore `useGuide`) will not return it. After the push succeeds, **delete the local scaffold directory** (`rm -rf ./guides/<guide-key>`) — the guide now lives in Knock and the local files are scaffolding artifacts, not source-of-truth.
+
+  4. **Activate** the new guide in the chosen environment with `knock guide activate <guide-key> --environment <env-slug> --status true` (add `--force` to skip the confirmation prompt). Rendering requires an active guide — a created-but-inactive guide will silently not appear and send you back to debugging.
 
   5. Re-run `knock guide list --environment <env-slug> --json` to confirm the new guide appears, then continue to step 3 with its `key`.
-
-  **If the Knock MCP is not available** in the current environment, fall back to either: (a) scaffolding with the CLI (`knock guide new` → edit the JSON → `knock guide push --environment <env-slug>`), or (b) asking the user to create a guide in the dashboard. Do not proceed until a guide exists and is active.
 
 **Step 3 — Choose `{ key }` vs `{ type }` for the hook.**
 
