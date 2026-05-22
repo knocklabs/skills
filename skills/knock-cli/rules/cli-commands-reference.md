@@ -43,8 +43,9 @@ Many Knock CLI commands display interactive confirmation prompts that require us
 knock workflow pull <workflow-key> --force
 knock pull --all --force
 
-# Commit and promote without prompts
+# Commit all changes without prompts
 knock commit -m "message" --force
+# Promote all changes without prompts (promotes ALL unpromoted commits — see scoped approach below)
 knock commit promote --to=production --force
 ```
 
@@ -423,6 +424,8 @@ Lists all channels configured in the project with their keys. Channel keys are p
 
 ## Commit commands
 
+Knock uses a commit model to version and promote changes across environments. By default, accounts have a **development** environment and a **production** environment. Additional intermediate environments (e.g., staging) can be configured between them. Commits always originate in development; promoting moves them to the next environment in the account's sequence.
+
 ### List commits
 
 View commit history:
@@ -431,22 +434,75 @@ View commit history:
 knock commit list
 ```
 
+Use `--resource-type` and `--resource-id` to scope the list to a specific resource. Use `--environment` to list commits in a non-development environment (useful for finding a commit ID to promote further up the chain):
+
+```bash
+# List commits for a specific workflow in development (default)
+knock commit list --resource-type=workflow --resource-id=order-confirmation
+
+# List commits for a specific workflow in a higher environment
+knock commit list --resource-type=workflow --resource-id=order-confirmation --environment=staging
+
+# List only unpromoted commits in an environment
+knock commit list --no-promoted --environment=staging
+```
+
+**`knock commit list` flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--environment` | Target environment (defaults to development) |
+| `--resource-type` | Filter by resource type: `workflow`, `email_layout`, `guide`, `message_type`, `partial`, `translation` |
+| `--resource-id` | Filter by resource key. Must be used with `--resource-type` |
+| `--[no-]promoted` | Show only promoted or unpromoted changes |
+
 ### Create commit
 
 Commit staged changes:
 
 ```bash
-knock commit create -m "Commit message"
+# Commit all uncommitted changes
+knock commit -m "Commit message" --force
+
+# Commit only changes for a specific resource (recommended when working on one resource)
+knock commit -m "Updated order confirmation" \
+  --resource-type=workflow --resource-id=order-confirmation --force
 ```
+
+Use `--resource-type` and `--resource-id` together to commit only the resource you've been working on, leaving any other uncommitted changes untouched.
+
+**`knock commit` flags:**
+
+| Flag | Description |
+|------|-------------|
+| `-m, --commit-message` | The commit message |
+| `--resource-type` | Commit only changes for this resource type |
+| `--resource-id` | Commit only changes for this resource key. Must be used with `--resource-type` |
+| `--force` | Skip confirmation prompt |
 
 ### Promote commit
 
-Promote changes between environments:
+> **Warning:** `knock commit promote --to=<env>` promotes **all** unpromoted commits across all resources from the preceding environment. If you are working on a single resource and other resources have commits that aren't ready to promote, use `--only` instead (see below).
+
+Promote all changes to a named environment:
 
 ```bash
-# Prompts for confirmation; use --force to skip
+# Promotes ALL unpromoted commits from the preceding environment — use with caution
 knock commit promote --to=production --force
 ```
+
+Promote a single commit to the next environment in sequence:
+
+```bash
+# Promotes only this one commit to the next environment in the account's sequence
+knock commit promote --only=<commit-id> --force
+```
+
+**Important notes on `--only`:**
+- `--to` and `--only` cannot be used together
+- `--only` always promotes to the **next** environment in the account's sequence. You cannot specify a named destination environment with `--only`
+- When a commit is promoted, it receives a **new ID** in the higher environment. The promote response includes this new commit ID, which you can pass directly to a subsequent `--only` call to continue promoting up the chain (e.g., from an intermediate environment to production)
+- Alternatively, use `knock commit list --resource-type=<type> --resource-id=<key> --environment=<env>` to look up the current commit ID for a resource in any environment at any time
 
 ## Translation commands
 
@@ -531,17 +587,32 @@ Use the exact keys from this output—don't assume keys from schema examples or 
 
 ### Make changes and deploy
 
-```bash
-# 1. Make local changes to workflow files
+When working on a single resource, use the scoped approach to avoid accidentally promoting other resources that may not be ready:
 
-# 2. Push changes
+```bash
+# 1. Push your changes
 knock workflow push <workflow-key>
 
-# 3. Commit changes
-knock commit create -m "Updated workflow"
+# 2. Commit only this resource
+knock commit -m "Updated workflow" --resource-type=workflow --resource-id=<workflow-key> --force
 
-# 4. Promote to production
-knock commit promote --to=production
+# 3. Get the commit ID
+knock commit list --resource-type=workflow --resource-id=<workflow-key>
+
+# 4. Promote only this commit to the next environment
+knock commit promote --only=<commit-id> --force
+
+# 5. To promote further (e.g., to production), use the new commit ID returned in step 4,
+#    or look it up in the higher environment:
+knock commit list --resource-type=workflow --resource-id=<workflow-key> --environment=<next-env>
+knock commit promote --only=<new-commit-id> --force
+```
+
+If you are certain you want to promote **all** pending changes across every resource:
+
+```bash
+knock commit -m "Updated workflow" --force
+knock commit promote --to=production --force
 ```
 
 ### Sync before editing
