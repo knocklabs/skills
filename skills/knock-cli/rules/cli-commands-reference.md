@@ -424,7 +424,7 @@ Lists all channels configured in the project with their keys. Channel keys are p
 
 ## Commit commands
 
-Knock uses a commit model to version and promote changes across environments. By default, accounts have a **development** environment and a **production** environment. Additional intermediate environments (e.g., staging) can be configured between them. Commits always originate in development; promoting moves them to the next environment in the account's sequence.
+Knock uses a commit model to version and promote changes across environments. By default, accounts have a **development** environment and a **production** environment. Additional intermediate environments (e.g., staging) can be configured between them. Promoting a commit moves it from the environment of origin to the next environment in the account's sequence.
 
 ### List commits
 
