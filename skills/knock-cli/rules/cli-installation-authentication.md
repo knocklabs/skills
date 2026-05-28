@@ -126,7 +126,7 @@ knock auth logout
 
 ### Working with multiple environments
 
-Knock supports multiple environments (development, staging, production). Specify the environment when running commands:
+Knock accounts have a **development** environment and a **production** environment by default. Additional intermediate environments (e.g., staging) can be configured between them. Specify the environment when running commands:
 
 ```bash
 # Pull from development environment
