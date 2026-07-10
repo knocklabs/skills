@@ -1,5 +1,5 @@
 ---
-name: notification-best-practices
+name: knock-notification-best-practices
 description: Comprehensive guidelines for designing, writing, and implementing effective notification systems across email, push, SMS, in-app, and chat channels.
 ---
 

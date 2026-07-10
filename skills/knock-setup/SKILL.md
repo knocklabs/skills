@@ -1,5 +1,5 @@
 ---
-name: setup
+name: knock-setup
 description: Connect Knock to your coding agent, discover and build notification workflows, and recommend how to trigger them from your application.
 ---
 

@@ -8,7 +8,7 @@ Each skill should follow this structure:
 
 ```
 skills/
-└── your-skill-name/
+└── knock-your-skill-name/
     ├── SKILL.md          # Human-readable guide (required)
     └── rules/            # Rule files directory (required)
         ├── rule-1.md
@@ -20,10 +20,10 @@ skills/
 
 ### 1. Create the skill directory
 
-Create a new directory under `skills/` with a descriptive name using kebab-case:
+Create a new directory under `skills/` with a descriptive name using the `knock-` prefix and kebab-case:
 
 ```bash
-mkdir -p skills/your-skill-name/rules
+mkdir -p skills/knock-your-skill-name/rules
 ```
 
 ### 2. Create rule files
@@ -39,7 +39,7 @@ Add individual rule files in the `rules/` directory. Each rule file should:
   tags:
     - relevant-tag-1
     - relevant-tag-2
-  category: your-skill-name
+  category: knock-your-skill-name
   last_updated: YYYY-MM-DD
   ---
   ```
@@ -55,7 +55,7 @@ description: What this rule covers
 tags:
   - tag1
   - tag2
-category: your-skill-name
+category: knock-your-skill-name
 last_updated: 2026-01-23
 ---
 
@@ -82,6 +82,11 @@ Create a `SKILL.md` file that serves as a human-readable guide. It should:
 
 **Example SKILL.md structure:**
 ```markdown
+---
+name: knock-your-skill-name
+description: Brief description of what this skill provides.
+---
+
 # Your skill name
 
 Brief description of what this skill provides.
@@ -114,9 +119,19 @@ Key points and patterns...
 ## Naming conventions
 
 ### Directory names
-- Use kebab-case: `your-skill-name`
+- **Always prefix with `knock-`**: every skill directory must start with `knock-` (e.g. `knock-setup`, `knock-cli`)
+- Use kebab-case after the prefix: `knock-your-skill-name`
 - Be descriptive and concise
 - Avoid abbreviations unless widely understood
+- The `name` field in `SKILL.md` frontmatter and the `category` field in rule frontmatter must match the directory name
+
+Examples:
+- ✅ `knock-setup`
+- ✅ `knock-notification-best-practices`
+- ✅ `knock-in-app-ui`
+- ✅ `knock-cli`
+- ❌ `setup`
+- ❌ `notification-best-practices`
 
 ### Rule file names
 - Use kebab-case: `rule-name.md`
@@ -162,7 +177,7 @@ Key points and patterns...
 
 1. Create the rule file:
    ```bash
-   touch skills/your-skill-name/rules/new-rule.md
+   touch skills/knock-your-skill-name/rules/new-rule.md
    ```
 
 2. Add content with frontmatter:
@@ -171,7 +186,7 @@ Key points and patterns...
    title: New rule name
    description: Description
    tags: [tag1, tag2]
-   category: your-skill-name
+   category: knock-your-skill-name
    last_updated: 2026-01-23
    ---
    
@@ -184,7 +199,7 @@ Key points and patterns...
 
 ## Reference implementation
 
-See `skills/notification-best-practices/` for a complete example:
+See `skills/knock-notification-best-practices/` for a complete example:
 - Multiple rule files organized by topic
 - `SKILL.md` with usage guide and frontmatter
 - All using sentence case consistently

@@ -1,5 +1,5 @@
 ---
-name: in-app-ui
+name: knock-in-app-ui
 description: Guidance for implementing Knock in-app UI in a web app, with a focus on setting up, rendering, and debugging Knock guides in React.
 ---
 

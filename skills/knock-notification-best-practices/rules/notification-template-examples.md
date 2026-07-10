@@ -11,7 +11,7 @@ tags:
   - push-templates
   - sms-templates
   - implementation
-category: notification-best-practices
+category: knock-notification-best-practices
 last_updated: 2026-01-23
 ---
 

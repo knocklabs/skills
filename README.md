@@ -8,7 +8,7 @@ Skills follow the [Agent Skills](https://agentskills.io/) format.
 
 ## Available skills
 
-### setup
+### knock-setup
 
 Connect Knock to your coding agent, discover and build notification workflows, and recommend how to trigger them from your application.
 
@@ -25,7 +25,7 @@ Connect Knock to your coding agent, discover and build notification workflows, a
 - Implementation approach recommendations
 - Wrap-up next steps and dashboard return
 
-### notification-best-practices
+### knock-notification-best-practices
 
 Comprehensive guidelines for designing, writing, and implementing effective notification systems across all channels (email, push, SMS, in-app, chat).
 
@@ -44,7 +44,7 @@ Comprehensive guidelines for designing, writing, and implementing effective noti
 - Transactional email (deliverability, componentized templates, localization)
 - Welcome email patterns (founder-led, quick start, value-first)
 
-### in-app-ui
+### knock-in-app-ui
 
 Guidance for implementing Knock in-app UI in a web app, with a focus on setting up, rendering, and debugging Knock guides in React.
 

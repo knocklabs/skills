@@ -2,11 +2,11 @@
 title: Choosing between Knock feeds and guides
 description: When to use feeds versus guides for Knock in-app UI, and how the two systems differ in data model, targeting, and rendering.
 tags:
-  - in-app-ui
+  - knock-in-app-ui
   - feeds
   - guides
   - architecture
-category: in-app-ui
+category: knock-in-app-ui
 last_updated: 2026-04-22
 ---
 
