@@ -8,6 +8,23 @@ Skills follow the [Agent Skills](https://agentskills.io/) format.
 
 ## Available skills
 
+### setup
+
+Connect Knock to your coding agent, discover and build notification workflows, and recommend how to trigger them from your application.
+
+**Use when:**
+- Setting up Knock MCP and skills in Cursor, Codex, or Claude Code
+- Discovering high-value notification workflows from a product or codebase
+- Building first workflows in Knock via MCP
+- Choosing how to trigger workflows (event pipeline, HTTP data source, or API)
+
+**Categories covered:**
+- Per-tool MCP and skills installation
+- Workflow discovery and proposals
+- Building workflows with Knock MCP
+- Implementation approach recommendations
+- Wrap-up next steps and dashboard return
+
 ### notification-best-practices
 
 Comprehensive guidelines for designing, writing, and implementing effective notification systems across all channels (email, push, SMS, in-app, chat).
