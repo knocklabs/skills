@@ -2,11 +2,11 @@
 title: Testing and debugging Knock guides
 description: A triage checklist and toolbar workflow for diagnosing why a Knock guide isn't rendering, plus best practices for testing targeting and engagement.
 tags:
-  - in-app-ui
+  - knock-in-app-ui
   - guides
   - debugging
   - testing
-category: in-app-ui
+category: knock-in-app-ui
 last_updated: 2026-04-23
 ---
 

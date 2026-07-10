@@ -6,7 +6,7 @@ tags:
   - users
   - identify
   - production
-category: setup
+category: knock-setup
 last_updated: 2026-07-09
 ---
 

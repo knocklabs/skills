@@ -2,11 +2,11 @@
 title: Rendering guides in React with useGuide and useGuides
 description: How to build a Knock guide component with the React hooks, including typed content, single vs multiple guides, and engagement tracking. React-specific.
 tags:
-  - in-app-ui
+  - knock-in-app-ui
   - guides
   - react
   - hooks
-category: in-app-ui
+category: knock-in-app-ui
 last_updated: 2026-04-23
 ---
 

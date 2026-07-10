@@ -2,11 +2,11 @@
 title: Setting up the Knock guide providers in a React app
 description: How to configure KnockProvider and KnockGuideProvider for rendering guides in React, including required props, where to source each value, and common pitfalls. React-specific, guides-only.
 tags:
-  - in-app-ui
+  - knock-in-app-ui
   - guides
   - react
   - setup
-category: in-app-ui
+category: knock-in-app-ui
 last_updated: 2026-04-23
 ---
 
