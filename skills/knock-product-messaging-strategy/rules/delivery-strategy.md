@@ -85,7 +85,7 @@ Follow-ups need a reason: new information, added urgency, channel switch, or own
 
 ## Agent steps
 
-For each workflow:
+For each workflow, update `messaging-plan.md` (not chat):
 
 1. Pick primary channel and interrupt level.
 2. Define escalation path with explicit advance conditions.

@@ -79,23 +79,24 @@ Identify users consistently. Import or identify users before production sends. U
 
 ## Agent steps
 
-1. Convert each approved plan item into a Knock resource sketch (workflow and/or guide).
-2. Confirm development environment before creating resources.
-3. Create via MCP or CLI; do not invent dashboard-only steps when tools can do the work.
+1. Convert each approved plan item into a Knock resource sketch (workflow and/or guide) **inside `messaging-plan.md`** — do not paste sketches into chat.
+2. Chat: one line that the plan file was updated with Knock shapes.
+3. Create via MCP or CLI only if the user explicitly asks to build now; confirm development environment first. Do not invent dashboard-only steps when tools can do the work.
 4. For copy inside templates, apply `knock-notification-best-practices`.
-5. After building, state how to test one happy path and one cancel path.
-6. If the user wants end-to-end install + trigger wiring next, hand off to `knock-setup` with an explicit build list. Do not invite rediscovery or re-ranking.
+5. After building, put happy-path and cancel-path test notes in the plan file; chat stays one line.
+6. If the user wants end-to-end install + trigger wiring next, hand off to `knock-setup` with an explicit build list and pointer to `messaging-plan.md`. Do not invite rediscovery or re-ranking.
 
 ### Setup handoff payload
 
 ```markdown
 ### Setup handoff
+- **plan.** messaging-plan.md
 - **confirmed.** [names]
 - **skipped.** [names]
 - **deferred / blocked.** [names + reason]
 ```
 
-`knock-setup` treats `confirmed` as the build list and skips `discover-workflows` rediscovery.
+`knock-setup` treats `confirmed` as the build list, reads detail from `messaging-plan.md`, and skips `discover-workflows` rediscovery.
 
 ## Cross-skill routing
 

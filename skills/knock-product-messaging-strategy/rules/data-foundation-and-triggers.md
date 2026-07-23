@@ -93,8 +93,9 @@ When scanning a product for messaging opportunities, look for:
 
 ## Agent steps
 
-1. List candidate moments from the product or codebase.
+1. Capture candidate moments from the product or codebase in `messaging-plan.md` (not chat).
 2. Tag each with a moment type.
 3. Reject or rewrite triggers that lack a clear action or cancel condition.
-4. Specify the minimum event + user/account properties Knock needs.
+4. Specify the minimum event + user/account properties Knock needs in the plan file.
 5. Carry only the strongest moments into recipient and delivery design.
+6. Chat stays a one-line status (or silent until the plan is ready for confirmation).

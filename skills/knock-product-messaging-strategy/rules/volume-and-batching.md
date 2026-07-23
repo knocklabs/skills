@@ -65,6 +65,8 @@ Active users often need stricter caps. Dormant users may need fewer, higher-valu
 
 ## Agent steps
 
+Write these into `messaging-plan.md` (not chat):
+
 1. Label each workflow critical vs non-critical for volume policy.
 2. Add throttle / cooldown / suppression notes.
 3. Decide batch key and window where activity clusters.

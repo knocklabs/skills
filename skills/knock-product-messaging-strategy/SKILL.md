@@ -13,9 +13,15 @@ Complementary manuals:
 - [Transactional email](https://knock.app/manuals/transactional-email)
 - [Notification infrastructure](https://knock.app/manuals/notification-infrastructure)
 
+## Output contract (hard)
+
+Write the full plan to **`messaging-plan.md`** (repo root). Keep chat **minimal** — status + confirmation only. Follow `rules/messaging-plan-file.md`.
+
+Do **not** paste full recommendation briefs, taxonomies, or checklists into chat. Rely on the plan file as the source of truth for context and for handoff to `knock-setup`.
+
 ## Overview
 
-Work through these rule files in order when designing or auditing a messaging system:
+Work through these rule files in order when designing or auditing a messaging system. Put detailed findings in `messaging-plan.md` as you go; do not narrate them in chat.
 
 1. **Data foundation and triggers** — meaningful product moments and event payloads
 2. **Recipients and ownership** — who should get the message and why
@@ -30,18 +36,19 @@ Work through these rule files in order when designing or auditing a messaging sy
 ### Designing a messaging system for a product
 
 1. Learn the product (codebase, events, roles, lifecycle). Ask at most 3 clarifying questions if needed.
-2. Follow `rules/data-foundation-and-triggers.md` to list meaningful moments and required event data.
-3. For each high-value moment, complete recipient, delivery, volume, and preference decisions using the next rule files.
+2. Follow `rules/data-foundation-and-triggers.md` to list meaningful moments and required event data — write them into `messaging-plan.md`.
+3. For each high-value moment, complete recipient, delivery, volume, and preference decisions using the next rule files — update the plan file, not chat.
 4. Prioritize by growth outcome: activation, retention, revenue recovery, then nice-to-have alerts.
-5. Run every candidate through `rules/measurement-and-review.md` before building.
-6. Use `rules/apply-in-knock.md` to create or propose Knock resources. Prefer Knock MCP / CLI when connected.
+5. Run every candidate through `rules/measurement-and-review.md` before marking build-ready in the plan.
+6. Use `rules/apply-in-knock.md` to enrich Knock shapes in the plan (or create resources only if the user explicitly asks). Prefer Knock MCP / CLI when connected.
+7. In chat: one status line pointing at `messaging-plan.md`, then ask which items to build. Confirmation question last, bolded.
 
 ### Auditing an existing notification program
 
-1. Inventory current workflows, guides, channels, and preference categories.
+1. Inventory current workflows, guides, channels, and preference categories into `messaging-plan.md` (Audit section).
 2. Score each against the review checklist in `rules/measurement-and-review.md`.
-3. Flag missing stop conditions, broad recipient rules, channel spam, and preference gaps.
-4. Return a prioritized 30/60/90 backlog tied to activation, engagement, churn, and fatigue risk.
+3. Flag missing stop conditions, broad recipient rules, channel spam, and preference gaps in the file.
+4. Chat: one status line + ask which Fix/Merge/Kill items to act on next.
 
 ### Handing off into setup or implementation
 
@@ -50,19 +57,21 @@ Work through these rule files in order when designing or auditing a messaging sy
 - For in-app guides UI, use `knock-in-app-ui`.
 - For local resource management, use `knock-cli`.
 
-When handing off to `knock-setup`, pass a structured payload and do **not** invite re-ranking unless the user asks:
+When handing off to `knock-setup`, update **Setup handoff** in `messaging-plan.md` and pass the same lists in chat (no re-ranking unless the user asks):
 
 ```markdown
 ### Setup handoff
-- **confirmed.** [names]
-- **skipped.** [names]
+- **plan.** messaging-plan.md
+- **confirmed.** [names or indexes]
+- **skipped.** [names or indexes]
 - **deferred / blocked.** [names + reason]
 ```
 
-`knock-setup` must treat `confirmed` as authoritative and skip rediscovery.
+`knock-setup` must treat `confirmed` as authoritative, read detail from `messaging-plan.md`, and skip rediscovery.
 
 ## Rule files reference
 
+- `rules/messaging-plan-file.md` — plan file path, structure, and chat brevity rules
 - `rules/data-foundation-and-triggers.md` — events, payloads, and moment types
 - `rules/recipients-and-ownership.md` — recipient selection and escalation
 - `rules/delivery-strategy.md` — channel progression and timing
@@ -96,26 +105,3 @@ When handing off to `knock-setup`, pass a structured payload and do **not** invi
 3. Revenue protection (failed payment, trial, limits)
 4. Re-engagement / win-back with precise state
 5. Announcements and education (lowest interrupt)
-
-## Output format
-
-When proposing a messaging plan, use this structure for each recommended workflow or guide:
-
-```markdown
-### [Name]
-- **Moment type.** …
-- **Trigger / eligibility.** …
-- **Recipient.** …
-- **Intended action.** …
-- **Channels.** primary → escalation (conditions)
-- **Stop condition.** …
-- **Frequency / batching.** …
-- **Preference category.** …
-- **Success metric.** …
-- **Fatigue risk.** low | medium | high — why
-- **Knock shape.** workflow | guide | both — brief notes
-```
-
-End strategy proposals by asking which items to build next. Put that confirmation question last, on its own line, and bolded.
-
-After the user confirms (including skips), if they want to build in Knock next, hand off to `knock-setup` with the structured payload above — do not ask `knock-setup` to pick a new top-5.
