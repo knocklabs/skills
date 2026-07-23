@@ -67,8 +67,8 @@ Example closing line when MCP is connected:
 |_______________________________________|
 ```
 
-6. **Guides next-step ask (only if guides were created or mentioned)** — do **not** invoke `knock-in-app-ui` until the user says yes. End the wrap-up with this confirmation as the **very last line**, on its own, and bolded:
+6. **Guides next-step ask (only if guides were created or mentioned)** — do **not** invoke `knock-in-app-ui` until the user says yes. Just before the confirmation, note in one short line that the same skill can easily set up in-app notifications (feed / inbox) too if they wish. End with this confirmation as the **very last line**, on its own, and bolded:
 
 **Want to wire up the Knock in-app guides next?**
 
-If the user declines, stop. If they accept, continue with `knock-in-app-ui`.
+If the user declines, stop (they can still ask later for in-app notifications). If they accept, continue with `knock-in-app-ui` — and offer in-app notifications there if they want those as well.
