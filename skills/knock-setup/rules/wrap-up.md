@@ -69,6 +69,6 @@ Example closing line when MCP is connected:
 
 6. **Guides next-step ask (only if guides were created or mentioned)** — do **not** invoke `knock-in-app-ui` until the user says yes. End the wrap-up with this confirmation as the **very last line**, on its own, and bolded:
 
-**Want to wire guides into the app next with knock-in-app-ui?**
+**Want to wire up the Knock in-app guides next?**
 
 If the user declines, stop. If they accept, continue with `knock-in-app-ui`.
