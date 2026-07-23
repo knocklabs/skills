@@ -87,4 +87,4 @@ Enforce preferences consistently across every workflow and channel in that categ
 2. Propose a preference taxonomy for the product (categories + channel controls).
 3. Map each workflow to a preference category or an explicit transactional exemption.
 4. Set sensible defaults by role where possible.
-5. Note Knock implementation: preference set keys, conditions, hosted vs headless preference center.
+5. Note Knock implementation: workflow [categories](https://docs.knock.app/concepts/workflows#workflow-categories), preference set keys, [conditions](https://docs.knock.app/preferences/preference-conditions), [hosted](https://docs.knock.app/preferences/hosted-preference-center) vs headless preference center. See [preferences overview](https://docs.knock.app/preferences/overview).

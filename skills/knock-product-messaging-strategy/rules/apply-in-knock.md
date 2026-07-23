@@ -25,12 +25,12 @@ After the strategy checklist passes, map each message onto Knock primitives. Pre
 | Both "notify while away" and "guide while in product" | Workflow + guide, shared eligibility where possible |
 | Who is in a lifecycle stage | Audience (or user/object properties) |
 | User control of categories/channels | Preferences (+ preference center) |
-| Wait / drip / business hours | Delay (+ windows) |
-| Collapse bursts of activity | Batch |
-| Cap repeats | Throttle |
-| Branch on plan, role, or state | Branch + conditions |
+| Wait / drip / business hours | [Delay](https://docs.knock.app/designing-workflows/delay-function) (+ windows) |
+| Collapse bursts of activity | [Batch](https://docs.knock.app/designing-workflows/batch-function) |
+| Cap repeats | [Throttle](https://docs.knock.app/designing-workflows/throttle-function) |
+| Branch on plan, role, or state | [Branch](https://docs.knock.app/designing-workflows/branch-function) + [conditions](https://docs.knock.app/designing-workflows/step-conditions) |
 | Compare copy/timing | Experiment |
-| One-off launch to a segment | Broadcast (keep separate from transactional reputation) |
+| One-off launch to a segment | [Broadcast](https://docs.knock.app/concepts/broadcasts) (keep separate from transactional reputation) |
 
 ## Workflow shape checklist
 
@@ -61,12 +61,12 @@ When the moment is in-product:
 
 Recommend one primary trigger path per workflow:
 
-- Application SDK / API on the domain event
-- CDP / Knock data source mapping
-- Audience entry / exit for lifecycle stages
-- Schedule for pure digests (see Knock digest tutorials when relevant)
+- Application SDK / API on the domain event ([triggering workflows](https://docs.knock.app/send-notifications/triggering-workflows))
+- CDP / Knock [data source](https://docs.knock.app/integrations/sources/overview) mapping
+- [Audience entry](https://docs.knock.app/send-notifications/triggering-workflows/audiences) for lifecycle stages (workflows trigger when a user **joins** an audience, not on exit)
+- [Schedule](https://docs.knock.app/concepts/schedules) for pure digests ([recurring digests tutorial](https://docs.knock.app/tutorials/building-recurring-digests))
 
-Identify users consistently. Import or identify users before production sends.
+Identify users consistently. Import or identify users before production sends. Use [cancellation](https://docs.knock.app/send-notifications/canceling-workflows) (and step conditions after delays) for stop conditions.
 
 ## Build order for startups
 

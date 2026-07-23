@@ -22,34 +22,48 @@ After inventory and mapping, deliver a phased plan. Do not execute Knock resourc
 - Suggested first slice (usually auth + billing transactional)
 - Link the primary tutorial (Braze / Courier / generic)
 
-### 2. Phases
+### 2. Technical resource order
 
-Use this default order (align with [Braze](https://docs.knock.app/tutorials/migrate-from-braze) and [Courier](https://docs.knock.app/tutorials/migrate-from-courier) tutorials):
+When migrating Knock dashboard / API resources, follow the dependency order from the [Braze](https://docs.knock.app/tutorials/migrate-from-braze) and [Courier](https://docs.knock.app/tutorials/migrate-from-courier) tutorials:
+
+1. Channels
+2. Workflows (+ templates)
+3. Translations
+4. Tenants (if needed)
+5. Users
+6. Subscriptions
+7. Preferences
+
+Do not migrate preferences before users exist in the target environment.
+
+### 3. Product cutover phases
+
+Within that technical order, ship product value in slices:
 
 | Phase | Work | Done when |
 | --- | --- | --- |
 | 0. Foundations | Knock account, environments, channel providers | Channels send a test in development |
 | 1. Critical transactional | Password reset, verify email, invites, receipts | Parity with old sends; dual-run or feature flag |
-| 2. Product / collaboration | Mentions, assignments, digests | Batching and prefs defined |
-| 3. Lifecycle | Onboarding, trial, win-back | Exit criteria documented |
-| 4. Preferences and users | Identify users, preference center, categories | Old opt-outs respected |
-| 5. Tenants / subscriptions | If B2B or list-based sends | Scoped correctly |
+| 2. Product / collaboration | Mentions, assignments, digests | Batching defined; workflow categories assigned |
+| 3. Lifecycle | Onboarding, trial, win-back | Stop / exit criteria documented |
+| 4. Recipients model | Identify users, tenants, subscriptions | Scoped correctly for B2B / lists |
+| 5. Preferences | Preference center + category mapping; honor old opt-outs | Opt-outs respected in Knock |
 | 6. In-app | Feed and/or guides | UI wired in app |
 | 7. Cutover | Remove old provider calls | No dual sends |
 | 8. Cleanup | Delete unused campaigns/providers | Docs updated |
 
-### 3. Application code changes (local only)
+### 4. Application code changes (local only)
 
 List concrete files/modules to change for triggers and identify calls. Propose diffs only if the user asks. Do not push workflows.
 
-### 4. Risks and open questions
+### 5. Risks and open questions
 
 - Dashboard-only templates with no export path
 - Missing stable user ids
 - Marketing vs transactional deliverability (separate email channels)
 - Compliance (SMS consent, unsubscribe)
 
-### 5. What not to do yet
+### 6. What not to do yet
 
 Explicitly state that Knock MCP/CLI resource writes and the [email MCP migration tutorial](https://docs.knock.app/tutorials/migrate-email-with-mcp-server) wait until the user opts in.
 

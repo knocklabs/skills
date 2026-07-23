@@ -23,7 +23,7 @@ Always ground recommendations in Knock docs. Prefer these:
 | Workflows | https://docs.knock.app/concepts/workflows |
 | Channels | https://docs.knock.app/concepts/channels |
 | Users | https://docs.knock.app/concepts/users |
-| Preferences | https://docs.knock.app/concepts/preferences |
+| Preferences | https://docs.knock.app/preferences/overview |
 | Tenants / multi-tenancy | https://docs.knock.app/multi-tenancy/overview |
 | Subscriptions | https://docs.knock.app/concepts/subscriptions |
 | Translations | https://docs.knock.app/template-editor/translations |
@@ -51,13 +51,14 @@ Always ground recommendations in Knock docs. Prefer these:
 
 ## Quick reference
 
-Recommended migration order (from Knock tutorials):
+Recommended resource migration order (from Knock Braze / Courier tutorials):
 
 1. Channels / provider connections
 2. Workflows and templates (logic + content)
 3. Translations
-4. Preferences
+4. Tenants (and branding context, if multi-tenant)
 5. Users / identify
-6. Subscriptions and tenants
-7. Cut over triggers in application code
-8. Retire old sends
+6. Subscriptions (lists → object subscriptions)
+7. Preferences (after users exist; map topics/groups → workflow categories)
+8. Cut over triggers in application code
+9. Retire old sends

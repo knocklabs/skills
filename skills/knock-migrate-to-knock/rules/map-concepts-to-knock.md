@@ -27,8 +27,9 @@ For everything else, use this generic map and link Knock concept docs in the pla
 | API trigger / send call | [Trigger workflow](https://docs.knock.app/send-notifications/triggering-workflows) | https://docs.knock.app/send-notifications/triggering-workflows |
 | Recipient profile | [User](https://docs.knock.app/concepts/users) | https://docs.knock.app/concepts/users |
 | Content blocks / layouts | [Partials](https://docs.knock.app/template-editor/partials), email layouts | https://docs.knock.app/template-editor/overview |
-| Topics / subscription categories | Workflow categories + [preferences](https://docs.knock.app/concepts/preferences) | https://docs.knock.app/concepts/preferences |
-| Lists / segments for messaging | [Subscriptions](https://docs.knock.app/concepts/subscriptions), [audiences](https://docs.knock.app/concepts/audiences) | — |
+| Topics / subscription categories | Workflow [categories](https://docs.knock.app/concepts/workflows#workflow-categories) + [preferences](https://docs.knock.app/preferences/overview) | https://docs.knock.app/preferences/overview |
+| Lists (entity followers) | [Subscriptions](https://docs.knock.app/concepts/subscriptions) on [objects](https://docs.knock.app/concepts/objects) | https://docs.knock.app/concepts/subscriptions |
+| Marketing / lifecycle segments | [Audiences](https://docs.knock.app/concepts/audiences) (can [trigger workflows on entry](https://docs.knock.app/send-notifications/triggering-workflows/audiences)) | https://docs.knock.app/concepts/audiences |
 | Workspace / account branding | [Tenants](https://docs.knock.app/multi-tenancy/overview) | https://docs.knock.app/multi-tenancy/overview |
 | Locale strings for notifications | [Translations](https://docs.knock.app/template-editor/translations) | https://docs.knock.app/template-editor/translations |
 | CDP events | [Sources](https://docs.knock.app/integrations/sources/overview) | https://docs.knock.app/integrations/sources/overview |
@@ -44,11 +45,11 @@ Follow the Braze tutorial mapping: campaigns/Canvases → workflows, Content Blo
 
 ### Courier
 
-Follow the Courier tutorial: Automations + templates → workflows, Lists → subscriptions, Brands/tenants → Knock tenants, Topics → preference categories.
+Follow the Courier tutorial: Automations + templates → workflows, Lists → subscriptions, Brands/tenants → Knock tenants, Topics / Preference Sections → workflow categories powering preferences.
 
 ### Customer.io / Iterable / similar
 
-Treat campaigns/journeys as workflows, people as users, attributes as user properties, subscription topics as preference categories. Prefer API-triggered transactional flows first.
+Treat campaigns/journeys as workflows, people as users, attributes as user properties, subscription topics as workflow categories for preferences. Prefer API-triggered transactional flows first.
 
 ### Direct ESP / custom mailer
 

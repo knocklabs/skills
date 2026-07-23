@@ -35,4 +35,5 @@ Find where users activate, stall, pay, invite, or churn in **this** product’s 
 - https://docs.knock.app/concepts/workflows
 - https://docs.knock.app/concepts/guides
 - https://docs.knock.app/concepts/audiences
+- https://docs.knock.app/send-notifications/triggering-workflows/audiences
 - https://knock.app/manuals/product-leaders-guide-to-effective-notifications/the-product-leaders-guide-to-effective-notifications
