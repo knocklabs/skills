@@ -40,9 +40,9 @@ Then output the following in this exact order:
 
 1. **What you can do next with Knock** — a short bulleted list. Always include:
    - **Set up in-app notifications** (notification feed / inbox) in the product — use the `knock-in-app-ui` skill (feeds).
-   - If guides were created or mentioned in the plan/build list: **Set up guides in the app** with the `knock-in-app-ui` skill (providers, rendering, engagement). Say this explicitly so guides are not left dashboard-only.
+   - If guides were created or mentioned in the plan/build list: note that guide **resources** alone are not enough — app wiring (providers, rendering, engagement) is done with `knock-in-app-ui`. Do **not** start that skill yet; you will ask below.
    - Then pick other relevant items as needed: send test runs of your workflows, create more workflows, add more channels (email, SMS, push, Slack), let users manage their notification preferences, add translations for localized notifications.
-2. **Immediate steps to complete this implementation** — only if any remain, a short bulleted list, e.g.: commit the workflows and promote them to production, import or identify your users in Knock (see `rules/import-users.md` when ready — not required on first pass), configure production channel credentials and API keys, verify the trigger path end to end. If guides were in scope, include: wire guides UI via `knock-in-app-ui` (ask in this chat to continue).
+2. **Immediate steps to complete this implementation** — only if any remain, a short bulleted list, e.g.: commit the workflows and promote them to production, import or identify your users in Knock (see `rules/import-users.md` when ready — not required on first pass), configure production channel credentials and API keys, verify the trigger path end to end.
 3. If the user provided a return URL, render this markdown link on its own line (substitute the provided URL):
 
 [View setup in Knock dashboard](RETURN_URL)
@@ -53,7 +53,7 @@ Example closing line when MCP is connected:
 
 > The Knock agent can help with most of these next steps — just ask here.
 
-5. **Finishing bang (email only)** — if the test email sent successfully, end with this ASCII art email (fenced as a code block). If no email was sent, skip this step entirely.
+5. **Finishing bang (email only)** — if the test email sent successfully, include this ASCII art email (fenced as a code block). If no email was sent, skip this step entirely.
 
 ```
  _______________________________________
@@ -66,3 +66,9 @@ Example closing line when MCP is connected:
 |          the test message!            |
 |_______________________________________|
 ```
+
+6. **Guides next-step ask (only if guides were created or mentioned)** — do **not** invoke `knock-in-app-ui` until the user says yes. End the wrap-up with this confirmation as the **very last line**, on its own, and bolded:
+
+**Want to wire guides into the app next with knock-in-app-ui?**
+
+If the user declines, stop. If they accept, continue with `knock-in-app-ui`.

@@ -7,7 +7,7 @@ description: Connect Knock to your coding agent, discover and build notification
 
 End-to-end Knock setup for a coding agent: connect tooling, design and build notification workflows, then wire them into the application. Work through the rules below in order.
 
-While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, and the final wrap-up output, which have their own formats. When you end with a confirmation question (workflows, implementation, or import-users id), that question must be the very last line of the message, on its own, and bolded.
+While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, and the final wrap-up output, which have their own formats. When you end with a confirmation question (workflows, implementation, import-users id, or wrap-up guides ask), that question must be the very last line of the message, on its own, and bolded.
 
 Assume the user already has a Knock account when this skill is invoked from the Knock dashboard. Otherwise, ask once whether they have an account; if not, point them to https://dashboard.knock.app/ to sign up, then continue.
 
@@ -32,7 +32,7 @@ Assume the user already has a Knock account when this skill is invoked from the 
 
 5. **Wrap up** (`rules/wrap-up.md`)
    - Test one workflow via Knock MCP (not sandbox mode; recipient is current user), then next steps, dashboard link, and close with Knock agent help.
-   - Always mention setting up in-app notifications via `knock-in-app-ui`. If guides were created or mentioned, also tell the user to set up guides through that skill.
+   - Always mention setting up in-app notifications via `knock-in-app-ui`. If guides were created or mentioned, note that guides need app wiring — then **ask** before starting `knock-in-app-ui` (do not proceed until the user says yes).
 
 ## Extension rules (not on the first pass)
 
