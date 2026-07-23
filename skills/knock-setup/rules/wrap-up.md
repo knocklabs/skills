@@ -13,7 +13,7 @@ last_updated: 2026-07-23
 
 Once all earlier rules are complete, do the following in order.
 
-Before writing the final output, check whether any confirmed items (this chat, `messaging-plan.md`, or `lifecycle-opportunities.md`) are **guides** or have Knock shape `guide` / `both`. That controls the in-app bullets below.
+Before writing the final output, check whether any confirmed items (this chat or `knock-plan.md`) are **guides** or have Knock shape `guide` / `both`. That controls the in-app bullets below.
 
 ## 1. Test one workflow via Knock agent MCP
 

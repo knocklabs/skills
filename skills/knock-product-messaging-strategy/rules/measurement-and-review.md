@@ -101,7 +101,7 @@ Return a prioritized backlog: activation → revenue protection → engagement h
 
 ## Agent steps
 
-1. Attach a success metric and fatigue risk to every proposal in `messaging-plan.md`.
+1. Attach a success metric and fatigue risk to every proposal in `knock-plan.md`.
 2. Refuse to mark build-ready for items that fail the checklist; note why in the file.
 3. For audits, write Keep / Fix / Merge / Kill with rationale into the plan Audit section — not into chat.
 4. Note analytics instrumentation (outcomes + fatigue) in the plan file.

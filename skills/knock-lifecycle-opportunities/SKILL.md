@@ -13,7 +13,7 @@ Find where users activate, stall, pay, invite, or churn in **this** product’s 
 
 ## Output contract (hard)
 
-Write all detailed findings to **`lifecycle-opportunities.md`** at the repo root (create or update). Keep chat **minimal** — status + confirmation only.
+Write all detailed findings to **`knock-plan.md`** at the repo root (create or update). Keep chat **minimal** — status + confirmation only.
 
 Do **not** paste opportunity briefs, code-path inventories, or long rationale into chat. Follow `rules/opportunity-brief-format.md`.
 
@@ -25,7 +25,7 @@ Allowed chat content:
 
 Example:
 
-Wrote `lifecycle-opportunities.md` with 6 ranked opportunities.
+Wrote `knock-plan.md` with 6 ranked opportunities.
 
 **Which opportunities should we take next?**
 
@@ -39,19 +39,19 @@ Wrote `lifecycle-opportunities.md` with 6 ranked opportunities.
 
 1. Infer personas, accounts/workspaces, and key funnels from the repo — capture in the file, not chat.
 2. Locate signup, onboarding, invite, billing, usage, and inactivity signals — same.
-3. Propose at most 8 prioritized lifecycle messages in `lifecycle-opportunities.md`.
+3. Propose at most 8 prioritized lifecycle messages in `knock-plan.md`.
 4. Chat: status line + ask which to advance. Do not dump the list body in chat.
 5. When the user asks to build in Knock or deepen strategy, hand off with a structured payload — do **not** invite re-ranking:
 
 ```markdown
 ### Setup handoff
-- **plan.** lifecycle-opportunities.md
+- **plan.** knock-plan.md
 - **confirmed.** [names or indexes]
 - **skipped.** [names or indexes]
 - **deferred / blocked.** [names + reason]
 ```
 
-`knock-setup` must treat `confirmed` as authoritative, read detail from the plan file, and skip rediscovery. For fuller strategy design, hand off confirmed items to `knock-product-messaging-strategy` (which writes `messaging-plan.md`).
+`knock-setup` must treat `confirmed` as authoritative, read detail from `knock-plan.md`, and skip rediscovery. For fuller strategy design, hand off confirmed items to `knock-product-messaging-strategy` (same `knock-plan.md`).
 
 ## Rule files reference
 

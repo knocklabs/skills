@@ -83,7 +83,7 @@ Enforce preferences consistently across every workflow and channel in that categ
 
 ## Agent steps
 
-Write these into `messaging-plan.md` (not chat):
+Write these into `knock-plan.md` (not chat):
 
 1. List the context fields each workflow template needs.
 2. Propose a preference taxonomy for the product (categories + channel controls).

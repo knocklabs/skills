@@ -1,6 +1,6 @@
 ---
-title: Messaging plan file
-description: Write the full strategy plan to messaging-plan.md; keep chat minimal
+title: Knock plan file
+description: Write all plan detail to knock-plan.md; keep chat minimal
 tags:
   - strategy
   - output
@@ -9,9 +9,11 @@ category: knock-product-messaging-strategy
 last_updated: 2026-07-23
 ---
 
-# Messaging plan file
+# Knock plan file
 
-All detailed strategy output goes in **`messaging-plan.md`** at the repo root (create or update; do not invent a different path unless the user names one). Chat is only for must-know status and confirmation questions.
+All detailed plan output from messaging strategy (and related skills) goes in **`knock-plan.md`** at the repo root (create or update; do not invent a different path unless the user names one). Chat is only for must-know status and confirmation questions.
+
+Shared across `knock-product-messaging-strategy`, `knock-lifecycle-opportunities`, and `knock-setup` handoffs. Update the same file — do not create a second plan.
 
 ## Chat contract (hard)
 
@@ -25,22 +27,22 @@ Allowed chat content:
 
 Example chat after drafting:
 
-Wrote `messaging-plan.md` with 6 recommendations (4 build-ready, 2 deferred).
+Wrote `knock-plan.md` with 6 recommendations (4 build-ready, 2 deferred).
 
 **Which items should we build next?**
 
 Example after user confirms:
 
-Updated `messaging-plan.md` handoff: confirmed 1–4, 6; skipped 5.
+Updated `knock-plan.md` handoff: confirmed 1–4, 6; skipped 5.
 
 **Hand off to knock-setup to build these in Knock development?**
 
 ## File structure
 
-Write (or rewrite) `messaging-plan.md` using this skeleton:
+Write (or update) `knock-plan.md` using this skeleton. Preserve sections other skills already filled.
 
 ```markdown
-# Messaging plan
+# Knock plan
 
 ## Product context
 - **Product.** …
@@ -50,11 +52,16 @@ Write (or rewrite) `messaging-plan.md` using this skeleton:
 ## Preference taxonomy
 - Categories and defaults (brief)
 
+## Signals found
+| Stage | Signal | Evidence (path) | Recipient | Existing message? |
+| --- | --- | --- | --- | --- |
+| … | … | … | … | … |
+
 ## Recommendations
 
 ### 1. [Name]
 - **Status.** proposed | confirmed | skipped | deferred | blocked
-- **Moment type.** …
+- **Moment type.** … (or lifecycle stage)
 - **Trigger / eligibility.** …
 - **Recipient.** …
 - **Intended action.** …
@@ -66,6 +73,7 @@ Write (or rewrite) `messaging-plan.md` using this skeleton:
 - **Fatigue risk.** low | medium | high — why
 - **Knock shape.** workflow | guide | both — brief notes
 - **Trigger data.** required payload / user properties
+- **Evidence in code.** paths / models / events (when from lifecycle scan)
 - **Notes.** …
 
 ### 2. [Name]
@@ -82,6 +90,7 @@ Write (or rewrite) `messaging-plan.md` using this skeleton:
 | … | … | … |
 
 ## Setup handoff
+- **plan.** knock-plan.md
 - **confirmed.** …
 - **skipped.** …
 - **deferred / blocked.** …
@@ -91,7 +100,7 @@ Number recommendations so the user can answer with indexes (e.g. "build 1–4, s
 
 ## Update rules
 
-1. After each major strategy step, update the file — do not accumulate a long chat draft then dump once.
+1. After each major step, update the file — do not accumulate a long chat draft then dump once.
 2. When the user confirms or skips, update **Status** on each item and refresh **Setup handoff**.
-3. When applying Knock shapes (`apply-in-knock.md`), enrich the matching recommendation sections in the file; keep chat to a one-line "updated Knock shapes in messaging-plan.md".
-4. Downstream skills (`knock-setup`) should read `messaging-plan.md` for detail; chat handoff only needs the confirmed/skipped/deferred lists plus a pointer to the file.
+3. When applying Knock shapes (`apply-in-knock.md`), enrich the matching recommendation sections in the file; keep chat to a one-line "updated Knock shapes in knock-plan.md".
+4. Downstream skills (`knock-setup`) should read `knock-plan.md` for detail; chat handoff only needs the confirmed/skipped/deferred lists plus a pointer to the file.

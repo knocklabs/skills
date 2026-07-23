@@ -64,7 +64,7 @@ For team products:
 
 ## Agent steps
 
-For each workflow in `messaging-plan.md` (not chat):
+For each workflow in `knock-plan.md` (not chat):
 
 1. Name the primary recipient rule in product terms (not only `user_id`).
 2. Define escalation recipients and the condition that advances ownership.

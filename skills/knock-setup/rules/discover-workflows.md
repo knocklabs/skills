@@ -13,19 +13,19 @@ last_updated: 2026-07-23
 
 ## Prior confirmation (skip rediscovery)
 
-If this conversation already has an approved build list from `knock-lifecycle-opportunities` or `knock-product-messaging-strategy` (user said e.g. "looks good", "build these", "skip N", an upstream skill passed a `confirmed` / `skipped` / `deferred` payload, or `messaging-plan.md` / `lifecycle-opportunities.md` has a filled **Setup handoff**):
+If this conversation already has an approved build list from `knock-lifecycle-opportunities` or `knock-product-messaging-strategy` (user said e.g. "looks good", "build these", "skip N", an upstream skill passed a `confirmed` / `skipped` / `deferred` payload, or `knock-plan.md` has a filled **Setup handoff**):
 
 1. Do **not** re-propose a new top-5.
 2. Do **not** re-rank or substitute "higher volume" workflows unless the user asks.
-3. Prefer reading detail from `messaging-plan.md` or `lifecycle-opportunities.md` when present; do not paste the plan into chat.
+3. Prefer reading detail from `knock-plan.md` when present; do not paste the plan into chat.
 4. Optionally restate context in 2–3 short lines (trigger / recipient notes only for the confirmed set).
 5. Restate the confirmed set in one line (include explicit skips).
 6. Ask only whether to proceed to build these in Knock development. The question must be the **very last thing** in your message: on its own line, and bolded.
-7. On yes → go straight to `build-workflows.md`, using the plan file for trigger/recipient/channel detail when building.
+7. On yes → go straight to `build-workflows.md`, using `knock-plan.md` for trigger/recipient/channel detail when building.
 
 Example ending after prior confirmation:
 
-Confirmed: Invite accepted, Trial ending, Payment failed, Usage limit. Skipped: Weekly digest. Detail in lifecycle-opportunities.md.
+Confirmed: Invite accepted, Trial ending, Payment failed, Usage limit. Skipped: Weekly digest. Detail in knock-plan.md.
 
 **Proceed to build these in Knock development?**
 
