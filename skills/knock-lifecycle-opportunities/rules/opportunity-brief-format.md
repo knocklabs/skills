@@ -29,3 +29,14 @@ For each ranked opportunity:
 End with:
 
 **Which opportunities should we design in more detail next?**
+
+After the user confirms which to build (including skips), if they want Knock setup next, hand off with:
+
+```markdown
+### Setup handoff
+- **confirmed.** [names]
+- **skipped.** [names]
+- **deferred / blocked.** [names + reason]
+```
+
+Do not ask `knock-setup` to propose a new top-5 unless the user asks to re-rank.

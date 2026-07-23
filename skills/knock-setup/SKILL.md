@@ -7,7 +7,7 @@ description: Connect Knock to your coding agent, discover and build notification
 
 End-to-end Knock setup for a coding agent: connect tooling, design and build notification workflows, then wire them into the application. Work through the rules below in order.
 
-While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the workflow proposals, the implementation confirmation ask, the import-users id ask, and the final wrap-up output, which have their own formats. When you end with a confirmation question (workflows, implementation, or import-users id), that question must be the very last line of the message, on its own, and bolded.
+While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, and the final wrap-up output, which have their own formats. When you end with a confirmation question (workflows, implementation, or import-users id), that question must be the very last line of the message, on its own, and bolded.
 
 Assume the user already has a Knock account when this skill is invoked from the Knock dashboard. Otherwise, ask once whether they have an account; if not, point them to https://dashboard.knock.app/ to sign up, then continue.
 
@@ -20,7 +20,8 @@ Assume the user already has a Knock account when this skill is invoked from the 
    - If the tool is unknown, ask which one, then follow the matching rule.
 
 2. **Discover workflows** (`rules/discover-workflows.md`)
-   - Learn the product, propose high-value workflows, confirm which to build.
+   - If this conversation already has an approved build list from `knock-lifecycle-opportunities` or `knock-product-messaging-strategy`, skip rediscovery (see prior-confirmation gate in that rule).
+   - Otherwise learn the product, propose high-value workflows, and confirm which to build.
 
 3. **Build workflows** (`rules/build-workflows.md`)
    - Create confirmed workflows in the Knock development environment via MCP.

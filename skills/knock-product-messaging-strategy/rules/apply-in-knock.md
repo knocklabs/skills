@@ -84,13 +84,24 @@ Identify users consistently. Import or identify users before production sends. U
 3. Create via MCP or CLI; do not invent dashboard-only steps when tools can do the work.
 4. For copy inside templates, apply `knock-notification-best-practices`.
 5. After building, state how to test one happy path and one cancel path.
-6. If the user wants end-to-end install + trigger wiring next, hand off to `knock-setup`.
+6. If the user wants end-to-end install + trigger wiring next, hand off to `knock-setup` with an explicit build list. Do not invite rediscovery or re-ranking.
+
+### Setup handoff payload
+
+```markdown
+### Setup handoff
+- **confirmed.** [names]
+- **skipped.** [names]
+- **deferred / blocked.** [names + reason]
+```
+
+`knock-setup` treats `confirmed` as the build list and skips `discover-workflows` rediscovery.
 
 ## Cross-skill routing
 
 | Need | Skill |
 | --- | --- |
-| MCP connect + first workflows in app | `knock-setup` |
+| MCP connect + first workflows in app | `knock-setup` (pass confirmed/skipped/deferred) |
 | Copy / channel formatting | `knock-notification-best-practices` |
 | React guides providers and rendering | `knock-in-app-ui` |
 | Pull/push resources as code | `knock-cli` |

@@ -50,6 +50,17 @@ Work through these rule files in order when designing or auditing a messaging sy
 - For in-app guides UI, use `knock-in-app-ui`.
 - For local resource management, use `knock-cli`.
 
+When handing off to `knock-setup`, pass a structured payload and do **not** invite re-ranking unless the user asks:
+
+```markdown
+### Setup handoff
+- **confirmed.** [names]
+- **skipped.** [names]
+- **deferred / blocked.** [names + reason]
+```
+
+`knock-setup` must treat `confirmed` as authoritative and skip rediscovery.
+
 ## Rule files reference
 
 - `rules/data-foundation-and-triggers.md` — events, payloads, and moment types
@@ -106,3 +117,5 @@ When proposing a messaging plan, use this structure for each recommended workflo
 ```
 
 End strategy proposals by asking which items to build next. Put that confirmation question last, on its own line, and bolded.
+
+After the user confirms (including skips), if they want to build in Knock next, hand off to `knock-setup` with the structured payload above — do not ask `knock-setup` to pick a new top-5.

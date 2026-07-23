@@ -23,6 +23,16 @@ Find where users activate, stall, pay, invite, or churn in **this** product’s 
 2. Locate signup, onboarding, invite, billing, usage, and inactivity signals.
 3. Propose a prioritized list of lifecycle messages (not a laundry list of every cron).
 4. Ask which opportunities to design in depth next.
+5. When the user asks to build in Knock, hand off to `knock-setup` with a structured payload — do **not** invite re-ranking:
+
+```markdown
+### Setup handoff
+- **confirmed.** [names]
+- **skipped.** [names]
+- **deferred / blocked.** [names + reason]
+```
+
+`knock-setup` must treat `confirmed` as authoritative and skip rediscovery.
 
 ## Rule files reference
 
