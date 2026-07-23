@@ -1,0 +1,96 @@
+---
+title: Apply in Knock
+description: Map messaging strategy decisions onto Knock workflows, guides, audiences, preferences, and triggers
+tags:
+  - strategy
+  - knock
+  - workflows
+  - guides
+  - preferences
+  - audiences
+category: knock-product-messaging-strategy
+last_updated: 2026-07-23
+---
+
+# Apply in Knock
+
+After the strategy checklist passes, map each message onto Knock primitives. Prefer Knock MCP tools or the CLI when available. Use docs for details: https://docs.knock.app
+
+## Decision table
+
+| Strategy need | Knock primitive |
+| --- | --- |
+| Event-driven cross-channel journey | Workflow |
+| In-session guidance, checklist, paywall, announcement | Guide (+ message type) |
+| Both "notify while away" and "guide while in product" | Workflow + guide, shared eligibility where possible |
+| Who is in a lifecycle stage | Audience (or user/object properties) |
+| User control of categories/channels | Preferences (+ preference center) |
+| Wait / drip / business hours | Delay (+ windows) |
+| Collapse bursts of activity | Batch |
+| Cap repeats | Throttle |
+| Branch on plan, role, or state | Branch + conditions |
+| Compare copy/timing | Experiment |
+| One-off launch to a segment | Broadcast (keep separate from transactional reputation) |
+
+## Workflow shape checklist
+
+For each approved workflow, specify:
+
+1. **Key and name** (sentence case name, stable key)
+2. **Trigger data schema** (required payload fields from the data foundation rule)
+3. **Steps**
+   - Delays with re-check conditions
+   - Channel steps in escalation order
+   - Batch / throttle as designed
+   - Branch for role or plan when needed
+4. **Cancellation** — which event or condition terminates the run
+5. **Preference category** binding
+6. **Tenant / object** usage for B2B scope
+
+## Guides shape checklist
+
+When the moment is in-product:
+
+1. Choose format from urgency rules (banner, modal, card, custom message type)
+2. Target by audience, properties, or page context
+3. Wire engagement (seen / interacted / archived) so dismissals are respected
+4. Pair with a workflow only when out-of-app reach is required
+5. For React implementation details, use `knock-in-app-ui`
+
+## Trigger wiring
+
+Recommend one primary trigger path per workflow:
+
+- Application SDK / API on the domain event
+- CDP / Knock data source mapping
+- Audience entry / exit for lifecycle stages
+- Schedule for pure digests (see Knock digest tutorials when relevant)
+
+Identify users consistently. Import or identify users before production sends.
+
+## Build order for startups
+
+1. Preference taxonomy + critical transactional workflows (auth, billing, security)
+2. Activation journey (guide + email with exit on activation event)
+3. Core collaboration / product activity (with batching)
+4. Revenue protection (failed payment, trial)
+5. Digests and re-engagement with precise eligibility
+6. Announcements / education last
+
+## Agent steps
+
+1. Convert each approved plan item into a Knock resource sketch (workflow and/or guide).
+2. Confirm development environment before creating resources.
+3. Create via MCP or CLI; do not invent dashboard-only steps when tools can do the work.
+4. For copy inside templates, apply `knock-notification-best-practices`.
+5. After building, state how to test one happy path and one cancel path.
+6. If the user wants end-to-end install + trigger wiring next, hand off to `knock-setup`.
+
+## Cross-skill routing
+
+| Need | Skill |
+| --- | --- |
+| MCP connect + first workflows in app | `knock-setup` |
+| Copy / channel formatting | `knock-notification-best-practices` |
+| React guides providers and rendering | `knock-in-app-ui` |
+| Pull/push resources as code | `knock-cli` |

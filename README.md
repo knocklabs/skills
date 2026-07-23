@@ -80,6 +80,40 @@ Guidelines for working with the Knock CLI to manage workflows, templates, guides
 - Guides and message types (lifecycle messaging vs notifications)
 - Partials (reusable blocks, input_schema, visual block editor)
 
+### knock-product-messaging-strategy
+
+Design a cross-channel product messaging system that drives activation, engagement, and retention while controlling fatigue. Operationalizes Knock's [product leader messaging manual](https://knock.app/manuals/product-leaders-guide-to-effective-notifications/the-product-leaders-guide-to-effective-notifications).
+
+**Use when:**
+- Planning lifecycle, onboarding, or retention messaging
+- Auditing an existing notification program for gaps and fatigue
+- Prioritizing which workflows and guides to build
+- Turning product moments into a Knock-ready messaging plan
+
+**Categories covered:**
+- Data foundation and meaningful triggers
+- Recipient ownership and escalation
+- Channel progression, timing, and stop conditions
+- Volume controls, batching, and digests
+- Personalization and preference taxonomy
+- Outcome + fatigue measurement and launch review
+- Mapping the plan onto Knock workflows, guides, audiences, and preferences
+
+### knock-migrate-to-knock
+
+Investigate existing messaging infrastructure and recommend how it maps to Knock. Links Braze/Courier and core concept docs. Discovery and planning only unless the user explicitly asks to write Knock resources.
+
+**Use when:**
+- Migrating from Braze, Courier, Customer.io, Iterable, or a custom/ESP stack
+- Planning a phased cutover to Knock
+
+### knock-lifecycle-opportunities
+
+Scan product code for activation, engagement, expansion, and churn signals; recommend precise lifecycle messaging opportunities. Does not modify Knock resources.
+
+**Use when:**
+- Finding onboarding, trial, invite, or win-back candidates from the codebase
+
 ## Installation
 
 ### Cursor
