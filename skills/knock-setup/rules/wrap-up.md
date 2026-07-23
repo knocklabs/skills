@@ -6,12 +6,14 @@ tags:
   - wrap-up
   - mcp
 category: knock-setup
-last_updated: 2026-07-09
+last_updated: 2026-07-23
 ---
 
 # Wrap up
 
 Once all earlier rules are complete, do the following in order.
+
+Before writing the final output, check whether any confirmed items (this chat, `messaging-plan.md`, or `lifecycle-opportunities.md`) are **guides** or have Knock shape `guide` / `both`. That controls the in-app bullets below.
 
 ## 1. Test one workflow via Knock agent MCP
 
@@ -36,8 +38,11 @@ Note whether an **email** channel message was sent successfully — you need tha
 
 Then output the following in this exact order:
 
-1. **What you can do next with Knock** — a short bulleted list, picking the most relevant of: set up in-app notifications with Knock's feed components, send test runs of your workflows, create more workflows, add more channels (email, SMS, push, Slack), let users manage their notification preferences, add translations for localized notifications.
-2. **Immediate steps to complete this implementation** — only if any remain, a short bulleted list, e.g.: commit the workflows and promote them to production, import or identify your users in Knock (see `rules/import-users.md` when ready — not required on first pass), configure production channel credentials and API keys, verify the trigger path end to end.
+1. **What you can do next with Knock** — a short bulleted list. Always include:
+   - **Set up in-app notifications** (notification feed / inbox) in the product — use the `knock-in-app-ui` skill (feeds).
+   - If guides were created or mentioned in the plan/build list: **Set up guides in the app** with the `knock-in-app-ui` skill (providers, rendering, engagement). Say this explicitly so guides are not left dashboard-only.
+   - Then pick other relevant items as needed: send test runs of your workflows, create more workflows, add more channels (email, SMS, push, Slack), let users manage their notification preferences, add translations for localized notifications.
+2. **Immediate steps to complete this implementation** — only if any remain, a short bulleted list, e.g.: commit the workflows and promote them to production, import or identify your users in Knock (see `rules/import-users.md` when ready — not required on first pass), configure production channel credentials and API keys, verify the trigger path end to end. If guides were in scope, include: wire guides UI via `knock-in-app-ui` (ask in this chat to continue).
 3. If the user provided a return URL, render this markdown link on its own line (substitute the provided URL):
 
 [View setup in Knock dashboard](RETURN_URL)

@@ -32,6 +32,7 @@ Assume the user already has a Knock account when this skill is invoked from the 
 
 5. **Wrap up** (`rules/wrap-up.md`)
    - Test one workflow via Knock MCP (not sandbox mode; recipient is current user), then next steps, dashboard link, and close with Knock agent help.
+   - Always mention setting up in-app notifications via `knock-in-app-ui`. If guides were created or mentioned, also tell the user to set up guides through that skill.
 
 ## Extension rules (not on the first pass)
 
