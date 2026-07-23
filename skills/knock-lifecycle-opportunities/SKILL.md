@@ -11,34 +11,53 @@ Find where users activate, stall, pay, invite, or churn in **this** product’s 
 
 **Do not create, update, push, or delete Knock resources** via MCP or CLI. Output an opportunity backlog and event/trigger sketches only. Hand off to `knock-setup` or `knock-product-messaging-strategy` only if the user asks to build.
 
+## Output contract (hard)
+
+Write all detailed findings to **`lifecycle-opportunities.md`** at the repo root (create or update). Keep chat **minimal** — status + confirmation only.
+
+Do **not** paste opportunity briefs, code-path inventories, or long rationale into chat. Follow `rules/opportunity-brief-format.md`.
+
+Allowed chat content:
+
+1. One short status line (path + count)
+2. Optional one-line blocker
+3. Bold confirmation question as the **last line**
+
+Example:
+
+Wrote `lifecycle-opportunities.md` with 6 ranked opportunities.
+
+**Which opportunities should we take next?**
+
 ## Overview
 
-1. **Map the product lifecycle in code** (`rules/map-product-lifecycle.md`)
-2. **Select high-value opportunities** (`rules/select-opportunities.md`)
-3. **Write opportunity briefs** (`rules/opportunity-brief-format.md`)
+1. **Map the product lifecycle in code** (`rules/map-product-lifecycle.md`) — write signals into the file
+2. **Select high-value opportunities** (`rules/select-opportunities.md`) — rank in the file
+3. **Write opportunity briefs** (`rules/opportunity-brief-format.md`) — full briefs in the file only
 
 ## How to use this skill
 
-1. Infer personas, accounts/workspaces, and key funnels from the repo.
-2. Locate signup, onboarding, invite, billing, usage, and inactivity signals.
-3. Propose a prioritized list of lifecycle messages (not a laundry list of every cron).
-4. Ask which opportunities to design in depth next.
-5. When the user asks to build in Knock, hand off to `knock-setup` with a structured payload — do **not** invite re-ranking:
+1. Infer personas, accounts/workspaces, and key funnels from the repo — capture in the file, not chat.
+2. Locate signup, onboarding, invite, billing, usage, and inactivity signals — same.
+3. Propose at most 8 prioritized lifecycle messages in `lifecycle-opportunities.md`.
+4. Chat: status line + ask which to advance. Do not dump the list body in chat.
+5. When the user asks to build in Knock or deepen strategy, hand off with a structured payload — do **not** invite re-ranking:
 
 ```markdown
 ### Setup handoff
-- **confirmed.** [names]
-- **skipped.** [names]
+- **plan.** lifecycle-opportunities.md
+- **confirmed.** [names or indexes]
+- **skipped.** [names or indexes]
 - **deferred / blocked.** [names + reason]
 ```
 
-`knock-setup` must treat `confirmed` as authoritative and skip rediscovery.
+`knock-setup` must treat `confirmed` as authoritative, read detail from the plan file, and skip rediscovery. For fuller strategy design, hand off confirmed items to `knock-product-messaging-strategy` (which writes `messaging-plan.md`).
 
 ## Rule files reference
 
 - `rules/map-product-lifecycle.md` — where to look in code
 - `rules/select-opportunities.md` — prioritization
-- `rules/opportunity-brief-format.md` — output template
+- `rules/opportunity-brief-format.md` — plan file structure and chat brevity
 
 ## Docs
 

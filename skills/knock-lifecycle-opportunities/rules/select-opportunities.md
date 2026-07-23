@@ -10,7 +10,7 @@ last_updated: 2026-07-23
 
 # Select opportunities
 
-Propose at most **8** opportunities, ranked.
+Propose at most **8** opportunities, ranked, in `lifecycle-opportunities.md` only — not in chat.
 
 ## Priority
 

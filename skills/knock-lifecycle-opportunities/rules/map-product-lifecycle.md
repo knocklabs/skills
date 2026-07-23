@@ -32,4 +32,6 @@ Avoid recommending “user inactive 7 days” alone. Prefer combinations such as
 
 ## Capture
 
-For each signal: model/field or event name, file path, who the actor/recipient is, and whether a message already exists.
+For each signal, write into `lifecycle-opportunities.md` (Signals found table): model/field or event name, file path, who the actor/recipient is, and whether a message already exists.
+
+Do not paste the inventory into chat.
