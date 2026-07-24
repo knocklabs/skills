@@ -13,7 +13,7 @@ last_updated: 2026-07-23
 
 ## Prior confirmation (skip rediscovery)
 
-If this conversation already has an approved build list from `knock-lifecycle-opportunities` or `knock-product-messaging-strategy` (user said e.g. "looks good", "build these", "skip N", an upstream skill passed a `confirmed` / `skipped` / `deferred` payload, or `knock-plan.md` has a filled **Setup handoff**):
+If this conversation already has an approved build list from `knock-lifecycle-opportunities`, `knock-product-messaging-strategy`, or `knock-migrate-to-knock` (user said e.g. "looks good", "build these", "skip N", an upstream skill passed a `confirmed` / `skipped` / `deferred` payload, or `knock-plan.md` has a filled **Setup handoff**):
 
 1. Do **not** re-propose a new top-5.
 2. Do **not** re-rank or substitute "higher volume" workflows unless the user asks.

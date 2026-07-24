@@ -6,12 +6,12 @@ tags:
   - plan
   - phases
 category: knock-migrate-to-knock
-last_updated: 2026-07-23
+last_updated: 2026-07-24
 ---
 
 # Migration plan
 
-After inventory and mapping, deliver a phased plan. Do not execute Knock resource creation unless the user explicitly asks.
+After inventory and mapping, write a phased plan into `knock-plan.md` under a `## Migration plan` section — do not paste it into chat. Do not execute Knock resource creation unless the user explicitly asks.
 
 ## Plan structure
 
@@ -67,8 +67,10 @@ List concrete files/modules to change for triggers and identify calls. Propose d
 
 Explicitly state that Knock MCP/CLI resource writes and the [email MCP migration tutorial](https://docs.knock.app/tutorials/migrate-email-with-mcp-server) wait until the user opts in.
 
-## Closing question
+## Closing chat message
 
-End with a single bold confirmation question, for example:
+After writing the plan file, chat is one status line plus a single bold confirmation question as the last line, for example:
+
+Wrote `knock-plan.md`: 14 message types inventoried, 8-phase migration plan drafted.
 
 **Which migration phase should we plan in more detail next?**

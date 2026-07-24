@@ -82,7 +82,7 @@ Guidelines for working with the Knock CLI to manage workflows, templates, guides
 
 ### knock-product-messaging-strategy
 
-Design a cross-channel product messaging system that drives activation, engagement, and retention while controlling fatigue. Operationalizes Knock's [product leader messaging manual](https://knock.app/manuals/product-leaders-guide-to-effective-notifications/the-product-leaders-guide-to-effective-notifications).
+Design a cross-channel product messaging system that drives activation, engagement, and retention while controlling fatigue. Operationalizes Knock's [product leader messaging manual](https://knock.app/manuals/product-leaders-guide-to-effective-notifications/the-product-leaders-guide-to-effective-notifications). Writes its full plan to a shared `knock-plan.md` file and keeps chat output minimal.
 
 **Use when:**
 - Planning lifecycle, onboarding, or retention messaging
@@ -101,18 +101,28 @@ Design a cross-channel product messaging system that drives activation, engageme
 
 ### knock-migrate-to-knock
 
-Investigate existing messaging infrastructure and recommend how it maps to Knock. Links Braze/Courier and core concept docs. Discovery and planning only unless the user explicitly asks to write Knock resources.
+Investigate existing messaging infrastructure and recommend how it maps to Knock. Links Braze/Courier and core concept docs. Discovery and planning only unless the user explicitly asks to write Knock resources. Writes its inventory and phased plan to a shared `knock-plan.md` file and keeps chat output minimal.
 
 **Use when:**
 - Migrating from Braze, Courier, Customer.io, Iterable, or a custom/ESP stack
 - Planning a phased cutover to Knock
 
+**Categories covered:**
+- Codebase inventory of providers, templates, and send call sites
+- Platform concept mapping (campaigns, lists, topics, brands → Knock)
+- Resource migration order and phased cutover plan
+
 ### knock-lifecycle-opportunities
 
-Scan product code for activation, engagement, expansion, and churn signals; recommend precise lifecycle messaging opportunities. Does not modify Knock resources.
+Scan product code for activation, engagement, expansion, and churn signals; recommend precise lifecycle messaging opportunities. Does not modify Knock resources. Writes its opportunity briefs to a shared `knock-plan.md` file and keeps chat output minimal.
 
 **Use when:**
 - Finding onboarding, trial, invite, or win-back candidates from the codebase
+
+**Categories covered:**
+- Lifecycle signal mapping in code (signup, activation, billing, churn)
+- Opportunity prioritization by growth impact
+- Opportunity brief format and setup handoff
 
 ## Installation
 

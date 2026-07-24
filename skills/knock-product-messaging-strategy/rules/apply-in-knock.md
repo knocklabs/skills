@@ -9,7 +9,7 @@ tags:
   - preferences
   - audiences
 category: knock-product-messaging-strategy
-last_updated: 2026-07-23
+last_updated: 2026-07-24
 ---
 
 # Apply in Knock
@@ -25,11 +25,11 @@ After the strategy checklist passes, map each message onto Knock primitives. Pre
 | Both "notify while away" and "guide while in product" | Workflow + guide, shared eligibility where possible |
 | Who is in a lifecycle stage | Audience (or user/object properties) |
 | User control of categories/channels | Preferences (+ preference center) |
-| Wait / drip / business hours | [Delay](https://docs.knock.app/designing-workflows/delay-function) (+ windows) |
+| Wait / drip / business hours | [Delay](https://docs.knock.app/designing-workflows/delay-function) + [send windows](https://docs.knock.app/designing-workflows/send-windows) |
 | Collapse bursts of activity | [Batch](https://docs.knock.app/designing-workflows/batch-function) |
 | Cap repeats | [Throttle](https://docs.knock.app/designing-workflows/throttle-function) |
 | Branch on plan, role, or state | [Branch](https://docs.knock.app/designing-workflows/branch-function) + [conditions](https://docs.knock.app/designing-workflows/step-conditions) |
-| Compare copy/timing | Experiment |
+| Compare copy/timing | [Experiment](https://docs.knock.app/designing-workflows/experiment-function) |
 | One-off launch to a segment | [Broadcast](https://docs.knock.app/concepts/broadcasts) (keep separate from transactional reputation) |
 
 ## Workflow shape checklist

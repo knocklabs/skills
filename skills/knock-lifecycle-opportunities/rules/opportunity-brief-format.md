@@ -6,14 +6,24 @@ tags:
   - output
   - plan
 category: knock-lifecycle-opportunities
-last_updated: 2026-07-23
+last_updated: 2026-07-24
 ---
 
 # Opportunity brief format
 
 All briefs go in **`knock-plan.md`** at the repo root (create or update the same shared plan). Chat stays status + confirmation only — never paste the full briefs.
 
-Use the shared Knock plan skeleton. Fill **Product context**, **Signals found**, and **Recommendations** (lifecycle opportunities live under Recommendations). Include **Setup handoff** when the user confirms.
+The full skeleton lives in `knock-product-messaging-strategy/rules/knock-plan-file.md`. For this skill, fill these sections (create any that are missing, preserve sections other skills filled):
+
+```markdown
+# Knock plan
+
+## Product context
+## Signals found
+## Recommendations
+## Deferred / blocked
+## Setup handoff
+```
 
 ## Recommendation fields (lifecycle)
 

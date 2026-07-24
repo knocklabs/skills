@@ -6,7 +6,7 @@ tags:
   - discovery
   - inventory
 category: knock-migrate-to-knock
-last_updated: 2026-07-23
+last_updated: 2026-07-24
 ---
 
 # Inventory existing messaging
@@ -58,13 +58,17 @@ Record: file path, channel, trigger condition, recipient selection, template loc
 
 ## Output: inventory table
 
+Write the inventory into `knock-plan.md` under a `## Migration inventory` section — do not paste it into chat:
+
 | ID | Current mechanism | Channel(s) | Trigger | Recipient logic | Template location | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | N1 | … | email | … | … | … | … |
 
-Also list:
+Also list in the same section:
 
 - Detected platform(s)
 - Whether users are identified with a stable id today
 - Whether preferences exist and where
 - Estimated volume / criticality (transactional vs marketing) if visible
+
+Chat stays to one status line (platforms + count of message types found).

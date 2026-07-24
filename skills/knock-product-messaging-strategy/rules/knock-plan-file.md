@@ -6,14 +6,14 @@ tags:
   - output
   - plan
 category: knock-product-messaging-strategy
-last_updated: 2026-07-23
+last_updated: 2026-07-24
 ---
 
 # Knock plan file
 
 All detailed plan output from messaging strategy (and related skills) goes in **`knock-plan.md`** at the repo root (create or update; do not invent a different path unless the user names one). Chat is only for must-know status and confirmation questions.
 
-Shared across `knock-product-messaging-strategy`, `knock-lifecycle-opportunities`, and `knock-setup` handoffs. Update the same file — do not create a second plan.
+Shared across `knock-product-messaging-strategy`, `knock-lifecycle-opportunities`, `knock-migrate-to-knock`, and `knock-setup` handoffs. Update the same file — do not create a second plan. Preserve sections another skill already filled.
 
 ## Chat contract (hard)
 
@@ -88,6 +88,14 @@ Write (or update) `knock-plan.md` using this skeleton. Preserve sections other s
 | Existing item | Score (Keep/Fix/Merge/Kill) | Notes |
 | --- | --- | --- |
 | … | … | … |
+
+## Migration inventory (only when migrating; see knock-migrate-to-knock)
+| ID | Current mechanism | Channel(s) | Trigger | Recipient logic | Template location | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| … | … | … | … | … | … | … |
+
+## Migration plan (only when migrating; see knock-migrate-to-knock)
+- Summary, resource order, phases, code changes, risks
 
 ## Setup handoff
 - **plan.** knock-plan.md
