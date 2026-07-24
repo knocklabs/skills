@@ -7,31 +7,35 @@ description: Connect Knock to your coding agent, discover and build notification
 
 End-to-end Knock setup for a coding agent: connect tooling, design and build notification workflows, then wire them into the application. Work through the rules below in order.
 
-While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, and the final wrap-up output, which have their own formats. When you end with a confirmation question (workflows, implementation, import-users id, or wrap-up guides ask), that question must be the very last line of the message, on its own, and bolded.
-
-Assume the user already has a Knock account when this skill is invoked from the Knock dashboard. Otherwise, ask once whether they have an account; if not, point them to https://dashboard.knock.app/ to sign up, then continue.
+While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the account ask (step 1), the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, the wrap-up test-send asks, and the final wrap-up output, which have their own formats. When you end with a confirmation question (account, workflows, implementation, import-users id, wrap-up test send, or wrap-up guides ask), that question must be the very last line of the message, on its own, and bolded.
 
 ## How to use this skill
 
-1. **Connect MCP for the current tool**
+1. **Confirm Knock account** (required first action — do this before anything else)
+   - **Default: always ask.** Your first message in this skill must ask whether they have a Knock account. Do not add MCP, run OAuth, install skills, discover workflows, or call Knock tools until they answer.
+   - **Skip only if** the user's message explicitly says they started from the Knock dashboard (e.g. pasted a dashboard setup prompt, or says "from the Knock dashboard"). MCP already configured, a prior chat, or guessing they might have an account does **not** count — still ask.
+   - If they say no: do **not** send them to the dashboard to sign up separately. Tell them in one line that they'll create their account during the sign-in step — signup, onboarding, and returning here all happen in that one browser flow — then continue to Connect MCP.
+   - End the ask as the last line, bolded, e.g. **Do you already have a Knock account?**
+
+2. **Connect MCP for the current tool**
    - Cursor → `rules/connect-mcp-cursor.md`
    - Codex → `rules/connect-mcp-codex.md`
    - Claude Code → `rules/connect-mcp-claude-code.md`
    - If the tool is unknown, ask which one, then follow the matching rule.
 
-2. **Discover workflows** (`rules/discover-workflows.md`)
+3. **Discover workflows** (`rules/discover-workflows.md`)
    - If this conversation already has an approved build list from `knock-lifecycle-opportunities` or `knock-product-messaging-strategy`, skip rediscovery (see prior-confirmation gate in that rule).
    - Otherwise learn the product, propose high-value workflows, and confirm which to build.
 
-3. **Build workflows** (`rules/build-workflows.md`)
+4. **Build workflows** (`rules/build-workflows.md`)
    - Create confirmed workflows in the Knock development environment via MCP.
 
-4. **Recommend an implementation approach** (`rules/recommend-implementation.md`)
+5. **Recommend an implementation approach** (`rules/recommend-implementation.md`)
    - Pick one trigger path, ask the user to confirm, then create branch `knock-implementation` before file changes.
    - For a Knock Data Source (CDP or custom HTTP), follow `rules/implement-data-source.md`.
 
-5. **Wrap up** (`rules/wrap-up.md`)
-   - Test one workflow via Knock MCP (not sandbox mode; recipient is current user), then next steps, dashboard link, and close with Knock agent help.
+6. **Wrap up** (`rules/wrap-up.md`)
+   - Ask if they want a test send; if yes, ask for their Knock signup email, then trigger one workflow via Knock MCP with inline identify (not sandbox mode). Then next steps, dashboard link, and close with Knock agent help.
    - Always mention setting up in-app notifications via `knock-in-app-ui`. If guides were created or mentioned, note that guides need app wiring — then **ask** before starting `knock-in-app-ui` (do not proceed until the user says yes).
 
 ## Extension rules (not on the first pass)
@@ -49,7 +53,7 @@ Use these when preparing for production or when the user asks — they are optio
 - `rules/build-workflows.md` — Build confirmed workflows with Knock MCP
 - `rules/recommend-implementation.md` — Choose a trigger path, confirm, branch, then implement
 - `rules/implement-data-source.md` — Source setup: identify user, mappings, MCP prompts, testing
-- `rules/wrap-up.md` — MCP workflow test, next steps, dashboard link, and Knock agent help
+- `rules/wrap-up.md` — Optional test send (inline identify), next steps, dashboard link, and Knock agent help
 - `rules/import-users.md` — Extension: bulk-identify users for production readiness
 
 ## Quick reference

@@ -1,33 +1,40 @@
 ---
 title: Wrap up
-description: Final next steps, test one workflow via Knock MCP, and optional return link
+description: Final next steps, optional test send via Knock MCP, and optional return link
 tags:
   - setup
   - wrap-up
   - mcp
 category: knock-setup
-last_updated: 2026-07-23
+last_updated: 2026-07-24
 ---
 
 # Wrap up
 
 Once all earlier rules are complete, do the following in order.
 
-Before writing the final output, check whether any confirmed items (this chat or `knock-plan.md`) are **guides** or have Knock shape `guide` / `both`. That controls the in-app bullets below.
+## 1. Optional test send
 
-## 1. Test one workflow via Knock agent MCP
+Ask whether the user wants a test send before sending anything. End as the last line, bolded:
 
-Pick one of the workflows that was built (prefer an API-triggerable one if available). Call `start_knock_agent` with a prompt that includes **exactly** these constraints:
+**Want to send a test email to yourself?**
+
+- If they decline → skip the rest of this section and go to the final output. Treat the test as not sent (no finishing bang).
+- If they accept → ask for the email they used to sign up for Knock. End as the last line, bolded:
+
+**What email did you use to sign up for Knock?**
+
+Then pick one of the workflows that was built (prefer an API-triggerable one with an email channel if available). Call `start_knock_agent` with a prompt that includes **exactly** these constraints:
 
 - run this not in sandbox mode
-- recipient is current user
+- recipient uses **inline identify**: a recipient object with a stable test `id` and `email` set to the address they provided (so the message lands in their inbox without a prior user import)
 
 **From name:** if the email (or other message) would come from an internal/system address that looks generic or technical, tell the Knock agent to set a realistic human-readable **from** name for the test (e.g. the product or company name). If the from already looks like a normal product sender, do not change it.
 
-Example prompt shape:
+Example prompt shape (substitute their email):
 
 ```text
-Test workflow `[workflow_key]` in the development environment. Run this not in sandbox mode, recipient is current user. Use a minimal valid data payload for the workflow templates. If the message from address looks internal or generic, set a realistic from name for this test. Report the run result and a link or run id if available.
+Test workflow `[workflow_key]` in the development environment. Run this not in sandbox mode. Use inline identify for the recipient: `{"id": "knock-setup-test", "email": "USER_EMAIL", "name": "Test User"}`. Use a minimal valid data payload for the workflow templates. If the message from address looks internal or generic, set a realistic from name for this test. Report the run result and a link or run id if available.
 ```
 
 Poll with `get_knock_agent` until the run finishes. If the workflow is only source-triggered and the agent cannot run a direct test, say so in one line and skip to the output below (source path was already verified earlier).
@@ -53,7 +60,7 @@ Example closing line when MCP is connected:
 
 > The Knock agent can help with most of these next steps — just ask here.
 
-5. **Finishing bang (email only)** — if the test email sent successfully, include this ASCII art email (fenced as a code block). If no email was sent, skip this step entirely.
+5. **Finishing bang (email only)** — if the test send succeeded, include this ASCII art email (fenced as a code block). If no email was sent, skip this step entirely.
 
 ```
  _______________________________________
@@ -67,7 +74,7 @@ Example closing line when MCP is connected:
 |_______________________________________|
 ```
 
-6. **Guides next-step ask (only if guides were created or mentioned)** — do **not** invoke `knock-in-app-ui` until the user says yes. Just before the confirmation, note in one short line that the same skill can easily set up in-app notifications (feed / inbox) too if they wish. End with this confirmation as the **very last line**, on its own, and bolded:
+6. **Guides next-step ask (only if guides were created or mentioned)** — first check whether any confirmed items (this chat or `knock-plan.md`) are **guides** or have Knock shape `guide` / `both`. That controls the in-app bullets above and whether to ask here. Do **not** invoke `knock-in-app-ui` until the user says yes. Just before the confirmation, note in one short line that the same skill can easily set up in-app notifications (feed / inbox) too if they wish. End with this confirmation as the **very last line**, on its own, and bolded:
 
 **Want to wire up the Knock in-app guides next?**
 
