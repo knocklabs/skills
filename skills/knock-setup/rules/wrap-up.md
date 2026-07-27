@@ -6,7 +6,7 @@ tags:
   - wrap-up
   - mcp
 category: knock-setup
-last_updated: 2026-07-24
+last_updated: 2026-07-27
 ---
 
 # Wrap up
@@ -20,18 +20,22 @@ Ask whether the user wants a test send before sending anything. End as the last 
 **Want to send a test email to yourself?**
 
 - If they decline → skip the rest of this section and go to the final output. Treat the test as not sent (no finishing bang).
-- If they accept → ask for the email they used to sign up for Knock. End as the last line, bolded:
+- If they accept → resolve the recipient email:
+
+  1. Call `execute_mapi` with `GET /v1/whoami`.
+  2. Use `user_email` from the response for the test recipient.
+  3. If `user_email` is null (service token auth), ask for the email they used to sign up for Knock. End as the last line, bolded:
 
 **What email did you use to sign up for Knock?**
 
 Then pick one of the workflows that was built (prefer an API-triggerable one with an email channel if available). Call `start_knock_agent` with a prompt that includes **exactly** these constraints:
 
 - run this not in sandbox mode
-- recipient uses **inline identify**: a recipient object with a stable test `id` and `email` set to the address they provided (so the message lands in their inbox without a prior user import)
+- recipient uses **inline identify**: a recipient object with a stable test `id` and `email` set to the whoami (or provided) address (so the message lands in their inbox without a prior user import)
 
 **From name:** if the email (or other message) would come from an internal/system address that looks generic or technical, tell the Knock agent to set a realistic human-readable **from** name for the test (e.g. the product or company name). If the from already looks like a normal product sender, do not change it.
 
-Example prompt shape (substitute their email):
+Example prompt shape (substitute the whoami / provided email):
 
 ```text
 Test workflow `[workflow_key]` in the development environment. Run this not in sandbox mode. Use inline identify for the recipient: `{"id": "knock-setup-test", "email": "USER_EMAIL", "name": "Test User"}`. Use a minimal valid data payload for the workflow templates. If the message from address looks internal or generic, set a realistic from name for this test. Report the run result and a link or run id if available.
