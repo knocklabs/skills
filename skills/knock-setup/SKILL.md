@@ -35,7 +35,7 @@ While working, keep every response to one short line — no summaries, no menus,
    - For a Knock Data Source (CDP or custom HTTP), follow `rules/implement-data-source.md`.
 
 6. **Wrap up** (`rules/wrap-up.md`)
-   - Ask if they want a test send; if yes, resolve email via `GET /v1/whoami` (`user_email`), falling back to asking for their signup email only if `user_email` is null, then trigger one workflow via Knock MCP with inline identify (not sandbox mode). Then next steps, dashboard link, and close with Knock agent help.
+   - Resolve email + name via `GET /v1/whoami` (`user_email`, `user_name`). If email is present, send the test immediately (no confirmation), using `user_name` when available (else `"Test User"`). If email is null, ask whether they want a test send and for their signup email. Trigger via Knock MCP with inline identify (not sandbox mode). Then next steps, dashboard link, and close with Knock agent help.
    - Always mention setting up in-app notifications via `knock-in-app-ui`. If guides were created or mentioned, note that guides need app wiring — then **ask** before starting `knock-in-app-ui` (do not proceed until the user says yes).
 
 ## Extension rules (not on the first pass)
@@ -53,7 +53,7 @@ Use these when preparing for production or when the user asks — they are optio
 - `rules/build-workflows.md` — Build confirmed workflows with Knock MCP
 - `rules/recommend-implementation.md` — Choose a trigger path, confirm, branch, then implement
 - `rules/implement-data-source.md` — Source setup: identify user, mappings, MCP prompts, testing
-- `rules/wrap-up.md` — Optional test send (whoami email + inline identify), next steps, dashboard link, and Knock agent help
+- `rules/wrap-up.md` — Test send via whoami email + name (ask only if email missing) + inline identify, next steps, dashboard link, and Knock agent help
 - `rules/import-users.md` — Extension: bulk-identify users for production readiness
 
 ## Quick reference

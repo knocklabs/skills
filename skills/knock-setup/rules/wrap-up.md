@@ -1,6 +1,6 @@
 ---
 title: Wrap up
-description: Final next steps, optional test send via Knock MCP, and optional return link
+description: Final next steps, test send via Knock MCP, and optional return link
 tags:
   - setup
   - wrap-up
@@ -13,32 +13,34 @@ last_updated: 2026-07-27
 
 Once all earlier rules are complete, do the following in order.
 
-## 1. Optional test send
+## 1. Test send
 
-Ask whether the user wants a test send before sending anything. End as the last line, bolded:
+Resolve the recipient email and name, then send — do not ask for confirmation when whoami already has an email.
+
+1. Call `execute_mapi` with `GET /v1/whoami`.
+2. If `user_email` is present → use it as the recipient email. Use `user_name` for the recipient name when present and non-blank; otherwise fall back to `"Test User"`. Proceed with the test send below (no confirmation ask).
+3. If `user_email` is null (service token auth) → ask whether they want a test send. End as the last line, bolded:
 
 **Want to send a test email to yourself?**
 
 - If they decline → skip the rest of this section and go to the final output. Treat the test as not sent (no finishing bang).
-- If they accept → resolve the recipient email:
-
-  1. Call `execute_mapi` with `GET /v1/whoami`.
-  2. Use `user_email` from the response for the test recipient.
-  3. If `user_email` is null (service token auth), ask for the email they used to sign up for Knock. End as the last line, bolded:
+- If they accept → ask for the email they used to sign up for Knock. End as the last line, bolded:
 
 **What email did you use to sign up for Knock?**
+
+  Use that email with name `"Test User"` (do not ask for a name).
 
 Then pick one of the workflows that was built (prefer an API-triggerable one with an email channel if available). Call `start_knock_agent` with a prompt that includes **exactly** these constraints:
 
 - run this not in sandbox mode
-- recipient uses **inline identify**: a recipient object with a stable test `id` and `email` set to the whoami (or provided) address (so the message lands in their inbox without a prior user import)
+- recipient uses **inline identify**: a recipient object with a stable test `id`, `email` set to the whoami (or provided) address, and `name` set to whoami `user_name` when available (otherwise `"Test User"`)
 
 **From name:** if the email (or other message) would come from an internal/system address that looks generic or technical, tell the Knock agent to set a realistic human-readable **from** name for the test (e.g. the product or company name). If the from already looks like a normal product sender, do not change it.
 
-Example prompt shape (substitute the whoami / provided email):
+Example prompt shape (substitute the whoami / provided email and name):
 
 ```text
-Test workflow `[workflow_key]` in the development environment. Run this not in sandbox mode. Use inline identify for the recipient: `{"id": "knock-setup-test", "email": "USER_EMAIL", "name": "Test User"}`. Use a minimal valid data payload for the workflow templates. If the message from address looks internal or generic, set a realistic from name for this test. Report the run result and a link or run id if available.
+Test workflow `[workflow_key]` in the development environment. Run this not in sandbox mode. Use inline identify for the recipient: `{"id": "knock-setup-test", "email": "USER_EMAIL", "name": "USER_NAME"}`. Use a minimal valid data payload for the workflow templates. If the message from address looks internal or generic, set a realistic from name for this test. Report the run result and a link or run id if available.
 ```
 
 Poll with `get_knock_agent` until the run finishes. If the workflow is only source-triggered and the agent cannot run a direct test, say so in one line and skip to the output below (source path was already verified earlier).
