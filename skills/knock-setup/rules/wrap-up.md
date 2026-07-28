@@ -33,14 +33,14 @@ Resolve the recipient email and name, then send — do not ask for confirmation 
 Then pick one of the workflows that was built (prefer an API-triggerable one with an email channel if available). Call `start_knock_agent` with a prompt that includes **exactly** these constraints:
 
 - run this not in sandbox mode
-- recipient uses **inline identify**: a recipient object with a stable test `id`, `email` set to the whoami (or provided) address, and `name` set to whoami `user_name` when available (otherwise `"Test User"`)
+- recipient uses **inline identify**: a recipient object with `id` set to `"1"`, `email` set to the whoami (or provided) address, and `name` set to whoami `user_name` when available (otherwise `"Test User"`)
 
 **From name:** if the email (or other message) would come from an internal/system address that looks generic or technical, tell the Knock agent to set a realistic human-readable **from** name for the test (e.g. the product or company name). If the from already looks like a normal product sender, do not change it.
 
 Example prompt shape (substitute the whoami / provided email and name):
 
 ```text
-Test workflow `[workflow_key]` in the development environment. Run this not in sandbox mode. Use inline identify for the recipient: `{"id": "knock-setup-test", "email": "USER_EMAIL", "name": "USER_NAME"}`. Use a minimal valid data payload for the workflow templates. If the message from address looks internal or generic, set a realistic from name for this test. Report the run result and a link or run id if available.
+Test workflow `[workflow_key]` in the development environment. Run this not in sandbox mode. Use inline identify for the recipient: `{"id": "1", "email": "USER_EMAIL", "name": "USER_NAME"}`. Use a minimal valid data payload for the workflow templates. If the message from address looks internal or generic, set a realistic from name for this test. Report the run result and a link or run id if available.
 ```
 
 Poll with `get_knock_agent` until the run finishes. If the workflow is only source-triggered and the agent cannot run a direct test, say so in one line and skip to the output below (source path was already verified earlier).
@@ -52,7 +52,7 @@ Note whether an **email** channel message was sent successfully — you need tha
 Then output the following in this exact order:
 
 1. **What you can do next with Knock** — a short bulleted list. Always include:
-   - **Set up in-app notifications** (notification feed / inbox) in the product — use the `knock-in-app-ui` skill (feeds).
+   - **Set up in-app notifications** (notification feed / inbox) in the product.
    - If guides were created or mentioned in the plan/build list: note that guide **resources** alone are not enough — app wiring (providers, rendering, engagement) is done with `knock-in-app-ui`. Do **not** start that skill yet; you will ask below.
    - Then pick other relevant items as needed: send test runs of your workflows, create more workflows, add more channels (email, SMS, push, Slack), let users manage their notification preferences, add translations for localized notifications.
 2. **Immediate steps to complete this implementation** — only if any remain, a short bulleted list, e.g.: commit the workflows and promote them to production, import or identify your users in Knock (see `rules/import-users.md` when ready — not required on first pass), configure production channel credentials and API keys, verify the trigger path end to end.

@@ -7,7 +7,7 @@ description: Connect Knock to your coding agent, discover and build notification
 
 End-to-end Knock setup for a coding agent: connect tooling, design and build notification workflows, then wire them into the application. Work through the rules below in order.
 
-While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the account ask (step 1), the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, the wrap-up test-send asks, and the final wrap-up output, which have their own formats. When you end with a confirmation question (account, workflows, implementation, import-users id, wrap-up test send, or wrap-up guides ask), that question must be the very last line of the message, on its own, and bolded.
+While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the account ask (step 1), the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, the wrap-up test-send asks, the final wrap-up output, the Codex MCP handoff in `rules/connect-mcp-codex.md`, and the Claude MCP reload handoff in `rules/connect-mcp-claude-code.md` (limitation + copyable new-session prompt), which have their own formats. When you end with a confirmation question (account, workflows, implementation, import-users id, wrap-up test send, or wrap-up guides ask), that question must be the very last line of the message, on its own, and bolded.
 
 ## How to use this skill
 
@@ -17,13 +17,14 @@ While working, keep every response to one short line — no summaries, no menus,
    - If they say no: do **not** send them to the dashboard to sign up separately. Tell them in one line that they'll create their account during the sign-in step — signup, onboarding, and returning here all happen in that one browser flow — then continue to Connect MCP.
    - End the ask as the last line, bolded, e.g. **Do you already have a Knock account?**
 
-2. **Connect MCP for the current tool**
+2. **Connect MCP for the current tool** (hard gate — do not discover, propose, or build workflows until a Knock MCP tool call has succeeded)
    - Cursor → `rules/connect-mcp-cursor.md`
-   - Codex → `rules/connect-mcp-codex.md`
-   - Claude Code → `rules/connect-mcp-claude-code.md`
+   - Codex → `rules/connect-mcp-codex.md` (after auth, Codex needs a **new task** for Knock tools — emit the copyable handoff and stop; do not continue in the same chat)
+   - Claude Code → `rules/connect-mcp-claude-code.md` (add with `--scope user`; verify with `claude mcp list`; if Knock tools are not callable in this session, emit the copyable fresh-session handoff immediately — do not ask the user to run `/mcp` in the current chat)
    - If the tool is unknown, ask which one, then follow the matching rule.
+   - Auth proof: call `list_environments` or `execute_mapi` `GET /v1/whoami` and wait for success. Checking that MCP is installed is not enough.
 
-3. **Discover workflows** (`rules/discover-workflows.md`)
+3. **Discover workflows** (`rules/discover-workflows.md`) — only after step 2 auth proof
    - If this conversation already has an approved build list from `knock-lifecycle-opportunities` or `knock-product-messaging-strategy`, skip rediscovery (see prior-confirmation gate in that rule).
    - Otherwise learn the product, propose high-value workflows, and confirm which to build.
 
