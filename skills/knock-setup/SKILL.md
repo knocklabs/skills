@@ -7,22 +7,24 @@ description: Connect Knock to your coding agent, discover and build notification
 
 End-to-end Knock setup for a coding agent: connect tooling, design and build notification workflows, then wire them into the application. Work through the rules below in order.
 
-While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the account ask (step 1), the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, the wrap-up test-send asks, the final wrap-up output, the Codex MCP handoff in `rules/connect-mcp-codex.md`, and the Claude MCP reload handoff in `rules/connect-mcp-claude-code.md` (limitation + copyable new-session prompt), which have their own formats. When you end with a confirmation question (account, workflows, implementation, import-users id, wrap-up test send, or wrap-up guides ask), that question must be the very last line of the message, on its own, and bolded.
+While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the account ask (step 1), the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, the wrap-up test-send asks, the final wrap-up output, the Codex MCP handoff in `rules/connect-mcp-codex.md`, and the Claude connector instructions in `rules/connect-mcp-claude.md` (settings steps + connected ask), which have their own formats. When you end with a confirmation question (account, workflows, implementation, import-users id, wrap-up test send, or wrap-up guides ask), that question must be the very last line of the message, on its own, and bolded.
 
 ## How to use this skill
 
 1. **Confirm Knock account** (required first action — do this before anything else)
    - **Default: always ask.** Your first message in this skill must ask whether they have a Knock account. Do not add MCP, run OAuth, install skills, discover workflows, or call Knock tools until they answer.
    - **Skip only if** the user's message explicitly says they started from the Knock dashboard (e.g. pasted a dashboard setup prompt, or says "from the Knock dashboard"). MCP already configured, a prior chat, or guessing they might have an account does **not** count — still ask.
-   - If they say no: do **not** send them to the dashboard to sign up separately. Tell them in one line that they'll create their account during the sign-in step — signup, onboarding, and returning here all happen in that one browser flow — then continue to Connect MCP.
+   - If they say no: do **not** send them to the dashboard to sign up separately. Tell them in one line that they'll create their account during the sign-in step — signup, onboarding, and returning here all happen in that one browser flow — then continue to Connect Knock tooling.
    - End the ask as the last line, bolded, e.g. **Do you already have a Knock account?**
 
-2. **Connect MCP for the current tool** (hard gate — do not discover, propose, or build workflows until a Knock MCP tool call has succeeded)
-   - Cursor → `rules/connect-mcp-cursor.md`
-   - Codex → `rules/connect-mcp-codex.md` (after auth, Codex needs a **new task** for Knock tools — emit the copyable handoff and stop; do not continue in the same chat)
-   - Claude Code → `rules/connect-mcp-claude-code.md` (add with `--scope user`; verify with `claude mcp list`; if Knock tools are not callable in this session, emit the copyable fresh-session handoff immediately — do not ask the user to run `/mcp` in the current chat)
+2. **Connect Knock tooling for the current tool** (hard gate — do not discover, propose, or build workflows until a Knock MCP tool call, or `knock whoami` on the CLI path, has succeeded)
+   - **Interactive clients use MCP.**
+     - Cursor → `rules/connect-mcp-cursor.md`
+     - Codex → `rules/connect-mcp-codex.md` (after auth, Codex needs a **new task** for Knock tools — emit the copyable handoff and stop; do not continue in the same chat)
+     - Claude → `rules/connect-mcp-claude.md` (the user adds Knock as a custom connector in Claude settings — give the instructions and wait; do not try to add MCP yourself)
+   - **CLI-based tools use the Knock CLI.** Terminal agents such as Claude Code or Cursor CLI → `rules/connect-cli.md` (install the Knock CLI and auth with `knock login`)
    - If the tool is unknown, ask which one, then follow the matching rule.
-   - Auth proof: call `list_environments` or `execute_mapi` `GET /v1/whoami` and wait for success. Checking that MCP is installed is not enough.
+   - Auth proof: call `list_environments` or `execute_mapi` `GET /v1/whoami` (MCP), or run `knock whoami` (CLI), and wait for success. Checking that MCP or the CLI is installed is not enough.
 
 3. **Discover workflows** (`rules/discover-workflows.md`) — only after step 2 auth proof
    - If this conversation already has an approved build list from `knock-lifecycle-opportunities` or `knock-product-messaging-strategy`, skip rediscovery (see prior-confirmation gate in that rule).
@@ -49,7 +51,8 @@ Use these when preparing for production or when the user asks — they are optio
 
 - `rules/connect-mcp-cursor.md` — Cursor MCP + skills install
 - `rules/connect-mcp-codex.md` — Codex MCP + skills install
-- `rules/connect-mcp-claude-code.md` — Claude Code MCP + skills install
+- `rules/connect-mcp-claude.md` — Claude MCP via custom connector (user adds it in Claude settings) + skills install
+- `rules/connect-cli.md` — Knock CLI install + `knock login` auth for CLI-based tools
 - `rules/discover-workflows.md` — Product discovery and workflow proposals
 - `rules/build-workflows.md` — Build confirmed workflows with Knock MCP
 - `rules/recommend-implementation.md` — Choose a trigger path, confirm, branch, then implement
@@ -60,5 +63,6 @@ Use these when preparing for production or when the user asks — they are optio
 ## Quick reference
 
 - MCP server URL: `https://mcp.knock.app/mcp`
+- Knock CLI: install with `npm install -g @knocklabs/cli`, auth with `knock login` ([docs](https://docs.knock.app/cli/overview))
 - Install open-source skills: `npx skills add knocklabs/skills`
-- Prefer Knock MCP tools for workflow, step, and template creation after tooling is connected
+- Prefer Knock MCP tools (or Knock CLI commands on the CLI path) for workflow, step, and template creation after tooling is connected
