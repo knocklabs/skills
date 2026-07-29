@@ -7,7 +7,7 @@ description: Connect Knock to your coding agent, discover and build notification
 
 End-to-end Knock setup for a coding agent: connect tooling, design and build notification workflows, then wire them into the application. Work through the rules below in order.
 
-While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the account ask (step 1), the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, the wrap-up test-send asks, the final wrap-up output, the Codex MCP handoff in `rules/connect-mcp-codex.md`, and the Claude connector instructions in `rules/connect-mcp-claude.md` (settings steps + connected ask), which have their own formats. When you end with a confirmation question (account, workflows, implementation, import-users id, wrap-up test send, or wrap-up guides ask), that question must be the very last line of the message, on its own, and bolded.
+While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the account ask (step 1), the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, the wrap-up test-send asks, the final wrap-up output, the Codex MCP handoff in `rules/connect-codex.md`, and the Claude connector instructions in `rules/connect-claude.md` (settings steps + connected ask), which have their own formats. When you end with a confirmation question (account, workflows, implementation, import-users id, wrap-up test send, or wrap-up guides ask), that question must be the very last line of the message, on its own, and bolded.
 
 ## How to use this skill
 
@@ -18,11 +18,11 @@ While working, keep every response to one short line — no summaries, no menus,
    - End the ask as the last line, bolded, e.g. **Do you already have a Knock account?**
 
 2. **Connect Knock tooling for the current tool** (hard gate — do not discover, propose, or build workflows until a Knock MCP tool call, or `knock whoami` on the CLI path, has succeeded)
-   - **Interactive clients use MCP.**
-     - Cursor → `rules/connect-mcp-cursor.md`
-     - Codex → `rules/connect-mcp-codex.md` (after auth, Codex needs a **new task** for Knock tools — emit the copyable handoff and stop; do not continue in the same chat)
-     - Claude → `rules/connect-mcp-claude.md` (the user adds Knock as a custom connector in Claude settings — give the instructions and wait; do not try to add MCP yourself)
-   - **CLI-based tools use the Knock CLI.** Terminal agents such as Claude Code or Cursor CLI → `rules/connect-cli.md` (install the Knock CLI and auth with `knock login`)
+   - Route by tool family, then follow the **surface check at the top of that rule** (app vs CLI) — do not pick a path from this list alone:
+     - **Cursor** (editor or Cursor CLI) → `rules/connect-cursor.md` — editor uses MCP; Cursor CLI is routed to `rules/connect-cli.md`
+     - **Claude** (app or Claude Code) → `rules/connect-claude.md` — app adds Knock as a custom connector (give the user the settings instructions and wait); Claude Code is routed to `rules/connect-cli.md`
+     - **Codex** (any surface) → `rules/connect-codex.md` — MCP; after auth, Codex needs a **new task** for Knock tools (emit the copyable handoff and stop; do not continue in the same chat)
+     - **Any other terminal/CLI agent** → `rules/connect-cli.md` — install the Knock CLI and auth with `knock login`
    - If the tool is unknown, ask which one, then follow the matching rule.
    - Auth proof: call `list_environments` or `execute_mapi` `GET /v1/whoami` (MCP), or run `knock whoami` (CLI), and wait for success. Checking that MCP or the CLI is installed is not enough.
 
@@ -49,10 +49,10 @@ Use these when preparing for production or when the user asks — they are optio
 
 ## Rule files reference
 
-- `rules/connect-mcp-cursor.md` — Cursor MCP + skills install
-- `rules/connect-mcp-codex.md` — Codex MCP + skills install
-- `rules/connect-mcp-claude.md` — Claude MCP via custom connector (user adds it in Claude settings) + skills install
-- `rules/connect-cli.md` — Knock CLI install + `knock login` auth for CLI-based tools
+- `rules/connect-cursor.md` — Cursor: surface check, then editor MCP + skills install (Cursor CLI routes to `connect-cli.md`)
+- `rules/connect-claude.md` — Claude: surface check, then app custom connector (Claude Code routes to `connect-cli.md`)
+- `rules/connect-codex.md` — Codex (any surface): MCP + skills install + new-task handoff
+- `rules/connect-cli.md` — shared Knock CLI path: install + `knock login` auth for CLI-based tools
 - `rules/discover-workflows.md` — Product discovery and workflow proposals
 - `rules/build-workflows.md` — Build confirmed workflows with Knock MCP
 - `rules/recommend-implementation.md` — Choose a trigger path, confirm, branch, then implement

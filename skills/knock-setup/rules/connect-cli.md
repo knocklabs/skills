@@ -10,7 +10,7 @@ last_updated: 2026-07-29
 
 # Connect the Knock CLI
 
-Use this rule when the coding agent is a CLI-based tool running in a terminal (e.g. Claude Code, Cursor CLI, or another terminal agent). CLI-based tools load MCP servers at session start, so a mid-session MCP add cannot attach Knock tools — use the Knock CLI instead. Interactive clients (the Cursor app, Codex, Claude) use MCP; see their rules.
+Use this rule when the coding agent is a CLI-based tool running in a terminal. You are routed here from `rules/connect-cursor.md` (Cursor CLI) or `rules/connect-claude.md` (Claude Code), or arrive directly as any other terminal agent. CLI-based tools load MCP servers at session start, so a mid-session MCP add cannot attach Knock tools — use the Knock CLI instead. Codex is the exception: it uses MCP with a new-task handoff (`rules/connect-codex.md`).
 
 Prerequisite: step 1 (Confirm Knock account) must already be asked and answered in this conversation. If it hasn't been, stop and ask before continuing — do not install the CLI or start auth.
 

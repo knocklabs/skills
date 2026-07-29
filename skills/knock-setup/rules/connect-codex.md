@@ -1,15 +1,17 @@
 ---
-title: Connect MCP in Codex
+title: Connect Knock in Codex
 description: Add the Knock MCP server and skills in Codex
 tags:
   - setup
   - mcp
   - codex
 category: knock-setup
-last_updated: 2026-07-27
+last_updated: 2026-07-29
 ---
 
-# Connect MCP in Codex
+# Connect Knock in Codex
+
+Use this rule for Codex on any surface (Codex CLI, IDE extension, or app) — the MCP flow below, including the new-task handoff, applies to all of them.
 
 Prerequisite: step 1 (Confirm Knock account) must already be asked and answered in this conversation. If it hasn't been, stop and ask before continuing — do not add the MCP server or start OAuth.
 

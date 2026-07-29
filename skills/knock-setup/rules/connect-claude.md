@@ -1,17 +1,26 @@
 ---
-title: Connect MCP in Claude
-description: Add the Knock MCP server to Claude as a custom connector
+title: Connect Knock in Claude
+description: Route Claude sessions — the app adds a custom connector, Claude Code uses the Knock CLI
 tags:
   - setup
   - mcp
+  - cli
   - claude
 category: knock-setup
 last_updated: 2026-07-29
 ---
 
-# Connect MCP in Claude
+# Connect Knock in Claude
 
-Use this rule for the Claude app (web or desktop). Claude connects to remote MCP servers through **connectors**, which the user adds in Claude settings — you cannot add one for them, so give the instructions below and wait. If the user is in the Claude Code terminal instead, that is a CLI-based tool — use `rules/connect-cli.md`.
+Use this rule for anything Claude. First determine which surface you are on — do not skip this check:
+
+- **Claude Code** — a terminal agent launched with the `claude` command. If you have a shell tool, run `echo $CLAUDECODE`; if it prints `1`, you are Claude Code. → Stop here and follow `rules/connect-cli.md` (Knock CLI, not MCP). Do not use the connector steps below and do not run `claude mcp add`.
+- **Claude app** — the web or desktop chat. You either have no shell tool at all, or the env check above does not print `1`. → Continue with the connector path below.
+- If you still cannot tell, ask the user in one line: are they in the Claude app or in Claude Code in a terminal?
+
+## Connector path (Claude app)
+
+Claude connects to remote MCP servers through **connectors**, which the user adds in Claude settings — you cannot add one for them, so give the instructions below and wait.
 
 Prerequisite: step 1 (Confirm Knock account) must already be asked and answered in this conversation. If it hasn't been, stop and ask before continuing — do not give connector instructions or start OAuth.
 
