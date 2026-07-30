@@ -14,7 +14,7 @@ last_updated: 2026-07-29
 
 Use this rule for anything Claude. First determine which surface you are on — do not skip this check:
 
-- **Claude Code** — a terminal agent launched with the `claude` command. If you have a shell tool, run `echo $CLAUDECODE`; if it prints `1`, you are Claude Code. → Stop here and follow `rules/connect-cli.md` (Knock CLI, not MCP). Do not use the connector steps below and do not run `claude mcp add`.
+- **Claude Code** — a terminal agent launched with the `claude` command. If you have a shell tool, run `echo $CLAUDECODE`; if it prints `1`, you are Claude Code. → Stop here and follow `rules/connect-knock-cli.md` (Knock CLI, not MCP). Do not use the connector steps below and do not run `claude mcp add`.
 - **Claude app** — the web or desktop chat. You either have no shell tool at all, or the env check above does not print `1`. → Continue with the connector path below.
 - If you still cannot tell, ask the user in one line: are they in the Claude app or in Claude Code in a terminal?
 

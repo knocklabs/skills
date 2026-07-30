@@ -14,7 +14,7 @@ last_updated: 2026-07-29
 
 Use this rule for anything Cursor. First determine which surface you are on — do not skip this check:
 
-- **Cursor CLI** — this session was launched by running `cursor-agent` (or `agent`) in a terminal; there is no editor UI. → Stop here and follow `rules/connect-cli.md` (Knock CLI, not MCP). Do not use the MCP path below.
+- **Cursor CLI** — this session was launched by running `cursor-agent` (or `agent`) in a terminal; there is no editor UI. → Stop here and follow `rules/connect-knock-cli.md` (Knock CLI, not MCP). Do not use the MCP path below.
 - **Cursor editor** — you are the agent chat inside the Cursor IDE. → Continue with the MCP path below.
 - If you cannot tell, ask the user in one line: are they in the Cursor editor or the Cursor CLI (`cursor-agent`)? (Do not rely on `CURSOR_AGENT`/`CURSOR_CLI` env vars — the editor's terminal sets them too.)
 
