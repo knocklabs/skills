@@ -24,6 +24,7 @@ While working, keep every response to one short line — no summaries, no menus,
      - **Codex** (any surface) → `rules/connect-codex.md` — MCP; after auth, Codex needs a **new task** for Knock tools (emit the copyable handoff and stop; do not continue in the same chat)
      - **Any other terminal/CLI agent** → `rules/connect-cli.md` — install the Knock CLI and auth with `knock login`
    - If the tool is unknown, ask which one, then follow the matching rule.
+   - On the Knock CLI path, do **not** set up MCP at any point in this skill — no `claude mcp add`, no `mcp.json` edits, no connector ask. Use `knock` CLI equivalents wherever later steps mention Knock MCP tools.
    - Auth proof: call `list_environments` or `execute_mapi` `GET /v1/whoami` (MCP), or run `knock whoami` (CLI), and wait for success. Checking that MCP or the CLI is installed is not enough.
 
 3. **Discover workflows** (`rules/discover-workflows.md`) — only after step 2 auth proof

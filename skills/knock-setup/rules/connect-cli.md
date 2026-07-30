@@ -12,6 +12,8 @@ last_updated: 2026-07-29
 
 Use this rule when the coding agent is a CLI-based tool running in a terminal. You are routed here from `rules/connect-cursor.md` (Cursor CLI) or `rules/connect-claude.md` (Claude Code), or arrive directly as any other terminal agent. CLI-based tools load MCP servers at session start, so a mid-session MCP add cannot attach Knock tools — use the Knock CLI instead. Codex is the exception: it uses MCP with a new-task handoff (`rules/connect-codex.md`).
 
+**Never set up MCP on this path — not now, and not in any later step of this skill.** Do not run `claude mcp add` or `codex mcp add`, do not edit `mcp.json` or any MCP config, and do not tell the user to add a connector. Later rules mention Knock MCP tools because they are shared with the MCP path; on this path every one of those mentions means the Knock CLI equivalent, never "install MCP first."
+
 Prerequisite: step 1 (Confirm Knock account) must already be asked and answered in this conversation. If it hasn't been, stop and ask before continuing — do not install the CLI or start auth.
 
 1. Install the Knock CLI ([docs](https://docs.knock.app/cli/overview)): run `npm install -g @knocklabs/cli` (on macOS, `brew install knocklabs/tap/knock` also works). Skip the install if `knock --version` already succeeds.

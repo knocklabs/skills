@@ -17,6 +17,8 @@ Once all earlier rules are complete, do the following in order.
 
 Resolve the recipient email and name, then send — do not ask for confirmation when whoami already has an email.
 
+On the Knock CLI path, do **not** set up MCP for this section. Run `knock whoami` in place of `GET /v1/whoami` (if it does not return an email, follow the null-email ask flow below), trigger the test with `knock workflow run` (see the `knock-cli` skill) using the same inline-identify recipient, and skip the `start_knock_agent` / `get_knock_agent` steps.
+
 1. Call `execute_mapi` with `GET /v1/whoami`.
 2. If `user_email` is present → use it as the recipient email. Use `user_name` for the recipient name when present and non-blank; otherwise fall back to `"Test User"`. Proceed with the test send below (no confirmation ask).
 3. If `user_email` is null (service token auth) → ask whether they want a test send. End as the last line, bolded:
@@ -60,7 +62,7 @@ Then output the following in this exact order:
 
 [View setup in Knock dashboard](RETURN_URL)
 
-4. **Close with Knock agent help** — always include this. Make clear the Knock agent can help with most remaining tasks. If Knock MCP was set up earlier in this skill, say they can just ask here in this chat. If MCP was not set up, point them to connect MCP first, then ask.
+4. **Close with Knock agent help** — always include this. Make clear the Knock agent can help with most remaining tasks. If Knock MCP was set up earlier in this skill, say they can just ask here in this chat. If the Knock CLI path was used, say they can keep asking here — the CLI stays authenticated; do **not** tell them to connect MCP.
 
 Example closing line when MCP is connected:
 
