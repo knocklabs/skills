@@ -1,15 +1,24 @@
 ---
-title: Connect MCP in Cursor
-description: Add the Knock MCP server and skills in Cursor
+title: Connect Knock in Cursor
+description: Route Cursor sessions — editor uses the Knock MCP server, Cursor CLI uses the Knock CLI
 tags:
   - setup
   - mcp
+  - cli
   - cursor
 category: knock-setup
-last_updated: 2026-07-27
+last_updated: 2026-07-29
 ---
 
-# Connect MCP in Cursor
+# Connect Knock in Cursor
+
+Use this rule for anything Cursor. First determine which surface you are on — do not skip this check:
+
+- **Cursor CLI** — this session was launched by running `cursor-agent` (or `agent`) in a terminal; there is no editor UI. → Stop here and follow `rules/connect-knock-cli.md` (Knock CLI, not MCP). Do not use the MCP path below.
+- **Cursor editor** — you are the agent chat inside the Cursor IDE. → Continue with the MCP path below.
+- If you cannot tell, ask the user in one line: are they in the Cursor editor or the Cursor CLI (`cursor-agent`)? (Do not rely on `CURSOR_AGENT`/`CURSOR_CLI` env vars — the editor's terminal sets them too.)
+
+## MCP path (Cursor editor)
 
 Prerequisite: step 1 (Confirm Knock account) must already be asked and answered in this conversation. If it hasn't been, stop and ask before continuing — do not add the MCP server or start OAuth.
 
@@ -22,4 +31,4 @@ Prerequisite: step 1 (Confirm Knock account) must already be asked and answered 
 
 For users without an account, OAuth sign-in doubles as signup: they'll create their account, complete onboarding, and be redirected back to the IDE automatically. If the redirect doesn't complete (e.g. they land on the dashboard instead), have them finish signup there, then retry the Knock tool call to re-trigger OAuth.
 
-**Hard gate:** steps after Connect MCP (discover, build, implement, wrap-up) are blocked until a Knock MCP tool call has succeeded in this conversation.
+**Hard gate:** steps after Connect Knock tooling (discover, build, implement, wrap-up) are blocked until a Knock MCP tool call has succeeded in this conversation.

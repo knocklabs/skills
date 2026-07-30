@@ -1,15 +1,24 @@
 ---
-title: Connect MCP in Codex
-description: Add the Knock MCP server and skills in Codex
+title: Connect Knock in Codex
+description: Route Codex sessions — IDE/app uses the Knock MCP server, Codex CLI uses the Knock CLI
 tags:
   - setup
   - mcp
+  - cli
   - codex
 category: knock-setup
-last_updated: 2026-07-27
+last_updated: 2026-07-30
 ---
 
-# Connect MCP in Codex
+# Connect Knock in Codex
+
+Use this rule for anything Codex. First determine which surface you are on — do not skip this check:
+
+- **Codex CLI** — this session was launched by running `codex` in a terminal; there is no IDE UI. → Stop here and follow `rules/connect-knock-cli.md` (Knock CLI, not MCP). Do not use the MCP path below and do not run `codex mcp add`.
+- **Codex IDE / app** — you are the agent inside the Codex IDE extension or desktop/app UI. → Continue with the MCP path below.
+- If you cannot tell, ask the user in one line: are they in the Codex IDE/app or the Codex CLI (`codex`)?
+
+## MCP path (Codex IDE / app)
 
 Prerequisite: step 1 (Confirm Knock account) must already be asked and answered in this conversation. If it hasn't been, stop and ask before continuing — do not add the MCP server or start OAuth.
 

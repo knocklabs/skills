@@ -6,7 +6,7 @@ tags:
   - output
   - plan
 category: knock-lifecycle-opportunities
-last_updated: 2026-07-24
+last_updated: 2026-07-29
 ---
 
 # Opportunity brief format
@@ -44,7 +44,7 @@ For each ranked opportunity under `## Recommendations`:
 - **Dependencies.** data you do not yet emit, etc.
 ```
 
-Number opportunities so the user can answer with indexes.
+Number opportunities as an ordered list (`1.`, `2.`, … — never unnumbered bullets) so the user can answer with indexes. Keep the same numbering any time you list recommended opportunities in chat.
 
 ## Chat after drafting
 
