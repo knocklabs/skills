@@ -5,12 +5,12 @@ tags:
   - lifecycle
   - prioritization
 category: knock-lifecycle-opportunities
-last_updated: 2026-07-23
+last_updated: 2026-07-29
 ---
 
 # Select opportunities
 
-Propose at most **8** opportunities, ranked, in `knock-plan.md` only — not in chat.
+Propose at most **8** opportunities, ranked as an **ordered list** (`1.`, `2.`, …, most valuable first — not bullets), in `knock-plan.md` only — not in chat. If the user ever asks to see the recommendations in chat, keep the same ordered numbering.
 
 ## Priority
 
