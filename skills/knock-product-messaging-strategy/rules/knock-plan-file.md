@@ -6,7 +6,7 @@ tags:
   - output
   - plan
 category: knock-product-messaging-strategy
-last_updated: 2026-07-24
+last_updated: 2026-07-29
 ---
 
 # Knock plan file
@@ -104,7 +104,7 @@ Write (or update) `knock-plan.md` using this skeleton. Preserve sections other s
 - **deferred / blocked.** …
 ```
 
-Number recommendations so the user can answer with indexes (e.g. "build 1–4, skip 5").
+Number recommendations as an ordered list (`1.`, `2.`, … — never unnumbered bullets) so the user can answer with indexes (e.g. "build 1–4, skip 5"). Keep the same numbering any time you list recommended workflows in chat.
 
 ## Update rules
 

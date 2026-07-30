@@ -6,7 +6,7 @@ tags:
   - workflows
   - discovery
 category: knock-setup
-last_updated: 2026-07-23
+last_updated: 2026-07-29
 ---
 
 # Discover workflows
@@ -34,7 +34,7 @@ Only run full discover below when there is **no** prior approved list in this co
 ## Cold-start discover
 
 1. Learn about the business: if you are in a codebase, examine it to understand the product, its users, and key events. Otherwise ask at most 3 short questions.
-2. Propose the 5 highest-value notification workflows as a bulleted list. For each: a short name in bold, then 1-2 sentences explaining why it is valuable for THIS product — tie it to a real user moment or business outcome you found (e.g. re-engagement, retention, conversion, trust). Don't just name the trigger; sell the workflow.
+2. Propose the 5 highest-value notification workflows as an **ordered list** (`1.`, `2.`, …), ranked with the most valuable first — not bullets, so the user can answer with numbers. For each: a short name in bold, then 1-2 sentences explaining why it is valuable for THIS product — tie it to a real user moment or business outcome you found (e.g. re-engagement, retention, conversion, trust). Don't just name the trigger; sell the workflow.
 3. Ask which to build. The confirmation question must be the **very last thing** in your message: on its own line, and bolded. Nothing after it.
 
 Example ending:
