@@ -16,6 +16,7 @@
     "sms",
     "push",
     "in-app",
+    "marketing",
     "mcp"
   ],
   "logo": "assets/logo.svg",
