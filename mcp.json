@@ -1,8 +1,9 @@
 {
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
   "mcpServers": {
     "knock": {
-      "url": "https://mcp.knock.app/mcp",
-      "name": "Knock MCP Server"
+      "type": "streamable-http",
+      "url": "https://mcp.knock.app/mcp"
     }
   }
 }
