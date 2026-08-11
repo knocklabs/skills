@@ -1,0 +1,17 @@
+{
+  "name": "knocklabs-skills",
+  "plugins": [
+    {
+      "name": "knock",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}
