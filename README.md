@@ -146,14 +146,6 @@ claude --plugin-dir ./skills
 
 This loads both the skills and the Knock MCP server, giving you access to notification best practices and Knock API tools.
 
-### MCP code mode tools
-
-When using the Knock MCP server (`https://mcp.knock.app/mcp`):
-
-- `search_mapi` — explore the Management API OpenAPI spec
-- `execute_mapi_read` — GET requests
-- `execute_mapi_write` — POST / PUT / PATCH / DELETE (requires Manage consent)
-
 ## Usage
 
 Skills are automatically available once installed. The agent will use them when relevant tasks are detected.
