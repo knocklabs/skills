@@ -127,24 +127,36 @@ Scan product code for activation, engagement, expansion, and churn signals; reco
 
 ## Installation
 
-### Cursor
+### Plugins (recommended)
+
+Install skills + the Knock MCP server across supported agents:
+
+```bash
+npx plugins add knocklabs/skills
+```
+
+Works with Cursor, Claude Code, Codex, Grok Build, and other Agent Plugins clients. MCP OAuth opens on first Knock tool use against `https://mcp.knock.app/mcp`.
+
+Management API code mode tools:
+
+- `search_mapi` — explore the Management API OpenAPI spec
+- `execute_mapi_read` — GET requests
+- `execute_mapi_write` — POST / PUT / PATCH / DELETE (requires Manage consent)
+
+### Skills-only
 
 ```bash
 npx skills add knocklabs/skills
 ```
 
-Or reference skills directly by path when configuring your agent.
-
-### Claude Code
-
-Clone the repository and load it as a plugin:
+### Claude Code (local plugin dir)
 
 ```bash
 git clone https://github.com/knocklabs/skills
 claude --plugin-dir ./skills
 ```
 
-This loads both the skills and the Knock MCP server, giving you access to notification best practices and Knock API tools.
+This loads both the skills and the Knock MCP server from `.mcp.json`.
 
 ## Usage
 

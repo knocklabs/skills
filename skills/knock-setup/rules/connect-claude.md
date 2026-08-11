@@ -32,7 +32,7 @@ Prerequisite: step 1 (Confirm Knock account) must already be asked and answered 
    - Click **Add**, then click **Connect** on the Knock connector and sign in with their Knock account.
    - On Team or Enterprise plans, an Owner may need to add the connector under **Admin settings → Connectors** first; members then connect it from **Settings → Connectors**.
    - End with this as the last line, bolded: **Tell me when the Knock connector is connected.**
-3. **Auth checkpoint (required — do not skip).** Once the user says it's connected, call a Knock MCP tool once — prefer `list_environments`, or `execute_mapi` with `GET /v1/whoami` — and wait for success.
+3. **Auth checkpoint (required — do not skip).** Once the user says it's connected, call a Knock MCP tool once — prefer `list_environments`, or `execute_mapi_read` with `GET /v1/whoami` — and wait for success.
    - If Knock tools are unavailable or the call fails, ask the user (one short line) to confirm the connector shows as connected in **Settings → Connectors** and is enabled for this chat, then retry the same tool call. Do not loop more than twice — stop and report what failed.
 4. Only after step 3 succeeds: say setup is done (one short line) and continue to `discover-workflows`. Do not summarize or list installed tools/skills.
 

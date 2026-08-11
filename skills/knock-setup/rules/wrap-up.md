@@ -24,7 +24,7 @@ Pick one of the workflows that was built (prefer an API-triggerable one with an 
 
 Resolve email and name the same way on either path:
 
-1. Load whoami (MCP: `execute_mapi` `GET /v1/whoami`; CLI: `knock whoami`).
+1. Load whoami (MCP: `execute_mapi_read` `GET /v1/whoami`; CLI: `knock whoami`).
 2. If `user_email` is present → use it as the recipient email. Use `user_name` for the recipient name when present and non-blank; otherwise fall back to `"Test User"`.
 3. If `user_email` is null (service token auth) → ask for the email they used to sign up for Knock. End as the last line, bolded:
 

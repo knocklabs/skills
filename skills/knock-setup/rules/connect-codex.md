@@ -24,7 +24,7 @@ Prerequisite: step 1 (Confirm Knock account) must already be asked and answered 
 
 1. Add MCP: run `codex mcp add knock --url https://mcp.knock.app/mcp`. If `knock` already exists, leave it (do not remove other servers).
 2. Run: `npx skills add knocklabs/skills`
-3. **Auth checkpoint (required — do not skip).** Call a Knock MCP tool once to trigger OAuth — prefer `list_environments`, or `execute_mapi` with `GET /v1/whoami`. If no browser opens within about 10 seconds, run `codex mcp login knock`, or have the user open the authorization URL Codex printed. Codex may show a local "Authentication complete. You may close this window." page — that is expected; close it and return here.
+3. **Auth checkpoint (required — do not skip).** Call a Knock MCP tool once to trigger OAuth — prefer `list_environments`, or `execute_mapi_read` with `GET /v1/whoami`. If no browser opens within about 10 seconds, run `codex mcp login knock`, or have the user open the authorization URL Codex printed. Codex may show a local "Authentication complete. You may close this window." page — that is expected; close it and return here.
 4. Do **not** discover, propose, or build workflows in this task. Auth that completes mid-task does not attach Knock tools here — continue with the handoff below (do not re-add the server in a loop).
 
 For users without an account, OAuth sign-in doubles as signup: they'll create their account, complete onboarding, and be redirected back automatically. If the redirect doesn't complete (e.g. they land on the dashboard instead), have them finish signup there, then retry the Knock tool call (or `codex mcp login knock`) to re-trigger OAuth.
