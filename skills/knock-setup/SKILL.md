@@ -66,6 +66,5 @@ Use these when preparing for production or when the user asks — they are optio
 
 - MCP server URL: `https://mcp.knock.app/mcp`
 - Knock CLI: install with `npm install -g @knocklabs/cli`, auth with `knock login` ([docs](https://docs.knock.app/cli/overview))
-- Install plugin (skills + MCP): `npx plugins add knocklabs/skills`
-- Install skills only: `npx skills add knocklabs/skills`
+- Install open-source skills: `npx skills add knocklabs/skills`
 - Prefer Knock MCP tools (or Knock CLI commands on the CLI path) for workflow, step, and template creation after tooling is connected
