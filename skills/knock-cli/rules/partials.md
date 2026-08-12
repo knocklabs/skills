@@ -96,11 +96,15 @@ Each field has:
 | `textarea` | Multi-line plain text | `required`, `default`, `description`, `min_length`, `max_length` |
 | `markdown` | Markdown editor (rendered as HTML) | `required`, `default`, `description` |
 | `boolean` | Checkbox (true/false) | `required`, `default`, `description` |
+| `number` | Numeric input with optional bounds | `required`, `default`, `description`, `placeholder`, `min`, `max`, `unit_label` |
+| `color` | Hex color input (`#RGB` / `#RRGGBB`), or a branding variable reference | `required`, `default`, `description`, `placeholder` |
 | `select` | Single-select from options | `required`, `default`, `description`, `options` (array of `{ label, value }`) |
 | `multi_select` | Multi-select from options | `required`, `default`, `description`, `options` |
 | `url` | URL field | `required`, `default`, `description` |
 | `button` | Button with `text` and `action` subfields | `required`, `text`, `action` (each with `key`, `label`, `settings`) |
 | `image` | Image with `url`, `alt`, `action` subfields | `required`, `url`, `alt`, `action` |
+| `json` | JSON input with optional JSON Schema validation | `required`, `default`, `description`, `schema` |
+| `list` | List of items, each optionally validated by a JSON Schema | `required`, `default`, `description`, `item_schema` |
 
 ### input_schema example
 
@@ -254,7 +258,26 @@ In your partial content, reference them by key:
 </table>
 ```
 
-Partials can also use workflow context: `data`, `vars`, `recipient`, `actor`, `tenant`. Use `data.` for trigger payload values, not `vars.`.
+### Partials render in an isolated scope
+
+Partial content does **not** inherit the surrounding template's context. `data`, `recipient`, `actor`, and `tenant` are not available inside a partial — referencing them renders empty.
+
+Only two things resolve inside a partial:
+
+1. The arguments explicitly passed on the render tag (or, for visual blocks, the `input_schema` values the editor filled in).
+2. `vars` — environment variables, which the renderer always injects.
+
+To use workflow context, pass it in as a named argument:
+
+```liquid
+{% render 'callout-card', recipient_name: recipient.name, order_id: data.order_id %}
+```
+
+Then reference it by the argument name in the partial content:
+
+```liquid
+<p>Hi {{ recipient_name }}, order {{ order_id }} is on its way.</p>
+```
 
 ## Key gotchas
 

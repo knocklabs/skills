@@ -26,7 +26,7 @@ Many Knock CLI commands display interactive confirmation prompts that require us
 | Command | Prompt | When |
 |---------|--------|------|
 | `knock workflow pull <key>` | `Create a new workflow directory? (y/N)` | When the local directory doesn't exist yet |
-| `knock email-layout pull <key>` | `Create a new email layout directory? (y/N)` | When the local directory doesn't exist yet |
+| `knock layout pull <key>` | `Create a new email layout directory? (y/N)` | When the local directory doesn't exist yet |
 | `knock guide pull <key>` | `Create a new guide directory? (y/N)` | When the local directory doesn't exist yet |
 | `knock message-type pull <key>` | `Create a new message type directory? (y/N)` | When the local directory doesn't exist yet |
 | `knock partial pull <key>` | `Create a new partial directory? (y/N)` | When the local directory doesn't exist yet |
@@ -80,7 +80,7 @@ The Knock CLI manages several resource types:
 | Resource | Description | Command prefix |
 |----------|-------------|----------------|
 | `workflow` | Notification workflows | `knock workflow` |
-| `email-layout` | Email layout templates | `knock email-layout` |
+| `layout` | Email layout templates | `knock layout` |
 | `guide` | In-app guides (lifecycle messaging) | `knock guide` |
 | `message-type` | Message type schemas for guides | `knock message-type` |
 | `channel` | Notification channels | `knock channel` |
@@ -122,7 +122,7 @@ Pull only specific resource types:
 knock workflow pull --all --force
 
 # Pull only email layouts
-knock email-layout pull --all --force
+knock layout pull --all --force
 
 # Pull only translations
 knock translation pull --all --force
@@ -143,14 +143,14 @@ Pull a single resource by its key:
 knock workflow pull <workflow-key> --force
 
 # Pull a specific email layout
-knock email-layout pull <layout-key> --force
+knock layout pull <layout-key> --force
 ```
 
 **Example:**
 
 ```bash
 knock workflow pull order-confirmation --force
-knock email-layout pull default --force
+knock layout pull default --force
 ```
 
 **Note:** If the local directory already exists, pull commands update in place without prompting. The `--force` flag is only needed for the first pull of a given resource, but is safe to always include.
@@ -185,7 +185,7 @@ Push only specific resource types:
 knock workflow push --all
 
 # Push only email layouts
-knock email-layout push --all
+knock layout push --all
 
 # Push only translations
 knock translation push --all
@@ -206,14 +206,14 @@ Push a single resource by its key (the directory name):
 knock workflow push <workflow-key>
 
 # Push a specific email layout
-knock email-layout push <layout-key>
+knock layout push <layout-key>
 ```
 
 **Example:**
 
 ```bash
 knock workflow push order-confirmation
-knock email-layout push default
+knock layout push default
 ```
 
 ### Push options
@@ -283,27 +283,27 @@ knock workflow run <workflow-key> \
 ### List email layouts
 
 ```bash
-knock email-layout list
+knock layout list
 ```
 
 ### Pull email layout
 
 ```bash
 # Pull all layouts
-knock email-layout pull --all --force
+knock layout pull --all --force
 
 # Pull specific layout
-knock email-layout pull <layout-key> --force
+knock layout pull <layout-key> --force
 ```
 
 ### Push email layout
 
 ```bash
 # Push all layouts
-knock email-layout push --all
+knock layout push --all
 
 # Push specific layout
-knock email-layout push <layout-key>
+knock layout push <layout-key>
 ```
 
 ## Guide commands
@@ -570,7 +570,7 @@ Before creating workflows that use channels or layouts, discover the project's c
 knock channel list
 
 # List available email layout keys (use these for layout_key in template settings)
-knock email-layout list
+knock layout list
 ```
 
 Before creating guides, discover available message types:
