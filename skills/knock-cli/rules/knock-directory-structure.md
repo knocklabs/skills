@@ -250,7 +250,7 @@ This key is used in CLI commands:
 
 ```bash
 knock workflow push order-confirmation
-knock email-layout push default
+knock layout push default
 knock guide push welcome-modal
 knock message-type push banner
 ```

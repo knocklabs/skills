@@ -40,7 +40,7 @@ cat knock/workflows/my-workflow/workflow.json
 knock workflow push <workflow-key>
 
 # After modifying other resources
-knock email-layout push <layout-key>
+knock layout push <layout-key>
 knock partial push <partial-key>
 knock push --all   # Push everything
 ```
@@ -126,7 +126,7 @@ workflows/my-workflow/
 | `divider` | Horizontal divider |
 | `image` | Image block |
 | `html` | Raw HTML block |
-| `row` | Multi-column row |
+| `partial` | Reusable partial rendered inline (see `partials.md`) |
 
 ### Button_set: variant requirement
 

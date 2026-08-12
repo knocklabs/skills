@@ -114,7 +114,7 @@ knock push --all
 knock workflow push <workflow-key>
 
 # Push a specific email layout
-knock email-layout push <layout-key>
+knock layout push <layout-key>
 
 # List channels (discover valid channel_key values before creating workflows)
 knock channel list
