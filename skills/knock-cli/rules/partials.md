@@ -10,7 +10,7 @@ tags:
   - visual-blocks
   - templates
 category: knock-cli
-last_updated: 2026-02-16
+last_updated: 2026-08-12
 ---
 
 # Partials
