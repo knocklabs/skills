@@ -1,7 +1,7 @@
 {
   "name": "knock",
-  "version": "1.1.0",
-  "description": "Skills and MCP tools for building notifications with Knock",
+  "version": "1.2.0",
+  "description": "Connect to Knock — ship notifications and manage customer engagement workflows — via Knock's official remote MCP server.",
   "author": {
     "name": "Knock Labs",
     "email": "support@knock.app",
@@ -29,8 +29,8 @@
   },
   "interface": {
     "displayName": "Knock",
-    "shortDescription": "Build and manage notifications with Knock",
-    "longDescription": "Skills and MCP tools for designing notification workflows, writing channel copy, and managing Knock resources from ChatGPT and Codex.",
+    "shortDescription": "Ship notifications and manage engagement workflows with Knock",
+    "longDescription": "Connect to Knock's official remote MCP server to ship notifications and manage customer engagement workflows. Includes agent skills for notification design, setup, and Knock CLI workflows in ChatGPT and Codex.",
     "developerName": "Knock Labs",
     "category": "Developer Tools",
     "capabilities": ["Read", "Write"],

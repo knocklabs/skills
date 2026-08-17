@@ -1,12 +1,13 @@
 {
   "name": "knock",
-  "version": "1.1.0",
-  "description": "Skills and MCP tools for building notifications with Knock",
+  "displayName": "Knock",
+  "version": "1.2.0",
+  "description": "Connect to Knock — ship notifications and manage customer engagement workflows — via Knock's official remote MCP server.",
   "author": {
     "name": "Knock Labs",
     "email": "support@knock.app"
   },
-  "homepage": "https://knock.app",
+  "homepage": "https://docs.knock.app/ai/mcp-server",
   "repository": "https://github.com/knocklabs/skills",
   "license": "MIT",
   "keywords": [
@@ -16,8 +17,18 @@
     "sms",
     "push",
     "in-app",
+    "workflows",
+    "engagement",
     "marketing",
     "mcp"
+  ],
+  "category": "integrations",
+  "tags": [
+    "knock",
+    "notifications",
+    "mcp",
+    "engagement",
+    "workflows"
   ],
   "logo": "assets/logo.svg",
   "mcpServers": "./mcp.json"
