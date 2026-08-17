@@ -1,0 +1,17 @@
+{
+  "name": "knock",
+  "owner": {
+    "name": "Knock Labs",
+    "email": "support@knock.app"
+  },
+  "metadata": {
+    "description": "Skills and MCP tools for building notifications with Knock"
+  },
+  "plugins": [
+    {
+      "name": "knock",
+      "source": "./",
+      "description": "Connect to Knock to ship notifications and manage customer engagement workflows via Knock's official remote MCP server."
+    }
+  ]
+}

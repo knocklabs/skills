@@ -129,6 +129,8 @@ Scan product code for activation, engagement, expansion, and churn signals; reco
 
 ### Cursor
 
+Install from the Cursor Marketplace (once listed), or:
+
 ```bash
 npx skills add knocklabs/skills
 ```

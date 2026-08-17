@@ -5,7 +5,8 @@
   "description": "Connect to Knock to ship notifications and manage customer engagement workflows via Knock's official remote MCP server.",
   "author": {
     "name": "Knock Labs",
-    "email": "support@knock.app"
+    "email": "support@knock.app",
+    "url": "https://knock.app"
   },
   "homepage": "https://knock.app",
   "repository": "https://github.com/knocklabs/skills",
