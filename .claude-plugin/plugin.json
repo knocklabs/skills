@@ -1,7 +1,7 @@
 {
   "name": "knock",
   "version": "1.1.0",
-  "description": "Skills and MCP tools for building notifications with Knock",
+  "description": "Connect to Knock to ship notifications and manage customer engagement workflows via Knock's official remote MCP server.",
   "author": {
     "name": "Knock Labs",
     "email": "support@knock.app"
