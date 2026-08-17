@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "knock",
   "version": "1.2.0",
-  "description": "Connect to Knock — ship notifications and manage customer engagement workflows — via Knock's official remote MCP server.",
+  "description": "Connect to Knock to ship notifications and manage customer engagement workflows via Knock's official remote MCP server.",
   "author": {
     "name": "Knock Labs",
     "email": "support@knock.app",
