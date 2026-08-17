@@ -10,7 +10,7 @@ tags:
   - workflow
   - resources
 category: knock-cli
-last_updated: 2026-02-01
+last_updated: 2026-08-12
 ---
 
 # CLI commands reference
