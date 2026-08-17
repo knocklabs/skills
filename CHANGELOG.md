@@ -3,9 +3,9 @@
 ## 1.2.0
 
 - Align Cursor plugin packaging with marketplace integration peers (`displayName`, `category`, `tags`)
-- Match MCP config shape used by approved Cursor plugins (`type: "http"`)
 - Update plugin description to the Connect to Knock / official remote MCP pattern
 - Add white-background logo plate for marketplace display
+- Keep Agent Plugins MCP config (`type: "streamable-http"` with schema)
 - Expand README with MCP connection details while keeping skills-first install docs
 
 ## 1.1.0

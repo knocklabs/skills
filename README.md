@@ -158,7 +158,7 @@ This repo also includes Agent Plugins / IDE plugin manifests (`.cursor-plugin`, 
 {
   "mcpServers": {
     "knock": {
-      "type": "http",
+      "type": "streamable-http",
       "url": "https://mcp.knock.app/mcp"
     }
   }
