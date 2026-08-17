@@ -1,0 +1,49 @@
+{
+  "name": "knock",
+  "version": "1.1.0",
+  "description": "Skills and MCP tools for building notifications with Knock",
+  "author": {
+    "name": "Knock Labs",
+    "email": "support@knock.app",
+    "url": "https://knock.app"
+  },
+  "homepage": "https://knock.app",
+  "repository": "https://github.com/knocklabs/skills",
+  "license": "MIT",
+  "keywords": [
+    "knock",
+    "notifications",
+    "email",
+    "sms",
+    "push",
+    "in-app",
+    "marketing",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "mcpServers": {
+    "knock": {
+      "type": "http",
+      "url": "https://mcp.knock.app/mcp"
+    }
+  },
+  "interface": {
+    "displayName": "Knock",
+    "shortDescription": "Build and manage notifications with Knock",
+    "longDescription": "Skills and MCP tools for designing notification workflows, writing channel copy, and managing Knock resources from ChatGPT and Codex.",
+    "developerName": "Knock Labs",
+    "category": "Developer Tools",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://knock.app",
+    "privacyPolicyURL": "https://knock.app/legal/privacy-policy",
+    "termsOfServiceURL": "https://knock.app/legal/terms-of-service",
+    "defaultPrompt": [
+      "Help me set up Knock for notifications in this app",
+      "Draft a welcome email and map it to a Knock workflow",
+      "Review this notification template for best practices"
+    ],
+    "brandColor": "#000000",
+    "composerIcon": "./assets/logo.svg",
+    "logo": "./assets/logo.svg"
+  }
+}
