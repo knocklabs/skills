@@ -1,76 +1,12 @@
-# Knock
+# Knock skills
 
-Cursor plugin that connects agents to [Knock](https://knock.app) through Knock's official remote [Model Context Protocol](https://modelcontextprotocol.io/) server.
+![Knock Skills](header.png)
 
-Ship notifications and manage customer engagement workflows in the signed-in Knock account. This plugin also includes Knock agent skills for notification design, setup, in-app UI, CLI workflows, messaging strategy, migration, and lifecycle opportunities.
+A collection of skills for AI coding agents working with Knock. Skills are packaged instructions and rules that extend agent capabilities for notification design, copy writing, and Knock CLI workflows.
+
+This repository is also packaged as a plugin that connects agents to Knock through Knock's official remote [MCP](https://modelcontextprotocol.io/) server at `https://mcp.knock.app/mcp`.
 
 Skills follow the [Agent Skills](https://agentskills.io/) format.
-
-## Install
-
-### Cursor
-
-After Knock is listed on the Cursor Marketplace:
-
-1. Open **Cursor Settings → Plugins**.
-2. Search for **Knock**.
-3. Click **Install**, then complete the Knock sign-in prompt.
-
-Or run `/add-plugin knock` in chat.
-
-Until the marketplace listing is live, load the plugin locally:
-
-```bash
-ln -s /path/to/knocklabs/skills ~/.cursor/plugins/local/knock
-```
-
-Then reload Cursor and complete the Knock OAuth prompt when the MCP server connects.
-
-You can also install skills only with:
-
-```bash
-npx skills add knocklabs/skills
-```
-
-### Claude Code
-
-Clone the repository and load it as a plugin:
-
-```bash
-git clone https://github.com/knocklabs/skills
-claude --plugin-dir ./skills
-```
-
-This loads both the skills and the Knock MCP server.
-
-## MCP
-
-```json
-{
-  "mcpServers": {
-    "knock": {
-      "type": "http",
-      "url": "https://mcp.knock.app/mcp"
-    }
-  }
-}
-```
-
-Auth is OAuth 2.0 against Knock with Dynamic Client Registration (DCR) and PKCE. Cursor registers itself and prompts for Knock sign-in when the plugin connects. There is no API key or client ID to configure for the default remote MCP flow.
-
-## Notes
-
-- Tool calls run as the Knock user who authorizes the connection and cannot exceed that user's permissions.
-- Prefer the hosted Knock agent tools for creating or updating workflows, broadcasts, guides, email layouts, partials, and translations.
-- Use Management API code-mode tools (`search_mapi`, `execute_mapi_read`, `execute_mapi_write`) for specific API calls.
-
-## Docs
-
-- Knock MCP server: https://docs.knock.app/ai/mcp-server
-- Knock skills: https://docs.knock.app/ai/skills
-- Server URL: https://mcp.knock.app/mcp
-
-Logo is Knock's brand mark on a white tile (1:1), matching the marketplace logotype guidance.
 
 ## Available skills
 
@@ -191,9 +127,53 @@ Scan product code for activation, engagement, expansion, and churn signals; reco
 - Opportunity prioritization by growth impact
 - Opportunity brief format and setup handoff
 
+## Installation
+
+### Skills
+
+```bash
+npx skills add knocklabs/skills
+```
+
+Or reference skills directly by path when configuring your agent.
+
+### Claude Code
+
+Clone the repository and load it as a plugin:
+
+```bash
+git clone https://github.com/knocklabs/skills
+claude --plugin-dir ./skills
+```
+
+This loads both the skills and the Knock MCP server.
+
+### Plugin manifests
+
+This repo also includes Agent Plugins / IDE plugin manifests (`.cursor-plugin`, `.claude-plugin`, `.codex-plugin`) so coding agents can discover skills and the Knock MCP server together. See the [Knock MCP server docs](https://docs.knock.app/ai/mcp-server) for client-specific connection steps.
+
+## MCP
+
+```json
+{
+  "mcpServers": {
+    "knock": {
+      "type": "http",
+      "url": "https://mcp.knock.app/mcp"
+    }
+  }
+}
+```
+
+Auth uses OAuth 2.0 with Dynamic Client Registration (DCR) and PKCE. Compatible clients prompt for Knock sign-in when the server connects. There is no API key required for the default remote MCP flow.
+
+Tool calls run as the Knock user who authorizes the connection. Prefer the hosted Knock agent tools for creating or updating workflows, broadcasts, guides, email layouts, partials, and translations. Use Management API code-mode tools (`search_mapi`, `execute_mapi_read`, `execute_mapi_write`) for specific API calls.
+
+Docs: [MCP server](https://docs.knock.app/ai/mcp-server) · [Skills](https://docs.knock.app/ai/skills)
+
 ## Usage
 
-Skills are available once the plugin is installed. The agent will use them when relevant tasks are detected.
+Skills are automatically available once installed. The agent will use them when relevant tasks are detected.
 
 **Examples:**
 ```

@@ -6,7 +6,7 @@
 - Match MCP config shape used by approved Cursor plugins (`type: "http"`)
 - Update plugin description to the Connect to Knock / official remote MCP pattern
 - Add white-background logo plate for marketplace display
-- Expand README with Cursor install, MCP, OAuth setup, and docs sections
+- Expand README with MCP connection details while keeping skills-first install docs
 
 ## 1.1.0
 
