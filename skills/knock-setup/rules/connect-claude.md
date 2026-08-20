@@ -1,6 +1,6 @@
 ---
 title: Connect Knock in Claude
-description: Route Claude sessions — Cowork and Desktop add Knock from the connectors directory, Claude Code uses the Knock CLI
+description: Route Claude sessions — the app adds Knock from the connectors directory, Claude Code uses the Knock CLI
 tags:
   - setup
   - mcp
@@ -15,17 +15,17 @@ last_updated: 2026-08-20
 Use this rule for anything Claude. First determine which surface you are on — do not skip this check:
 
 - **Claude Code** — a terminal agent launched with the `claude` command. If you have a shell tool, run `echo $CLAUDECODE`; if it prints `1`, you are Claude Code. → Stop here and follow `rules/connect-knock-cli.md` (Knock CLI, not MCP). Do not use the connector steps below and do not run `claude mcp add`.
-- **Claude Cowork, Claude Desktop, or claude.ai** — you either have no shell tool at all, or the env check above does not print `1`. → Continue with the connector path below.
-- If you still cannot tell, ask the user in one line: are they in Claude Cowork / Desktop / claude.ai, or in Claude Code in a terminal?
+- **Claude app** — the web or desktop chat. You either have no shell tool at all, or the env check above does not print `1`. → Continue with the connector path below.
+- If you still cannot tell, ask the user in one line: are they in the Claude app or in Claude Code in a terminal?
 
-## Connector path (Claude Cowork, Desktop, and claude.ai)
+## Connector path (Claude app)
 
 Claude connects to Knock through the **community connector**. You cannot connect it for them. Give them the directory link and tell them to click **Connect** in the top right. Do not send them to settings or a custom connector URL. Do not paste `https://mcp.knock.app/mcp`.
 
-Prerequisite: step 1 (Confirm Knock account) must already be asked and answered in this conversation. If it hasn't been, stop and ask before continuing — do not give the connector prompt or start OAuth.
+Prerequisite: step 1 (Confirm Knock account) must already be asked and answered in this conversation. If it hasn't been, stop and ask before continuing — do not give connector instructions or start OAuth.
 
 1. If you have shell access in this session, run `npx skills add knocklabs/skills`. If not, skip this step.
-2. Give the user the connector prompt (this message is an allowed exception to the one-line rule — keep it to these steps):
+2. Give the user the connector instructions (this message is an allowed exception to the one-line rule — keep it to these steps):
    - Use the Knock community connector: https://claude.ai/directory/knock
    - Tell them to click the link, then click **Connect** in the top right and sign in with their Knock account. The flow continues here after.
    - End with this as the last line, bolded: **Click the link, then Connect in the top right.**
