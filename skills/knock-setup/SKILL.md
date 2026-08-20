@@ -7,7 +7,7 @@ description: Connect Knock to your coding agent, discover and build notification
 
 End-to-end Knock setup for a coding agent: connect tooling, design and build notification workflows, then wire them into the application. Work through the rules below in order.
 
-While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the opening encouragement + account ask (step 1), the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, the wrap-up signup-email ask (only when whoami has no email), the final wrap-up output, the Codex MCP handoff in `rules/connect-codex.md`, and the Claude connector instructions in `rules/connect-claude.md` (settings steps + connected ask), which have their own formats. When you end with a confirmation question (account, workflows, implementation, import-users id, wrap-up signup email, or wrap-up guides ask), that question must be the very last line of the message, on its own, and bolded.
+While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the opening encouragement + account ask (step 1), the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, the wrap-up signup-email ask (only when whoami has no email), the final wrap-up output, the Codex MCP handoff in `rules/connect-codex.md`, and the Claude connector instructions in `rules/connect-claude.md` (directory link + connected ask), which have their own formats. When you end with a confirmation question (account, workflows, implementation, import-users id, wrap-up signup email, or wrap-up guides ask), that question must be the very last line of the message, on its own, and bolded.
 
 ## How to use this skill
 
@@ -21,7 +21,7 @@ While working, keep every response to one short line — no summaries, no menus,
 2. **Connect Knock tooling for the current tool** (hard gate — do not discover, propose, or build workflows until a Knock MCP tool call, or `knock whoami` on the CLI path, has succeeded)
    - Route by tool family, then follow the **surface check at the top of that rule** (app vs CLI) — do not pick a path from this list alone:
      - **Cursor** (editor or Cursor CLI) → `rules/connect-cursor.md` — editor uses MCP; Cursor CLI is routed to `rules/connect-knock-cli.md`
-     - **Claude** (app or Claude Code) → `rules/connect-claude.md` — app adds Knock as a custom connector (give the user the settings instructions and wait); Claude Code is routed to `rules/connect-knock-cli.md`
+     - **Claude** (app or Claude Code) → `rules/connect-claude.md` — app adds Knock from the connectors directory (give the user the directory link and wait); Claude Code is routed to `rules/connect-knock-cli.md`
      - **Codex** (IDE/app or Codex CLI) → `rules/connect-codex.md` — IDE/app uses MCP + new-task handoff; Codex CLI is routed to `rules/connect-knock-cli.md`
      - **Any other terminal/CLI agent** → `rules/connect-knock-cli.md` — install the Knock CLI and auth with `knock login`
    - If the tool is unknown, ask which one, then follow the matching rule.
@@ -52,7 +52,7 @@ Use these when preparing for production or when the user asks — they are optio
 ## Rule files reference
 
 - `rules/connect-cursor.md` — Cursor: surface check, then editor MCP + skills install (Cursor CLI routes to `connect-knock-cli.md`)
-- `rules/connect-claude.md` — Claude: surface check, then app custom connector (Claude Code routes to `connect-knock-cli.md`)
+- `rules/connect-claude.md` — Claude: surface check, then app directory connector (Claude Code routes to `connect-knock-cli.md`)
 - `rules/connect-codex.md` — Codex: surface check, then IDE/app MCP + new-task handoff (Codex CLI routes to `connect-knock-cli.md`)
 - `rules/connect-knock-cli.md` — shared Knock CLI path: install + `knock login` auth for CLI-based tools
 - `rules/discover-workflows.md` — Product discovery and workflow proposals
