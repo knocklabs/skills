@@ -20,15 +20,14 @@ Use this rule for anything Claude. First determine which surface you are on — 
 
 ## Connector path (Claude Cowork, Desktop, and claude.ai)
 
-Claude connects to Knock through the **community connector**. You cannot click Connect for them. Including the exact sentence below makes a **Connect** button appear in this chat. Do not send them to the directory, settings, or a custom connector URL. Do not paste `https://mcp.knock.app/mcp`.
+Claude connects to Knock through the **community connector**. You cannot click Connect for them. Use the connector with the directory link so a **Connect** button appears in this chat. Do not send them to settings or a custom connector URL. Do not paste `https://mcp.knock.app/mcp`.
 
 Prerequisite: step 1 (Confirm Knock account) must already be asked and answered in this conversation. If it hasn't been, stop and ask before continuing — do not give the connector prompt or start OAuth.
 
 1. If you have shell access in this session, run `npx skills add knocklabs/skills`. If not, skip this step.
 2. Give the user the connector prompt (this message is an allowed exception to the one-line rule — keep it to these steps):
-   - Include this sentence **verbatim** (required — do not paraphrase, or the Connect button will not appear):
-     `Connect to Knock using community connector https://claude.ai/directory/knock`
-   - Tell them a **Connect** button should appear. They click it, sign in with their Knock account, and the flow continues here after.
+   - Use the Knock community connector: https://claude.ai/directory/knock
+   - A **Connect** button should appear. They click it, sign in with their Knock account, and the flow continues here after.
    - End with this as the last line, bolded: **Click Connect to continue.**
 3. **Auth checkpoint (required — do not skip).** Once the user has clicked Connect and returned, call a Knock MCP tool once — prefer `list_environments`, or `execute_mapi_read` with `GET /v1/whoami` — and wait for success.
    - If Knock tools are unavailable or the call fails, ask the user (one short line) to click **Connect** again if the button is still showing, then retry the same tool call. Do not loop more than twice — stop and report what failed.
