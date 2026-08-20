@@ -29,7 +29,7 @@ Prerequisite: step 1 (Confirm Knock account) must already be asked and answered 
 
    ```
    1. Add Knock connector here: https://claude.ai/directory/knock
-   2. Click Connect and follow the instructions there
+   2. Click Connect and follow the instructions
    3. Return here after complete
    ```
 3. **Auth checkpoint (required — do not skip).** Once the user has returned, call a Knock MCP tool once — prefer `list_environments`, or `execute_mapi_read` with `GET /v1/whoami` — and wait for success.
