@@ -24,7 +24,7 @@ While working, keep every response to one short line — no summaries, no menus,
      - **Cursor** (editor or Cursor CLI) → `rules/connect-cursor.md` — editor uses MCP; Cursor CLI is routed to `rules/connect-knock-cli.md`
      - **Claude** (app or Claude Code) → `rules/connect-claude.md` — app adds Knock from the connectors directory (give the user the directory link and wait); Claude Code is routed to `rules/connect-knock-cli.md`
      - **Codex** (IDE/app or Codex CLI) → `rules/connect-codex.md` — IDE/app uses MCP + new-task handoff; Codex CLI is routed to `rules/connect-knock-cli.md`
-     - **Grok Bot** (desktop or iOS teammate) → `rules/connect-grok-bot.md` — intro as a marketing engineer teammate, then the MCP connect line. Not Cursor editor; not the Knock CLI path.
+     - **Grok Bot** (desktop or iOS teammate) → `rules/connect-grok-bot.md` — intro as a marketing engineer teammate, then affirm and connect via MCP. Not Cursor editor; not the Knock CLI path.
      - **Any other terminal/CLI agent** → `rules/connect-knock-cli.md` — install the Knock CLI and auth with `knock login`
    - If the tool is unknown, ask which one, then follow the matching rule.
    - On the Knock CLI path, do **not** set up MCP at any point in this skill — no `claude mcp add`, no `codex mcp add`, no `mcp.json` edits, no connector ask. Use `knock` CLI equivalents wherever later steps mention Knock MCP tools.

@@ -42,13 +42,11 @@ Wait for their answer, then continue to connect. Remember what they said so you 
 
 ## 2. Connect
 
-Do not pitch Knock. If Knock MCP tools are already available, skip to **Route**.
+Affirm that you can help. If Knock MCP tools are already available, skip to **Route**.
 
-Otherwise output only this line, nothing else:
+Otherwise connect to Knock via MCP https://mcp.knock.app/mcp
 
-Connect to Knock via MCP https://mcp.knock.app/mcp
-
-Then call a Knock MCP tool once — prefer `list_environments`, or `execute_mapi_read` with `GET /v1/whoami` — and wait for success. If it fails, say the same line once more and retry. Do not loop more than twice. Do not add UI instructions.
+Then call a Knock MCP tool once — prefer `list_environments`, or `execute_mapi_read` with `GET /v1/whoami` — and wait for success. If it fails, retry the Knock MCP connect once more. Do not loop more than twice. Do not add UI instructions.
 
 After success, continue to **Route**. Do not start `discover-workflows` yet.
 
