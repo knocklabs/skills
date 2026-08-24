@@ -7,7 +7,7 @@ description: Connect Knock to your coding agent, discover and build notification
 
 End-to-end Knock setup for a coding agent: connect tooling, design and build notification workflows, then wire them into the application. Work through the rules below in order.
 
-While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the opening encouragement + account ask (step 1), the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, the wrap-up signup-email ask (only when whoami has no email), the final wrap-up output, the Codex MCP handoff in `rules/connect-codex.md`, the Claude connector instructions in `rules/connect-claude.md` (directory link + connected ask), and the Grok Bot plugin instructions + surface-area ask in `rules/connect-grok-bot.md`, which have their own formats. When you end with a confirmation question (account, workflows, implementation, import-users id, wrap-up signup email, wrap-up guides ask, or Grok Bot surface area), that question must be the very last line of the message, on its own, and bolded.
+While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the opening encouragement + account ask (step 1), the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, the wrap-up signup-email ask (only when whoami has no email), the final wrap-up output, the Codex MCP handoff in `rules/connect-codex.md`, the Claude connector instructions in `rules/connect-claude.md` (directory link + connected ask), and the Grok Bot MCP connect line + surface-area ask in `rules/connect-grok-bot.md`, which have their own formats. When you end with a confirmation question (account, workflows, implementation, import-users id, wrap-up signup email, wrap-up guides ask, or Grok Bot surface area), that question must be the very last line of the message, on its own, and bolded.
 
 ## How to use this skill
 
@@ -25,7 +25,7 @@ While working, keep every response to one short line — no summaries, no menus,
      - **Cursor** (editor or Cursor CLI) → `rules/connect-cursor.md` — editor uses MCP; Cursor CLI is routed to `rules/connect-knock-cli.md`
      - **Claude** (app or Claude Code) → `rules/connect-claude.md` — app adds Knock from the connectors directory (give the user the directory link and wait); Claude Code is routed to `rules/connect-knock-cli.md`
      - **Codex** (IDE/app or Codex CLI) → `rules/connect-codex.md` — IDE/app uses MCP + new-task handoff; Codex CLI is routed to `rules/connect-knock-cli.md`
-     - **Grok Bot** (desktop or iOS teammate) → `rules/connect-grok-bot.md` — Plugins connector + marketing-engineer surface-area ask. Not Cursor editor; not the Knock CLI path.
+     - **Grok Bot** (desktop or iOS teammate) → `rules/connect-grok-bot.md` — say the Knock MCP URL to start connect, then marketing-engineer surface-area ask. Not Cursor editor; not the Knock CLI path.
      - **Any other terminal/CLI agent** → `rules/connect-knock-cli.md` — install the Knock CLI and auth with `knock login`
    - If the tool is unknown, ask which one, then follow the matching rule.
    - On the Knock CLI path, do **not** set up MCP at any point in this skill — no `claude mcp add`, no `codex mcp add`, no `mcp.json` edits, no connector ask. Use `knock` CLI equivalents wherever later steps mention Knock MCP tools.
@@ -60,7 +60,7 @@ Use these when preparing for production or when the user asks — they are optio
 - `rules/connect-cursor.md` — Cursor: surface check, then editor MCP + skills install (Cursor CLI routes to `connect-knock-cli.md`)
 - `rules/connect-claude.md` — Claude: surface check, then app directory connector (Claude Code routes to `connect-knock-cli.md`)
 - `rules/connect-codex.md` — Codex: surface check, then IDE/app MCP + new-task handoff (Codex CLI routes to `connect-knock-cli.md`)
-- `rules/connect-grok-bot.md` — Grok Bot: Plugins connector, then marketing-engineer surface-area ask
+- `rules/connect-grok-bot.md` — Grok Bot: MCP URL connect line, then marketing-engineer surface-area ask
 - `rules/connect-knock-cli.md` — shared Knock CLI path: install + `knock login` auth for CLI-based tools
 - `rules/discover-workflows.md` — Product discovery and workflow proposals
 - `rules/build-workflows.md` — Build confirmed workflows with Knock MCP

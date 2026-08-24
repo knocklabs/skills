@@ -1,6 +1,6 @@
 ---
 title: Connect Knock in Grok Bot
-description: Route Grok Bot sessions — add Knock as a Plugins connector, then ask what marketing surface to work on
+description: Route Grok Bot sessions — connect Knock MCP, then ask what marketing surface to work on
 tags:
   - setup
   - mcp
@@ -21,30 +21,23 @@ Treat this as Grok Bot when any of the following is true:
 
 If you still cannot tell, ask in one line: are they in Grok Bot or another tool?
 
-## Plugin path
+## Connect path
 
-Grok Bot connects to Knock through **Settings → Plugins**. You cannot write `~/.cursor/mcp.json` for them. Output the instruction block in step 2 and wait. Do not send them to grok.com/connectors.
+Saying the Knock MCP URL starts the connect flow. Do not add Settings → Plugins steps, catalog instructions, or `mcp.json` edits. Do not send them to grok.com/connectors.
 
-Prerequisite: step 1 (Confirm Knock account) must already be asked and answered in this conversation. If it hasn't been, stop and ask before continuing — do not give plugin instructions or start OAuth.
+Prerequisite: step 1 (Confirm Knock account) must already be asked and answered in this conversation. If it hasn't been, stop and ask before continuing — do not start OAuth.
 
 1. If Knock MCP tools are already available (shared Cursor auth counts), skip step 2 and go to the auth checkpoint.
-2. Give the user the plugin instructions (this message is an allowed exception to the one-line rule). Output only this, nothing else:
+2. Output only this line, nothing else:
 
-   ```
-   1. Open Settings → Plugins
-   2. Add a custom connector named knock
-   3. URL: https://mcp.knock.app/mcp
-   4. Complete Connect, then return here
-   ```
-
-   If Knock is already listed in the Plugins catalog, tell them to add Knock from there instead of the custom URL. Keep the custom URL as the fallback.
-3. **Auth checkpoint (required — do not skip).** Once the user has returned (or tools were already present), call a Knock MCP tool once — prefer `list_environments`, or `execute_mapi_read` with `GET /v1/whoami` — and wait for success.
-   - If no browser opens, or tools are unavailable, ask them (one short line) to open the Knock plugin and choose Authenticate / Connect, then return here, then retry the same tool call. Do not loop more than twice — stop and report what failed.
+   Connect to Knock via https://mcp.knock.app/mcp
+3. **Auth checkpoint (required — do not skip).** After that line (or if tools were already present), call a Knock MCP tool once — prefer `list_environments`, or `execute_mapi_read` with `GET /v1/whoami` — and wait for success.
+   - If no browser opens, or tools are unavailable, say the same connect line once more, then retry the same tool call. Do not loop more than twice — stop and report what failed. Do not add extra UI instructions.
 4. Only after step 3 succeeds: say Knock is connected (one short line) and continue to **Surface area** below. Do not summarize or list installed tools/skills. Do not start `discover-workflows` yet.
 
-Do not treat `npx skills add` as a gate. Skills and connectors on Grok Bot are enabled per Bot under Plugins. Installing skills on the cloud computer is optional after auth.
+Do not treat `npx skills add` as a gate.
 
-For users without an account, the plugin **Connect** sign-in doubles as signup: they'll create their account, complete onboarding, and be redirected back automatically. If the redirect doesn't complete (e.g. they land on the dashboard instead), have them finish signup there, then open the plugin again, click Connect, return here, and retry the Knock tool call.
+For users without an account, the connect sign-in doubles as signup: they'll create their account, complete onboarding, and be redirected back automatically. If the redirect doesn't complete (e.g. they land on the dashboard instead), have them finish signup there, then say the connect line again and retry the Knock tool call.
 
 **Hard gate:** the surface-area ask and every later step are blocked until a Knock MCP tool call has succeeded in this conversation.
 
