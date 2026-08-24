@@ -12,9 +12,8 @@ While working, keep every response to one short line — no summaries, no menus,
 ## How to use this skill
 
 1. **Open with encouragement, then confirm Knock account** (required first action — do this before anything else)
-   - **Opening (first message only).** Before the account ask, say a short word of encouragement (about 2–3 sentences). Keep it warm and plain — not a feature pitch, not a menu of next steps.
-     - **Most tools.** They are going to save a lot of time building notifications with Knock, this was a good call, and we will give it our best shot to get them set up as fast as possible.
-     - **Grok Bot.** You are a marketing engineer teammate. Say you will use Knock to help with engagement, notifications, and the messy middle between them; you will connect their account, then pick the highest-leverage place to start. Treat Grok Bot, a named teammate, **Agent Computer**, or a `/workspace` cloud computer as this path.
+   - **Grok Bot:** skip this step. Go straight to `rules/connect-grok-bot.md`.
+   - **Opening (first message only).** Before the account ask, say a short word of encouragement (about 2–3 sentences): they are going to save a lot of time building notifications with Knock, this was a good call, and we will give it our best shot to get them set up as fast as possible. Keep it warm and plain — not a feature pitch, not a menu of next steps.
    - **Default: always ask.** That same first message must then ask whether they have a Knock account. Do not add MCP, run OAuth, install skills, discover workflows, or call Knock tools until they answer.
    - **Skip only if** the user's message explicitly says they started from the Knock dashboard (e.g. pasted a dashboard setup prompt, or says "from the Knock dashboard"). MCP already configured, a prior chat, or guessing they might have an account does **not** count — still ask. Still include the opening encouragement in that first message.
    - If they say no: do **not** send them to the dashboard to sign up separately. Tell them in one line that they'll create their account during the sign-in step — signup, onboarding, and returning here all happen in that one browser flow — then continue to Connect Knock tooling.
@@ -25,7 +24,7 @@ While working, keep every response to one short line — no summaries, no menus,
      - **Cursor** (editor or Cursor CLI) → `rules/connect-cursor.md` — editor uses MCP; Cursor CLI is routed to `rules/connect-knock-cli.md`
      - **Claude** (app or Claude Code) → `rules/connect-claude.md` — app adds Knock from the connectors directory (give the user the directory link and wait); Claude Code is routed to `rules/connect-knock-cli.md`
      - **Codex** (IDE/app or Codex CLI) → `rules/connect-codex.md` — IDE/app uses MCP + new-task handoff; Codex CLI is routed to `rules/connect-knock-cli.md`
-     - **Grok Bot** (desktop or iOS teammate) → `rules/connect-grok-bot.md` — say the Knock MCP URL to start connect, then marketing-engineer surface-area ask. Not Cursor editor; not the Knock CLI path.
+     - **Grok Bot** (desktop or iOS teammate) → `rules/connect-grok-bot.md` — skip the account ask; connect with the MCP URL, then surface-area ask. Not Cursor editor; not the Knock CLI path.
      - **Any other terminal/CLI agent** → `rules/connect-knock-cli.md` — install the Knock CLI and auth with `knock login`
    - If the tool is unknown, ask which one, then follow the matching rule.
    - On the Knock CLI path, do **not** set up MCP at any point in this skill — no `claude mcp add`, no `codex mcp add`, no `mcp.json` edits, no connector ask. Use `knock` CLI equivalents wherever later steps mention Knock MCP tools.
@@ -60,7 +59,7 @@ Use these when preparing for production or when the user asks — they are optio
 - `rules/connect-cursor.md` — Cursor: surface check, then editor MCP + skills install (Cursor CLI routes to `connect-knock-cli.md`)
 - `rules/connect-claude.md` — Claude: surface check, then app directory connector (Claude Code routes to `connect-knock-cli.md`)
 - `rules/connect-codex.md` — Codex: surface check, then IDE/app MCP + new-task handoff (Codex CLI routes to `connect-knock-cli.md`)
-- `rules/connect-grok-bot.md` — Grok Bot: MCP URL connect line, then marketing-engineer surface-area ask
+- `rules/connect-grok-bot.md` — Grok Bot: skip account ask, connect with the MCP URL, then surface-area ask
 - `rules/connect-knock-cli.md` — shared Knock CLI path: install + `knock login` auth for CLI-based tools
 - `rules/discover-workflows.md` — Product discovery and workflow proposals
 - `rules/build-workflows.md` — Build confirmed workflows with Knock MCP
