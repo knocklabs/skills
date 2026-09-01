@@ -10,7 +10,7 @@ tags:
   - visual-blocks
   - templates
 category: knock-cli
-last_updated: 2026-08-12
+last_updated: 2026-09-01
 ---
 
 # Partials
@@ -21,14 +21,14 @@ last_updated: 2026-08-12
 
 Partials are:
 
-- Stored in `knock/partials/{key}/`
+- Stored in `.knock/partials/{key}/`
 - Rendered with Liquid; they receive variables from the block editor or from the workflow context
 - Available in the email visual block editor when `visual_block_enabled` is true
 - Defined by a `partial.json` schema and a content file (HTML, markdown, text, or JSON)
 
 ## File structure
 
-Partials live under `knock/partials/{key}/`:
+Partials live under `.knock/partials/{key}/`:
 
 ```
 partials/{partial-key}/

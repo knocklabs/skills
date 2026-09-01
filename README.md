@@ -75,7 +75,7 @@ Guidelines for working with the Knock CLI to manage workflows, templates, guides
 
 **Categories covered:**
 - CLI installation and authentication (npm, Homebrew, service tokens)
-- Knock directory structure (knock.json, workflows, email-layouts, partials)
+- Knock directory structure (knock.json, workflows, layouts, partials)
 - CLI commands reference (pull, push, validate, run)
 - Workflow templates (visual blocks, HTML mode, Liquid namespaces)
 - Guides and message types (lifecycle messaging vs notifications)

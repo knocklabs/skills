@@ -9,7 +9,7 @@ tags:
   - service-token
   - setup
 category: knock-cli
-last_updated: 2026-02-01
+last_updated: 2026-09-01
 ---
 
 # CLI installation and authentication
@@ -56,11 +56,11 @@ Many Knock CLI commands use interactive prompts (y/N confirmations, multi-step w
 
 ```bash
 knock workflow pull <workflow-key> --force
-knock pull --all --force
+knock pull --force
 knock commit promote --to=production --force
 ```
 
-Some commands like `knock init`, `knock auth login`, and `knock workflow new` are fully interactive and don't support `--force`. Use their explicit flags (e.g., `--knock-dir`, `--key`, `--steps`) to avoid prompts, or have the user run them manually.
+Some commands like `knock init`, `knock login`, and `knock workflow new` are fully interactive and don't support `--force`. Where a command has explicit flags (e.g., `--key`, `--steps` on `knock workflow new`), use them to avoid prompts. `knock init` takes no such flags, so either have the user run it or write `knock.json` directly.
 
 See the CLI commands reference (`rules/cli-commands-reference.md`) for a full table of which commands prompt, which support `--force`, and which are safe to run directly.
 
@@ -85,10 +85,10 @@ export KNOCK_SERVICE_TOKEN=<your-service-token>
 
 ```bash
 # The CLI automatically uses KNOCK_SERVICE_TOKEN if set
-knock pull --all
+knock pull
 
 # Or pass explicitly
-knock pull --all --service-token=<your-service-token>
+knock pull --service-token=<your-service-token>
 ```
 
 **Best practices for service tokens:**
@@ -105,7 +105,7 @@ For local development, you can authenticate using your Knock dashboard account.
 **Interactive login (requires browser — cannot be automated by agents):**
 
 ```bash
-knock auth login
+knock login
 ```
 
 This opens a browser window for authentication. Once authenticated, credentials are stored locally. Because this requires browser interaction, it must be run manually by the user—agents cannot complete this flow.
@@ -113,13 +113,13 @@ This opens a browser window for authentication. Once authenticated, credentials 
 **Check authentication status:**
 
 ```bash
-knock auth whoami
+knock whoami
 ```
 
 **Logout:**
 
 ```bash
-knock auth logout
+knock logout
 ```
 
 ## Environment configuration
@@ -130,10 +130,10 @@ Knock accounts have a **development** environment and a **production** environme
 
 ```bash
 # Pull from development environment
-knock pull --all --environment=development
+knock pull --environment=development
 
 # Push to production
-knock push --all --environment=production
+knock push --environment=production
 ```
 
 ### Environment variables
@@ -163,7 +163,7 @@ This creates a `knock.json` configuration file in your project root. See the dir
 
 **"Authentication required"**
 - Set the `KNOCK_SERVICE_TOKEN` environment variable
-- Or run `knock auth login` for interactive authentication
+- Or run `knock login` for interactive authentication
 
 **"Invalid service token"**
 - Verify the token is correct and hasn't been revoked

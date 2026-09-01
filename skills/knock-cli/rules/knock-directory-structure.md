@@ -10,7 +10,7 @@ tags:
   - workflows
   - layouts
 category: knock-cli
-last_updated: 2026-08-12
+last_updated: 2026-09-01
 ---
 
 # Knock directory structure
@@ -19,61 +19,92 @@ last_updated: 2026-08-12
 
 ### The knock.json file
 
-Running `knock init` creates a `knock.json` file in your project root. This file configures where Knock resources are stored.
-
-**Basic structure:**
+Running `knock init` creates a `knock.json` file in the current directory. This file configures where Knock resources are stored. The command prompts for the resources directory and suggests `.knock`, so accepting the default produces:
 
 ```json
 {
-  "knockDir": "./knock"
+  "$schema": "https://schemas.knock.app/cli/knock.json",
+  "knockDir": ".knock"
 }
 ```
 
 **Configuration options:**
 
-| Property | Description | Default |
-|----------|-------------|---------|
-| `knockDir` | Path to the directory containing Knock resources | `./knock` |
+| Property | Description |
+|----------|-------------|
+| `knockDir` | Path to the directory containing Knock resources |
 
-The `knockDir` is relative to the location of `knock.json`. All CLI operations use this directory as the root for reading and writing resources.
+`knockDir` has no default value. The `.knock` above is the prefilled answer to the `init` prompt, and you can enter any path you like. `.knock` is a hidden directory.
+
+When `knock.json` is present, a relative `knockDir` resolves against the location of that file, and all CLI operations use the resulting directory as the root for reading and writing resources.
+
+When `knock.json` is absent, there is no configured root. Commands fall back to the current working directory, so `knock layout pull --all` run from your project root would write layout directories directly into that root rather than into a `layouts/` subdirectory. To target a specific directory instead, pass `--knock-dir` on the top-level `knock pull` and `knock push` commands, or the matching per-resource flag on a subcommand (see the table below).
+
+**Directory flags by command:**
+
+| Command | Flag |
+|---------|------|
+| `knock pull` / `knock push` | `--knock-dir` |
+| `knock workflow …` | `--workflows-dir` |
+| `knock layout …` | `--layouts-dir` |
+| `knock guide …` | `--guides-dir` |
+| `knock partial …` | `--partials-dir` |
+| `knock message-type …` | `--message-types-dir` |
+| `knock translation …` | `--translations-dir` |
+| `knock audience …` | `--audiences-dir` |
+| `knock schema …` | `--schemas-dir` |
 
 ## Directory layout
 
-The knock directory contains subdirectories for each resource type:
+The knock directory contains subdirectories for each resource type. These names are fixed by the CLI and are what `knock pull` writes and `knock push` expects:
 
 ```
-knock/
+.knock/
+├── audiences/                    # Audiences
+│   └── {audience-key}/
+│       └── audience.json         # Audience configuration
+│
+├── partials/                     # Reusable template partials
+│   └── {partial-key}/
+│       ├── partial.json          # Partial configuration
+│       └── content.html          # Content file; extension varies by type
+│
+├── layouts/                      # Email layout templates
+│   └── {layout-key}/
+│       ├── layout.json           # Layout configuration
+│       ├── html_layout.html      # HTML template; .mjml for MJML layouts
+│       └── text_layout.txt       # Plaintext layout template
+│
 ├── workflows/                    # Workflow definitions
-│   ├── workflow.schema.json      # JSON Schema for validation
 │   └── {workflow-key}/           # One directory per workflow
 │       ├── workflow.json         # Main workflow definition
 │       └── {step-ref}/           # Channel step content (optional)
 │           └── ...               # Template files
-│
-├── email-layouts/                # Email layout templates
-│   └── {layout-key}/
-│       ├── layout.json           # Layout configuration
-│       └── ...                   # Layout template files
-│
-├── guides/                       # In-app guides (lifecycle messaging)
-│   └── {guide-key}/
-│       └── guide.json            # Guide definition and content
 │
 ├── message-types/                # Message type schemas for guides
 │   └── {message-type-key}/
 │       ├── message_type.json     # Schema and metadata
 │       └── preview.html          # Optional; Liquid template for dashboard preview
 │
+├── guides/                       # In-app guides (lifecycle messaging)
+│   └── {guide-key}/
+│       └── guide.json            # Guide definition and content
+│
 ├── translations/                 # Translation files
-│   └── {locale}/
-│       └── ...                   # Translation JSON files
+│   └── {locale}/                 # Directory per locale code
+│       ├── {locale}.json         # e.g. en.json
+│       └── {namespace}.{locale}.json  # e.g. admin.en.json
 │
-├── partials/                     # Reusable template partials
-│   └── {partial-key}/
-│       └── ...                   # Partial template files
-│
-└── commits/                      # Commit history (managed by CLI)
+└── schemas/                      # Item schemas for users, tenants, objects
+    ├── user.json
+    ├── tenant.json
+    └── objects/
+        └── {collection}.json
 ```
+
+`knock pull` and `knock push` operate on audiences, partials, layouts, workflows, message types, guides, and translations. Schemas are managed separately with `knock schema pull` and `knock schema push`.
+
+Commit history lives in Knock and is reached with `knock commit list` and related commands.
 
 ## Workflow structure
 
@@ -145,11 +176,15 @@ workflows/order-confirmation/
 Email layouts define reusable structure for email templates:
 
 ```
-email-layouts/{layout-key}/
+layouts/{layout-key}/
 ├── layout.json                   # Layout configuration
-├── html_layout.html              # HTML layout template (optional)
-└── ...                           # Additional layout files
+├── html_layout.html              # HTML layout template
+└── text_layout.txt               # Plaintext layout template
 ```
+
+MJML layouts use the same structure with the HTML template written as `html_layout.mjml`. The extension follows the layout's `is_mjml` setting, which Knock supplies when the layout is pulled.
+
+A directory is recognized as an email layout when it contains a `layout.json` file.
 
 ### layout.json
 
@@ -225,15 +260,6 @@ workflows/my-workflow/
 
 **Common mistake:** Doubling the step directory path. If you're in `email-step/visual_blocks.json`, use `visual_blocks/1.content.md`, NOT `email-step/visual_blocks/1.content.md`.
 
-## JSON Schema
-
-The `workflows/workflow.schema.json` file provides validation for workflow definitions. Reference this schema when:
-
-- Creating or modifying templates
-- Working with specific channel types
-- Encountering validation errors
-- Adding function steps
-
 ## Resource identification
 
 Resources are identified by their directory name (the key):
@@ -241,10 +267,11 @@ Resources are identified by their directory name (the key):
 | Resource Type | Key Location | Example |
 |---------------|--------------|---------|
 | Workflow | Directory name under `workflows/` | `workflows/order-confirmation/` → key: `order-confirmation` |
-| Email Layout | Directory name under `email-layouts/` | `email-layouts/default/` → key: `default` |
+| Email Layout | Directory name under `layouts/` | `layouts/default/` → key: `default` |
 | Guide | Directory name under `guides/` | `guides/welcome-modal/` → key: `welcome-modal` |
 | Message Type | Directory name under `message-types/` | `message-types/banner/` → key: `banner` |
 | Partial | Directory name under `partials/` | `partials/footer/` → key: `footer` |
+| Audience | Directory name under `audiences/` | `audiences/new-signups/` → key: `new-signups` |
 
 This key is used in CLI commands:
 
@@ -253,4 +280,12 @@ knock workflow push order-confirmation
 knock layout push default
 knock guide push welcome-modal
 knock message-type push banner
+knock audience push new-signups
+```
+
+Translations are referenced by locale rather than by directory key, as `<locale>` or `<namespace>.<locale>`:
+
+```bash
+knock translation push en
+knock translation push admin.en
 ```

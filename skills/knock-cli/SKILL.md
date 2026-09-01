@@ -98,17 +98,17 @@ When making changes to workflows or templates:
 ### Common commands
 
 ```bash
-# Initialize a new project (interactive; use --knock-dir to skip prompts)
-knock init --knock-dir=./knock
+# Initialize a new project (interactive; prompts for the resources directory)
+knock init
 
 # Pull all resources from Knock (--force skips confirmation prompts)
-knock pull --all --force
+knock pull --force
 
 # Pull a specific workflow
 knock workflow pull <workflow-key> --force
 
 # Push all resources to Knock (push never prompts)
-knock push --all
+knock push
 
 # Push a specific workflow
 knock workflow push <workflow-key>
@@ -141,7 +141,7 @@ knock commit promote --only=<commit-id> --force
 ### Key concepts
 
 - **knockDir**: The directory where Knock resources are stored (configured in knock.json)
-- **Resource types**: workflows, email-layouts, guides, message-types, translations, partials, commits
+- **Resource types**: workflows, layouts, guides, message-types, translations, partials, audiences, schemas
 - **Guides vs workflows**: Guides are for lifecycle messaging (banners, modals); workflows are for notifications
 - **Template modes**: Visual blocks (default for new emails) vs HTML (only when explicitly requested)
 - **Variable namespaces**: `data` (trigger payload), `vars` (environment variables), `recipient`, `actor`, `tenant`

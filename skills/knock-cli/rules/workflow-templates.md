@@ -11,7 +11,7 @@ tags:
   - gotchas
   - best-practices
 category: knock-cli
-last_updated: 2026-08-12
+last_updated: 2026-09-01
 ---
 
 # Workflow templates
@@ -28,7 +28,7 @@ Before modifying any workflow or template file, always read the existing content
 
 ```bash
 # Read the current state before making changes
-cat knock/workflows/my-workflow/workflow.json
+cat .knock/workflows/my-workflow/workflow.json
 ```
 
 ### Always push after modifying
@@ -42,7 +42,7 @@ knock workflow push <workflow-key>
 # After modifying other resources
 knock layout push <layout-key>
 knock partial push <partial-key>
-knock push --all   # Push everything
+knock push   # Push everything
 ```
 
 If you don't push, your changes exist only on disk—Knock will continue using the previous version.
@@ -942,14 +942,6 @@ Use Knock secret variables (`vars`) for API keys and tokens in headers to keep t
 ```
 
 ## Validation and debugging
-
-### Check the schema
-
-When encountering validation errors, reference the JSON schema:
-
-```
-knock/workflows/workflow.schema.json
-```
 
 ### Validate before pushing
 

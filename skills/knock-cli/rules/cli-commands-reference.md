@@ -10,7 +10,7 @@ tags:
   - workflow
   - resources
 category: knock-cli
-last_updated: 2026-08-12
+last_updated: 2026-09-01
 ---
 
 # CLI commands reference
@@ -30,7 +30,7 @@ Many Knock CLI commands display interactive confirmation prompts that require us
 | `knock guide pull <key>` | `Create a new guide directory? (y/N)` | When the local directory doesn't exist yet |
 | `knock message-type pull <key>` | `Create a new message type directory? (y/N)` | When the local directory doesn't exist yet |
 | `knock partial pull <key>` | `Create a new partial directory? (y/N)` | When the local directory doesn't exist yet |
-| `knock pull --all` | Multiple directory creation prompts | When pulling resources that don't exist locally yet |
+| `knock pull` | Multiple directory creation prompts | When pulling resources that don't exist locally yet |
 | `knock commit promote` | Confirmation prompt | When promoting changes between environments |
 | `knock commit` | Confirmation prompt | When committing changes |
 | `knock workflow activate` | Confirmation prompt | When activating/deactivating a workflow |
@@ -41,7 +41,7 @@ Many Knock CLI commands display interactive confirmation prompts that require us
 ```bash
 # Pull without confirmation prompts
 knock workflow pull <workflow-key> --force
-knock pull --all --force
+knock pull --force
 
 # Commit all changes without prompts
 knock commit -m "message" --force
@@ -53,8 +53,8 @@ knock commit promote --to=production --force
 
 | Command | Behavior |
 |---------|----------|
-| `knock init` | Multi-step interactive wizard for project setup. Use `--knock-dir` to skip the directory prompt. If a `knock.json` already exists, there is no need to run `knock init`. |
-| `knock auth login` | Opens a browser window for authentication. Must be run manually by the user. |
+| `knock init` | Interactive prompt for the resources directory. It takes no directory flag, so have the user run it, or write `knock.json` directly. If a `knock.json` already exists, there is no need to run `knock init`. |
+| `knock login` | Opens a browser window for authentication. Must be run manually by the user. |
 | `knock workflow new` | Interactive step selection. Use `--key` and `--steps` flags to skip prompts. |
 | `knock guide new` | Interactive message type selection. Use `--key` and `--message-type` flags to skip prompts. |
 | `knock message-type new` | Interactive setup. Use `--key` and `--name` flags to skip prompts. |
@@ -63,9 +63,9 @@ knock commit promote --to=production --force
 **Commands that never prompt (safe for direct execution):**
 
 - All `list` commands (`knock workflow list`, `knock channel list`, etc.)
-- All `push` commands (`knock workflow push <key>`, `knock push --all`, etc.)
+- All `push` commands (`knock workflow push <key>`, `knock push`, etc.)
 - All `validate` commands (`knock workflow validate <key>`, etc.)
-- `knock whoami` / `knock auth whoami`
+- `knock whoami`
 - `knock workflow run` (trigger)
 - Pull commands when the local directory already exists (updates in place without prompting)
 
@@ -94,10 +94,14 @@ These options work with most commands:
 
 | Option | Description |
 |--------|-------------|
-| `--environment`, `-e` | Target environment (development, staging, production) |
+| `--environment` | Target environment (development, staging, production) |
+| `--branch` | Slug of the branch to use |
 | `--service-token` | Service token for authentication |
-| `--knock-dir` | Override the knock directory location |
 | `--help` | Show help for the command |
+
+Flags are matched by full name, so use `--environment=development` rather than a short alias.
+
+To override the resources directory, use `--knock-dir` on `knock pull` and `knock push`. Resource subcommands take their own directory flag instead, such as `--workflows-dir` on `knock workflow pull` and `--layouts-dir` on `knock layout pull`.
 
 ## Pulling resources
 
@@ -108,7 +112,7 @@ These options work with most commands:
 Sync all resources from Knock to your local project:
 
 ```bash
-knock pull --all --force
+knock pull --force
 ```
 
 This pulls all resource types into the configured `knockDir`.
@@ -160,7 +164,7 @@ knock layout pull default --force
 | Option | Description |
 |--------|-------------|
 | `--all` | Pull all resources of this type |
-| `--environment`, `-e` | Target environment |
+| `--environment` | Target environment |
 | `--hide-uncommitted-changes` | Don't include uncommitted changes |
 | `--force` | Skip confirmation prompts (always use in automated/agent contexts) |
 
@@ -171,7 +175,7 @@ knock layout pull default --force
 Push all local resources to Knock:
 
 ```bash
-knock push --all
+knock push
 ```
 
 This pushes all resources from the configured `knockDir` to Knock.
@@ -221,7 +225,7 @@ knock layout push default
 | Option | Description |
 |--------|-------------|
 | `--all` | Push all resources of this type |
-| `--environment`, `-e` | Target environment |
+| `--environment` | Target environment |
 | `--commit`, `-m` | Commit changes with a message after pushing |
 
 ### Push and commit
@@ -554,11 +558,11 @@ knock whoami
 # 1. Authenticate
 export KNOCK_SERVICE_TOKEN=<your-token>
 
-# 2. Initialize project (interactive wizard — use --knock-dir to skip prompts, or run manually)
-knock init --knock-dir=./knock
+# 2. Initialize project (interactive; prompts for the resources directory)
+knock init
 
 # 3. Pull existing resources (--force skips confirmation prompts)
-knock pull --all --force
+knock pull --force
 ```
 
 ### Discover before creating
@@ -619,12 +623,12 @@ knock commit promote --to=production --force
 
 ```bash
 # Always pull latest before making changes (--force skips any new directory prompts)
-knock pull --all --force
+knock pull --force
 
 # Make edits...
 
 # Push and commit (push does not prompt)
-knock push --all --commit -m "Updated templates"
+knock push --commit -m "Updated templates"
 ```
 
 ## Error handling
@@ -638,7 +642,7 @@ knock push --all --commit -m "Updated templates"
 **"Validation failed"**
 - The resource has structural errors
 - Check the error message for specific field issues
-- Reference the JSON schema for correct structure
+- Run `knock <resource> validate <key>` to see the specific structural errors
 - If the error mentions `channel_key` does not exist (e.g., `'knock-in-app' does not exist`), run `knock channel list` to find valid channel keys for this project
 
 **"Uncommitted changes exist"**
@@ -651,8 +655,14 @@ knock push --all --commit -m "Updated templates"
 
 ### Debugging
 
-Use verbose output for troubleshooting:
+Validate a resource locally to surface structural errors before pushing:
 
 ```bash
-knock workflow push <key> --verbose
+knock workflow validate <key>
+```
+
+Pass `--json` on any command for machine-readable output, which makes error details easier to inspect:
+
+```bash
+knock workflow get <key> --json
 ```

@@ -11,7 +11,7 @@ tags:
   - banners
   - modals
 category: knock-cli
-last_updated: 2026-02-16
+last_updated: 2026-09-01
 ---
 
 # Guides and message types
@@ -69,7 +69,7 @@ Use `knock message-type new` to scaffold a new message type locally, or create i
 
 ## Message type file structure
 
-Message types live under `knock/message-types/{key}/`:
+Message types live under `.knock/message-types/{key}/`:
 
 ```
 message-types/{message-type-key}/
@@ -163,7 +163,7 @@ Use variant conditionals for variant-specific UI:
 
 ## Guide file structure
 
-Guides live under `knock/guides/{key}/`:
+Guides live under `.knock/guides/{key}/`:
 
 ```
 guides/{guide-key}/
