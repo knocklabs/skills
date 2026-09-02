@@ -9,7 +9,7 @@ tags:
   - service-token
   - setup
 category: knock-cli
-last_updated: 2026-09-01
+last_updated: 2026-09-02
 ---
 
 # CLI installation and authentication
@@ -132,9 +132,15 @@ Knock accounts have a **development** environment and a **production** environme
 # Pull from development environment
 knock pull --environment=development
 
-# Push to production
-knock push --environment=production
+# Push local changes (development only)
+knock push
+
+# Commit, then promote up the chain to production
+knock commit -m "Update resources"
+knock commit promote --to=production
 ```
+
+`knock push` writes to the development environment only — its `--environment` flag accepts `development` and nothing else. Non-development environments are updated by committing and promoting, never by pushing directly. `knock push` also accepts `--commit` and `-m` to push and commit in one step.
 
 ### Environment variables
 

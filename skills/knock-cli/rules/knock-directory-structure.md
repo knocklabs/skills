@@ -10,7 +10,7 @@ tags:
   - workflows
   - layouts
 category: knock-cli
-last_updated: 2026-09-01
+last_updated: 2026-09-02
 ---
 
 # Knock directory structure
@@ -36,23 +36,27 @@ Running `knock init` creates a `knock.json` file in the current directory. This 
 
 `knockDir` has no default value. The `.knock` above is the prefilled answer to the `init` prompt, and you can enter any path you like. `.knock` is a hidden directory.
 
-When `knock.json` is present, a relative `knockDir` resolves against the location of that file, and all CLI operations use the resulting directory as the root for reading and writing resources.
+When `knock.json` is present, all CLI operations use `knockDir` as the root for reading and writing resources. The CLI locates `knock.json` by walking up from the current directory, but a relative `knockDir` resolves against the **current working directory**, not against the location of `knock.json`. Running a command from a subdirectory will therefore look for the resources directory in the wrong place — run CLI commands from the directory that contains `knock.json`.
 
-When `knock.json` is absent, there is no configured root. Commands fall back to the current working directory, so `knock layout pull --all` run from your project root would write layout directories directly into that root rather than into a `layouts/` subdirectory. To target a specific directory instead, pass `--knock-dir` on the top-level `knock pull` and `knock push` commands, or the matching per-resource flag on a subcommand (see the table below).
+When `knock.json` is absent, there is no configured root. Resource subcommands fall back to the current working directory, so `knock layout pull --all` run from your project root would write layout directories directly into that root rather than into a `layouts/` subdirectory. The top-level `knock pull` and `knock push` do not fall back — they error out unless you pass `--knock-dir`. To target a specific directory, pass `--knock-dir` on `knock pull` / `knock push`, or the matching per-resource flag on a subcommand (see the table below).
 
 **Directory flags by command:**
 
 | Command | Flag |
 |---------|------|
 | `knock pull` / `knock push` | `--knock-dir` |
-| `knock workflow …` | `--workflows-dir` |
-| `knock layout …` | `--layouts-dir` |
-| `knock guide …` | `--guides-dir` |
-| `knock partial …` | `--partials-dir` |
-| `knock message-type …` | `--message-types-dir` |
-| `knock translation …` | `--translations-dir` |
-| `knock audience …` | `--audiences-dir` |
-| `knock schema …` | `--schemas-dir` |
+| `knock workflow pull/push/validate` | `--workflows-dir` |
+| `knock layout pull/push/validate` | `--layouts-dir` |
+| `knock guide pull/push/validate` | `--guides-dir` |
+| `knock partial pull/push/validate` | `--partials-dir` |
+| `knock message-type pull/push/validate` | `--message-types-dir` |
+| `knock translation pull/push/validate` | `--translations-dir` |
+| `knock audience pull/push/validate` | `--audiences-dir` |
+| `knock schema pull/push` | `--schemas-dir` |
+
+These directory flags exist only on the `pull`, `push`, and `validate` subcommands; `get`, `list`, `open`, and `new` do not accept them. `knock schema` has only `pull` and `push`, so `--schemas-dir` is limited to those.
+
+Each per-resource flag also depends on `--all`, so pass it as `knock workflow pull --all --workflows-dir=<path>`. `--schemas-dir` is the exception and works with or without `--all`.
 
 ## Directory layout
 

@@ -10,7 +10,7 @@ tags:
   - workflow
   - resources
 category: knock-cli
-last_updated: 2026-09-01
+last_updated: 2026-09-02
 ---
 
 # CLI commands reference
@@ -86,6 +86,8 @@ The Knock CLI manages several resource types:
 | `channel` | Notification channels | `knock channel` |
 | `translation` | Localization files | `knock translation` |
 | `partial` | Reusable template partials | `knock partial` |
+| `audience` | Audience definitions | `knock audience` |
+| `schema` | Item schemas for users, tenants, and objects | `knock schema` |
 | `commit` | Version control for changes | `knock commit` |
 
 ### Global options
@@ -530,6 +532,108 @@ knock translation push --all
 knock translation push <locale>
 ```
 
+## Audience commands
+
+### List audiences
+
+```bash
+knock audience list
+```
+
+### Create a new audience
+
+```bash
+knock audience new -k <audience-key> -n "Audience name" -t static
+```
+
+| Flag | Description |
+|------|-------------|
+| `-k`, `--key` | The audience key (directory name) |
+| `-n`, `--name` | Display name |
+| `-t`, `--type` | `static` or `dynamic` |
+| `-d`, `--description` | Optional description |
+| `-p`, `--push` | Push to Knock after creation |
+| `--force` | Skip the directory confirmation prompt |
+
+### Pull audiences
+
+```bash
+# Pull all audiences
+knock audience pull --all --force
+
+# Pull a specific audience
+knock audience pull <audience-key> --force
+```
+
+### Push audiences
+
+```bash
+# Push all audiences
+knock audience push --all
+
+# Push a specific audience
+knock audience push <audience-key>
+```
+
+### Validate audiences
+
+```bash
+knock audience validate <audience-key>
+knock audience validate --all
+```
+
+### Other audience commands
+
+```bash
+knock audience get <audience-key>    # Display a single audience
+knock audience open <audience-key>   # Open in dashboard
+```
+
+### Archive an audience
+
+```bash
+knock audience archive <audience-key> --environment=<env>
+```
+
+> **Warning:** Archiving affects **all** environments and cannot be undone. `--environment` is required on this command, and `--force` skips the confirmation prompt.
+
+## Schema commands
+
+Item schemas describe the properties of users, tenants, and objects. `knock schema` has only `pull` and `push`—there is no `get`, `list`, `new`, `open`, or `validate`.
+
+### Pull schemas
+
+```bash
+# Pull all schemas
+knock schema pull --all --force
+
+# Pull a single item schema; item type is user, tenant, or object
+knock schema pull user
+
+# Object schemas are addressed by collection
+knock schema pull object --collection=<collection-key>
+```
+
+### Push schemas
+
+```bash
+# Push all schemas
+knock schema push --all
+
+# Push a single item schema
+knock schema push tenant
+knock schema push object --collection=<collection-key>
+```
+
+| Flag | Description |
+|------|-------------|
+| `--all` | Operate on every schema in the schemas directory. Cannot be combined with an item type argument or `--collection` |
+| `--collection` | Object collection key; valid only with the `object` item type |
+| `--schemas-dir` | Override the schemas directory |
+| `--force` | Skip the confirmation prompt (`pull` only; `push` has no `--force`) |
+
+Schemas are not covered by the top-level `knock pull` and `knock push`. Use `knock schema pull` and `knock schema push` for them.
+
 ## Initialization and configuration
 
 ### Initialize project
@@ -661,7 +765,7 @@ Validate a resource locally to surface structural errors before pushing:
 knock workflow validate <key>
 ```
 
-Pass `--json` on any command for machine-readable output, which makes error details easier to inspect:
+Pass `--json` for machine-readable output on the commands that support it — all `get` and `list` commands, `knock whoami`, and `knock branch list` / `create` / `rebase`. This makes error details easier to inspect:
 
 ```bash
 knock workflow get <key> --json

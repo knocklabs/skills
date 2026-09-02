@@ -11,7 +11,7 @@ tags:
   - gotchas
   - best-practices
 category: knock-cli
-last_updated: 2026-09-01
+last_updated: 2026-09-02
 ---
 
 # Workflow templates
@@ -28,7 +28,7 @@ Before modifying any workflow or template file, always read the existing content
 
 ```bash
 # Read the current state before making changes
-cat .knock/workflows/my-workflow/workflow.json
+cat workflows/my-workflow/workflow.json
 ```
 
 ### Always push after modifying
