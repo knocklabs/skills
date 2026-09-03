@@ -22,7 +22,7 @@ Use this rule for ChatGPT or Codex. First determine which surface you are on —
 
 ## Plugin path (ChatGPT / Codex IDE / app)
 
-Do **not** ask whether they have a Knock account. Plugin sign-in covers signup. Do not send them to settings or a custom MCP URL. Do not paste `https://mcp.knock.app/mcp` or a plugin URL. Do not run `codex mcp add`. A plugin URL alone does not surface the connect control.
+Do **not** ask whether they have a Knock account. Plugin sign-in covers signup. Do not send them to settings or a custom MCP URL. Do not paste `https://mcp.knock.app/mcp`. Do not run `codex mcp add`.
 
 **ChatGPT only:** do not install skills. Do not run `npx skills add` or any other skill installer. The plugin already includes them.
 
@@ -30,11 +30,19 @@ Do **not** ask whether they have a Knock account. Plugin sign-in covers signup. 
 
 If Knock plugin tools are already available, skip to the auth checkpoint.
 
-1. Search the plugin directory for **Knock**. If there is a supported, unconnected plugin, surface the inline connection control for it. Name the provider Knock — do not search by a generic capability like "notifications". This message is an allowed exception to the one-line rule: search and surface the control, then wait. Do not output a URL or a numbered install list.
-2. **Auth checkpoint (required — do not skip).** Once the user has connected, call a Knock tool once — prefer `list_environments`, or `execute_mapi_read` with `GET /v1/whoami` — and wait for success.
-   - If Knock tools are unavailable or the call fails, search the plugin directory for Knock again and surface the inline connection control. Do not loop more than twice — stop and report what failed. Do not fall back to a plugin URL, `codex mcp add`, or a custom MCP URL.
-3. Only after step 2 succeeds: say setup is done (one short line) and continue to `discover-workflows`. Do not summarize or list installed tools/skills.
+1. Search the plugin directory for the provider name **Knock**.
+2. If that returns no exact match, search once more using the exact plugin ID `plugin_asdk_app_6a8dddd50424819196928510eff4c70f`.
+3. If either search returns the exact Knock plugin, surface its inline connection control and wait. Do not substitute a fuzzy or similarly named result.
+4. If both searches fail, explain that the recently published listing may not yet be available through directory search, then provide this verified fallback listing:
+   `https://chatgpt.com/plugins/plugin_asdk_app_6a8dddd50424819196928510eff4c70f`
+   Ask the user to open it, connect Knock, and return to the conversation. This direct-listing fallback is permitted only after both directory searches fail.
+5. Once the user returns, perform the required auth checkpoint by calling a Knock tool — prefer `list_environments`, or `execute_mapi_read` with `GET /v1/whoami`.
+6. If the authentication call fails because Knock tools are still unavailable, repeat the two directory searches once. If they still fail, provide the verified listing again and stop. Do not use a custom MCP URL, run `codex mcp add`, or exceed two discovery cycles.
 
-For users without an account, the plugin's sign-in doubles as signup: they'll create their account, complete onboarding, and be redirected back automatically. If the redirect doesn't complete (e.g. they land on the dashboard instead), have them finish signup there, then search and surface the Knock plugin again, and retry the Knock tool call.
+The direct listing is only a fallback for opening and connecting the plugin; it does not itself prove that authentication succeeded. Do not continue to discovery, building, or implementation until a Knock tool call succeeds in the current conversation.
+
+Only after the auth checkpoint succeeds: say setup is done (one short line) and continue to `discover-workflows`. Do not summarize or list installed tools/skills.
+
+For users without an account, the plugin's sign-in doubles as signup: they'll create their account, complete onboarding, and be redirected back automatically. If the redirect doesn't complete (e.g. they land on the dashboard instead), have them finish signup there, then repeat the directory searches (and the listing fallback only if both fail), and retry the Knock tool call.
 
 **Hard gate:** steps after Connect Knock tooling (discover, build, implement, wrap-up) are blocked until a Knock tool call has succeeded in this conversation.
