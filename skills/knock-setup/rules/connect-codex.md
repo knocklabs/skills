@@ -1,6 +1,6 @@
 ---
 title: Connect Knock in ChatGPT and Codex
-description: Route ChatGPT and Codex sessions — ChatGPT surfaces the Knock plugin inline, Codex CLI uses the Knock CLI
+description: Route ChatGPT and Codex sessions by host interface — in-app plugin, Codex CLI /plugins, IDE extension unsupported
 tags:
   - setup
   - plugin
@@ -13,33 +13,14 @@ last_updated: 2026-09-03
 
 # Connect Knock in ChatGPT and Codex
 
-Use this rule for ChatGPT or Codex. First determine which surface you are on — do not skip this check:
+First identify the current surface using only the session's host interface. Do not determine the surface from shell access. An in-app Codex agent may also have a terminal, so shell access is not evidence of Codex CLI.
 
-- **Codex CLI** — this session was launched by running `codex` in a terminal; there is no IDE UI. → Stop here and follow `rules/connect-knock-cli.md` (Knock CLI, not the plugin). Do not use the plugin path below and do not run `codex mcp add`.
-- **ChatGPT** — the ChatGPT web or app chat (not Codex). → Continue with the plugin path below. Do not ask about a Knock account. Do not install skills.
-- **Codex IDE / app** — you are the agent inside the Codex IDE extension or desktop/app UI. → Continue with the plugin path below. Do not ask about a Knock account.
-- If you cannot tell, ask the user in one line: are they in ChatGPT, the Codex IDE/app, or the Codex CLI (`codex`)?
+- **Codex CLI** — the user launched the interactive Codex terminal interface by running `codex`. CLI slash commands such as `/plugins` are available. → Follow the Codex CLI path.
+- **In-app** — the conversation is running in ChatGPT on the web, mobile, or desktop, including Codex inside the ChatGPT desktop app. → Follow the in-app path.
+- **Codex IDE extension** — the agent is embedded in an editor such as VS Code. Do not classify this as in-app merely because it has a UI or shell access. Plugins are not currently supported in the IDE extension. → Explain that limitation and stop.
+- **Unclear** — ask one question: **Are you using ChatGPT, the Codex desktop app, the Codex IDE extension, or the terminal interface launched with `codex`?**
 
-## Plugin path (ChatGPT / Codex IDE / app)
-
-Do **not** ask whether they have a Knock account. Plugin sign-in covers signup. Do not send them to settings or a custom MCP URL. Do not paste `https://mcp.knock.app/mcp`. Do not run `codex mcp add`. Do not paste an unverified plugin URL. The verified Knock listing URL may be provided only after searches by both provider name and exact plugin ID fail.
-
-**ChatGPT only:** do not install skills. Do not run `npx skills add` or any other skill installer. The plugin already includes them.
-
-**Codex IDE / app only:** if you have shell access, run `npx skills add knocklabs/skills`. If not, skip this.
-
-If Knock plugin tools are already available, skip to the auth checkpoint for this surface.
-
-1. Search the plugin directory for the provider name **Knock**.
-2. If that returns no exact match, search once more using the exact plugin ID `plugin_asdk_app_6a8dddd50424819196928510eff4c70f`.
-3. If either search returns the exact Knock plugin, surface its inline connection control and wait. Do not substitute a fuzzy or similarly named result.
-4. If both searches fail, explain that the recently published listing may not yet be available through directory search, then provide this verified fallback listing:
-   `https://chatgpt.com/plugins/plugin_asdk_app_6a8dddd50424819196928510eff4c70f`
-   Ask the user to open it, connect Knock, and return to the conversation. This direct-listing fallback is permitted only after both directory searches fail.
-
-The direct listing is only a fallback for opening and connecting the plugin; it does not itself prove that authentication succeeded.
-
-## Tool loading and authentication checkpoint
+Do not ask about a Knock account. Plugin sign-in covers signup. Do not install skills separately on any surface. Plugin packages provide their own bundled skills and tools. Do not use `npx skills add`, a skill installer, or a manually configured Knock MCP server. Do not paste `https://mcp.knock.app/mcp`. Do not run `codex mcp add`. Do not paste an unverified plugin URL. The verified Knock listing URL may be provided only after searches by both provider name and exact plugin ID fail.
 
 A plugin connection and successful authentication are separate states:
 
@@ -48,20 +29,24 @@ A plugin connection and successful authentication are separate states:
 
 Never describe Knock as authenticated based only on the connection UI or OAuth redirect.
 
-### ChatGPT
+## In-app path
 
-After the user connects Knock, attempt the auth checkpoint in the current conversation:
+Use this path only in ChatGPT or Codex inside the ChatGPT desktop app.
 
-1. Call `list_environments`, or call `execute_mapi_read` with `GET /v1/whoami`.
-2. If the call succeeds, say setup is done in one short line and continue to `discover-workflows`.
-3. If Knock tools remain unavailable, explain that the conversation has not loaded the newly connected tools and provide the continuation prompt below. End with **Open a new chat, paste the prompt above, and continue there.** Do not repeatedly search the directory.
+If Knock tools are already available, skip directly to the authentication checkpoint.
 
-### Codex IDE / app
+1. Search the plugin directory for the exact provider name **Knock**.
+2. If no exact match is returned, search once using the exact plugin ID `plugin_asdk_app_6a8dddd50424819196928510eff4c70f`.
+3. If Knock is found, surface its inline connection control and wait for the user to connect it. Do not substitute a fuzzy or similarly named result.
+4. If both searches fail, provide the verified listing:
+   `https://chatgpt.com/plugins/plugin_asdk_app_6a8dddd50424819196928510eff4c70f`
+   Ask the user to open it, connect Knock, and return to the conversation. This direct-listing fallback is permitted only after both directory searches fail.
+5. After connection, call `list_environments`. If unavailable, call `execute_mapi_read` with `GET /v1/whoami`.
+6. Authentication is verified only when a Knock tool call succeeds in the current conversation.
 
-Codex loads plugin tools when a task starts. Connecting a plugin during an active task may not add its tools to that task.
+If the call succeeds, say setup is done in one short line and continue to `discover-workflows`.
 
-- If Knock tools were already available when the task started, perform the auth checkpoint normally.
-- If Knock was connected during the current task and its tools are unavailable, do not attempt an inline refresh, repeat directory searches, add a custom MCP server, or claim authentication succeeded. Immediately provide the following continuation prompt, then stop.
+If Knock was connected during the current Codex task but its tools are not available, instruct the user to start a new task. Do not repeat plugin discovery or install anything separately. Provide this continuation prompt, then stop:
 
 ```text
 Continue Knock setup with the knock-setup skill.
@@ -80,18 +65,47 @@ Next action: propose workflows
 
 End with this as the last line, bolded:
 
-**Open a new Codex task, paste the prompt above, and continue there.**
+**Open a new task, paste the prompt above, and continue there.**
 
-### New-task verification
+In the new task, call a Knock tool before doing anything else. If the call succeeds, authentication is verified; continue to `discover-workflows`. If the tool is available but requests authorization, surface the authorization control and wait. If no Knock tools are available, search the plugin directory once by provider name **Knock**, then once by exact plugin ID. If both searches fail, provide the verified listing and stop.
 
-In the new task:
+The direct listing is only a fallback for opening and connecting the plugin; it does not itself prove that authentication succeeded.
 
-1. Call a Knock tool before doing anything else.
-2. If the call succeeds, authentication is verified; continue to `discover-workflows`.
-3. If the tool is available but requests authorization, surface the authorization control and wait.
-4. If no Knock tools are available, search the plugin directory once by provider name **Knock**, then once by exact plugin ID `plugin_asdk_app_6a8dddd50424819196928510eff4c70f`.
-5. If both searches fail, provide the verified listing and stop.
+## Codex CLI path
 
-For users without an account, the plugin's sign-in doubles as signup: they'll create their account, complete onboarding, and be redirected back automatically. If the redirect doesn't complete (e.g. they land on the dashboard instead), have them finish signup there, then continue from the auth checkpoint for this surface. Do not repeat directory searches in the same Codex task after they return.
+Use this path only when the user is inside the interactive terminal interface launched with `codex`.
+
+1. Ask the user to enter `/plugins`.
+2. Search the CLI plugin browser for the exact provider name **Knock**.
+3. If necessary, search for the exact plugin ID `plugin_asdk_app_6a8dddd50424819196928510eff4c70f`.
+4. Install the exact Knock plugin and complete any connection or authentication prompts shown by the CLI.
+5. Start a new Codex CLI session after installation so the plugin's bundled capabilities load.
+6. In the new session, call `list_environments`. If unavailable, call `execute_mapi_read` with `GET /v1/whoami`.
+7. Authentication is verified only when a Knock tool call succeeds in that session.
+
+Provide this continuation prompt for the new session, then stop:
+
+```text
+Continue Knock setup with the knock-setup skill.
+
+The Knock plugin was installed in the previous Codex CLI session, but authentication has not yet been verified here. Do not repeat plugin discovery or ask about a Knock account.
+
+First action: call list_environments. If unavailable, call execute_mapi_read with GET /v1/whoami.
+
+After a successful Knock tool call:
+Resume from: discover-workflows
+Confirmed to build: none confirmed yet
+Skipped: none
+Deferred: none
+Next action: propose workflows
+```
+
+End with this as the last line, bolded:
+
+**Start a new Codex CLI session, paste the prompt above, and continue there.**
+
+Do not use `npx skills add`, a skill installer, or a manually configured Knock MCP server on either path.
+
+For users without an account, the plugin's sign-in doubles as signup: they'll create their account, complete onboarding, and be redirected back automatically. If the redirect doesn't complete (e.g. they land on the dashboard instead), have them finish signup there, then continue from the authentication checkpoint for this surface.
 
 **Hard gate:** do not discover, build, implement, or wrap up until a Knock tool call succeeds in the current conversation.

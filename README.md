@@ -20,7 +20,7 @@ Connect Knock to your coding agent, discover and build notification workflows, a
 - Choosing how to trigger workflows (event pipeline, HTTP data source, or API)
 
 **Categories covered:**
-- Per-tool connection: MCP for Cursor, Knock plugin for ChatGPT and Codex, Claude connector, Knock CLI for CLI-based tools, MCP URL connect for Grok Bot
+- Per-tool connection: MCP for Cursor, Knock plugin for ChatGPT and Codex (in-app and Codex CLI), Claude connector, Knock CLI for other CLI-based tools, MCP URL connect for Grok Bot
 - Workflow discovery and proposals
 - Building workflows with Knock MCP
 - Implementation approach recommendations
