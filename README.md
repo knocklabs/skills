@@ -13,14 +13,14 @@ Skills follow the [Agent Skills](https://agentskills.io/) format.
 Connect Knock to your coding agent, discover and build notification workflows, and recommend how to trigger them from your application.
 
 **Use when:**
-- Setting up Knock MCP and skills in Cursor, Codex, or Claude
+- Setting up Knock MCP and skills in Cursor, Codex, Claude, or Grok Bot
 - Setting up the Knock CLI for CLI-based coding agents
 - Discovering high-value notification workflows from a product or codebase
 - Building first workflows in Knock via MCP
 - Choosing how to trigger workflows (event pipeline, HTTP data source, or API)
 
 **Categories covered:**
-- Per-tool connection: MCP for interactive clients, Knock CLI for CLI-based tools
+- Per-tool connection: MCP for interactive clients, Knock CLI for CLI-based tools, MCP URL connect for Grok Bot
 - Workflow discovery and proposals
 - Building workflows with Knock MCP
 - Implementation approach recommendations

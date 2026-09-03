@@ -11,6 +11,8 @@ While working, keep every response to one short line — no summaries, no menus,
 
 ## How to use this skill
 
+**Grok Bot:** if this is Grok Bot (desktop/iOS teammate, Agent Computer, or `/workspace`), stop here and follow `rules/connect-grok-bot.md` instead of the steps below.
+
 1. **Open with encouragement, then confirm Knock account** (required first action — do this before anything else)
    - **Opening (first message only).** Before the account ask, say a short word of encouragement (about 2–3 sentences): they are going to save a lot of time building notifications with Knock, this was a good call, and we will give it our best shot to get them set up as fast as possible. Keep it warm and plain — not a feature pitch, not a menu of next steps.
    - **Default: always ask.** That same first message must then ask whether they have a Knock account. Do not add MCP, run OAuth, install skills, discover workflows, or call Knock tools until they answer.
@@ -54,6 +56,7 @@ Use these when preparing for production or when the user asks — they are optio
 - `rules/connect-cursor.md` — Cursor: surface check, then editor MCP + skills install (Cursor CLI routes to `connect-knock-cli.md`)
 - `rules/connect-claude.md` — Claude: surface check, then app directory connector (Claude Code routes to `connect-knock-cli.md`)
 - `rules/connect-codex.md` — Codex: surface check, then IDE/app MCP + new-task handoff (Codex CLI routes to `connect-knock-cli.md`)
+- `rules/connect-grok-bot.md` — Grok Bot escape hatch: intro, MCP connect, then route
 - `rules/connect-knock-cli.md` — shared Knock CLI path: install + `knock login` auth for CLI-based tools
 - `rules/discover-workflows.md` — Product discovery and workflow proposals
 - `rules/build-workflows.md` — Build confirmed workflows with Knock MCP
