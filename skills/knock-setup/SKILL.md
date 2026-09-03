@@ -56,7 +56,7 @@ Use these when preparing for production or when the user asks — they are optio
 
 - `rules/connect-cursor.md` — Cursor: surface check, then editor MCP + skills install (Cursor CLI routes to `connect-knock-cli.md`)
 - `rules/connect-claude.md` — Claude: surface check, then app directory connector (Claude Code routes to `connect-knock-cli.md`)
-- `rules/connect-codex.md` — ChatGPT and Codex: host-interface surface check, then in-app plugin or Codex CLI `/plugins` (IDE extension unsupported; no separate skill install)
+- `rules/connect-codex.md` — ChatGPT and Codex: host-interface surface check, then in-app plugin or Codex CLI `/plugins`
 - `rules/connect-grok-bot.md` — Grok Bot escape hatch: intro, MCP connect, then route
 - `rules/connect-knock-cli.md` — shared Knock CLI path: install + `knock login` auth for CLI-based tools
 - `rules/discover-workflows.md` — Product discovery and workflow proposals
