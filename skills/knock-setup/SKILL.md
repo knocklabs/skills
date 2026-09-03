@@ -7,7 +7,7 @@ description: Connect Knock to your coding agent, discover and build notification
 
 End-to-end Knock setup for a coding agent: connect tooling, design and build notification workflows, then wire them into the application. Work through the rules below in order.
 
-While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the opening encouragement + account ask (step 1), the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, the wrap-up signup-email ask (only when whoami has no email), the final wrap-up output, the Codex MCP handoff in `rules/connect-codex.md`, and the Claude connector instructions in `rules/connect-claude.md` (directory link + connected ask), which have their own formats. When you end with a confirmation question (account, workflows, implementation, import-users id, wrap-up signup email, or wrap-up guides ask), that question must be the very last line of the message, on its own, and bolded.
+While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the opening encouragement + account ask (step 1), the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, the wrap-up signup-email ask (only when whoami has no email), the final wrap-up output, the ChatGPT and Codex plugin instructions in `rules/connect-codex.md`, and the Claude connector instructions in `rules/connect-claude.md` (directory link + connected ask), which have their own formats. When you end with a confirmation question (account, workflows, implementation, import-users id, wrap-up signup email, or wrap-up guides ask), that question must be the very last line of the message, on its own, and bolded.
 
 ## How to use this skill
 
@@ -24,7 +24,7 @@ While working, keep every response to one short line — no summaries, no menus,
    - Route by tool family, then follow the **surface check at the top of that rule** (app vs CLI) — do not pick a path from this list alone:
      - **Cursor** (editor or Cursor CLI) → `rules/connect-cursor.md` — editor uses MCP; Cursor CLI is routed to `rules/connect-knock-cli.md`
      - **Claude** (app or Claude Code) → `rules/connect-claude.md` — app adds Knock from the connectors directory (give the user the directory link and wait); Claude Code is routed to `rules/connect-knock-cli.md`
-     - **Codex** (IDE/app or Codex CLI) → `rules/connect-codex.md` — IDE/app uses MCP + new-task handoff; Codex CLI is routed to `rules/connect-knock-cli.md`
+     - **ChatGPT or Codex** (ChatGPT, Codex IDE/app, or Codex CLI) → `rules/connect-codex.md` — ChatGPT and Codex app use the Knock plugin; Codex CLI is routed to `rules/connect-knock-cli.md`
      - **Any other terminal/CLI agent** → `rules/connect-knock-cli.md` — install the Knock CLI and auth with `knock login`
    - If the tool is unknown, ask which one, then follow the matching rule.
    - On the Knock CLI path, do **not** set up MCP at any point in this skill — no `claude mcp add`, no `codex mcp add`, no `mcp.json` edits, no connector ask. Use `knock` CLI equivalents wherever later steps mention Knock MCP tools.
@@ -55,7 +55,7 @@ Use these when preparing for production or when the user asks — they are optio
 
 - `rules/connect-cursor.md` — Cursor: surface check, then editor MCP + skills install (Cursor CLI routes to `connect-knock-cli.md`)
 - `rules/connect-claude.md` — Claude: surface check, then app directory connector (Claude Code routes to `connect-knock-cli.md`)
-- `rules/connect-codex.md` — Codex: surface check, then IDE/app MCP + new-task handoff (Codex CLI routes to `connect-knock-cli.md`)
+- `rules/connect-codex.md` — ChatGPT and Codex: surface check, then app plugin (Codex CLI routes to `connect-knock-cli.md`)
 - `rules/connect-grok-bot.md` — Grok Bot escape hatch: intro, MCP connect, then route
 - `rules/connect-knock-cli.md` — shared Knock CLI path: install + `knock login` auth for CLI-based tools
 - `rules/discover-workflows.md` — Product discovery and workflow proposals
@@ -68,6 +68,7 @@ Use these when preparing for production or when the user asks — they are optio
 ## Quick reference
 
 - MCP server URL: `https://mcp.knock.app/mcp`
+- ChatGPT / Codex plugin: https://chatgpt.com/plugins/plugin_asdk_app_6a8dddd50424819196928510eff4c70f
 - Knock CLI: install with `npm install -g @knocklabs/cli`, auth with `knock login` ([docs](https://docs.knock.app/cli/overview))
 - Install open-source skills: `npx skills add knocklabs/skills`
 - Prefer Knock MCP tools (or Knock CLI commands on the CLI path) for workflow, step, and template creation after tooling is connected

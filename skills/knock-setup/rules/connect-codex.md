@@ -1,61 +1,44 @@
 ---
-title: Connect Knock in Codex
-description: Route Codex sessions — IDE/app uses the Knock MCP server, Codex CLI uses the Knock CLI
+title: Connect Knock in ChatGPT and Codex
+description: Route ChatGPT and Codex sessions — the app uses the Knock plugin, Codex CLI uses the Knock CLI
 tags:
   - setup
-  - mcp
+  - plugin
   - cli
+  - chatgpt
   - codex
 category: knock-setup
-last_updated: 2026-07-30
+last_updated: 2026-09-03
 ---
 
-# Connect Knock in Codex
+# Connect Knock in ChatGPT and Codex
 
-Use this rule for anything Codex. First determine which surface you are on — do not skip this check:
+Use this rule for ChatGPT or Codex. First determine which surface you are on — do not skip this check:
 
-- **Codex CLI** — this session was launched by running `codex` in a terminal; there is no IDE UI. → Stop here and follow `rules/connect-knock-cli.md` (Knock CLI, not MCP). Do not use the MCP path below and do not run `codex mcp add`.
-- **Codex IDE / app** — you are the agent inside the Codex IDE extension or desktop/app UI. → Continue with the MCP path below.
-- If you cannot tell, ask the user in one line: are they in the Codex IDE/app or the Codex CLI (`codex`)?
+- **Codex CLI** — this session was launched by running `codex` in a terminal; there is no IDE UI. → Stop here and follow `rules/connect-knock-cli.md` (Knock CLI, not the plugin). Do not use the plugin path below and do not run `codex mcp add`.
+- **ChatGPT or Codex IDE / app** — you are the agent inside ChatGPT or the Codex IDE extension / desktop / app UI. → Continue with the plugin path below.
+- If you cannot tell, ask the user in one line: are they in ChatGPT, the Codex IDE/app, or the Codex CLI (`codex`)?
 
-## MCP path (Codex IDE / app)
+## Plugin path (ChatGPT / Codex IDE / app)
 
-Prerequisite: step 1 (Confirm Knock account) must already be asked and answered in this conversation. If it hasn't been, stop and ask before continuing — do not add the MCP server or start OAuth.
+ChatGPT and Codex connect to Knock through the **Knock plugin**. You cannot connect it for them. Output the three lines in step 2 and wait. Do not send them to settings or a custom MCP URL. Do not paste `https://mcp.knock.app/mcp`. Do not run `codex mcp add`.
 
-1. Add MCP: run `codex mcp add knock --url https://mcp.knock.app/mcp`. If `knock` already exists, leave it (do not remove other servers).
-2. Run: `npx skills add knocklabs/skills`
-3. **Auth checkpoint (required — do not skip).** Call a Knock MCP tool once to trigger OAuth — prefer `list_environments`, or `execute_mapi_read` with `GET /v1/whoami`. If no browser opens within about 10 seconds, run `codex mcp login knock`, or have the user open the authorization URL Codex printed. Codex may show a local "Authentication complete. You may close this window." page — that is expected; close it and return here.
-4. Do **not** discover, propose, or build workflows in this task. Auth that completes mid-task does not attach Knock tools here — continue with the handoff below (do not re-add the server in a loop).
+Prerequisite: step 1 (Confirm Knock account) must already be asked and answered in this conversation. If it hasn't been, stop and ask before continuing — do not give plugin instructions or start OAuth.
 
-For users without an account, OAuth sign-in doubles as signup: they'll create their account, complete onboarding, and be redirected back automatically. If the redirect doesn't complete (e.g. they land on the dashboard instead), have them finish signup there, then retry the Knock tool call (or `codex mcp login knock`) to re-trigger OAuth.
+If Knock plugin tools are already available, skip to the auth checkpoint (step 3).
 
-## Codex tool reload (required)
+1. If you have shell access in this session, run `npx skills add knocklabs/skills`. If not, skip this step.
+2. Give the user the plugin instructions (this message is an allowed exception to the one-line rule). Output only this, nothing else:
 
-Codex loads MCP tools when a task starts. Auth that completes mid-task does **not** attach Knock tools to this chat — you must hand off to a new task. Do not keep calling Knock tools here, and do not pretend setup can continue in this conversation.
+   ```
+   1. Add the Knock plugin here: https://chatgpt.com/plugins/plugin_asdk_app_6a8dddd50424819196928510eff4c70f
+   2. Click Try in chat and follow the instructions
+   3. Return here after complete
+   ```
+3. **Auth checkpoint (required — do not skip).** Once the user has returned, call a Knock tool once — prefer `list_environments`, or `execute_mapi_read` with `GET /v1/whoami` — and wait for success.
+   - If Knock tools are unavailable or the call fails, ask the user (one short line) to open the link again, click Try in chat, then return here, then retry the same tool call. Do not loop more than twice — stop and report what failed. Do not fall back to `codex mcp add` or a custom MCP URL.
+4. Only after step 3 succeeds: say setup is done (one short line) and continue to `discover-workflows`. Do not summarize or list installed tools/skills.
 
-After auth succeeds (or as soon as you see that Knock tools are missing in this task):
+For users without an account, the plugin's sign-in doubles as signup: they'll create their account, complete onboarding, and be redirected back automatically. If the redirect doesn't complete (e.g. they land on the dashboard instead), have them finish signup there, then open the link again, click Try in chat, return here, and retry the Knock tool call.
 
-1. Stop the main skill flow here.
-2. Explain in one short line: Codex only picks up newly authenticated MCP tools in a **new** task.
-3. Output a **copyable continuation prompt** in a fenced code block so the user can paste it into a new Codex chat. Fill in the placeholders from this conversation — omit lines that do not apply.
-
-Use this template (keep the fence; substitute real values):
-
-```text
-Continue Knock setup with the knock-setup skill. Knock MCP is already connected and authenticated — do not re-run account ask or MCP OAuth.
-
-Resume from: [discover-workflows | build-workflows | recommend-implementation | wrap-up]
-
-Confirmed to build: [workflow names, or "none confirmed yet — run discover-workflows"]
-Skipped: [names or none]
-Deferred: [names or none]
-If present, read detail from knock-plan.md and treat confirmed as authoritative (skip rediscovery).
-
-Next action: [e.g. propose workflows / build only “New market brief” / continue implementation]
-```
-
-4. End with this as the last line, bolded:
-
-**Open a new Codex task, paste the prompt above, and continue there.**
-
-Do not summarize installed tools/skills. Do not continue to discover/build in this chat after emitting the handoff.
+**Hard gate:** steps after Connect Knock tooling (discover, build, implement, wrap-up) are blocked until a Knock tool call has succeeded in this conversation.
