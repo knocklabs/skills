@@ -7,16 +7,17 @@ description: Connect Knock to your coding agent, discover and build notification
 
 End-to-end Knock setup for a coding agent: connect tooling, design and build notification workflows, then wire them into the application. Work through the rules below in order.
 
-While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the opening encouragement + account ask (step 1), the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, the wrap-up signup-email ask (only when whoami has no email), the final wrap-up output, the ChatGPT and Codex plugin instructions in `rules/connect-codex.md`, and the Claude connector instructions in `rules/connect-claude.md` (directory link + connected ask), which have their own formats. When you end with a confirmation question (account, workflows, implementation, import-users id, wrap-up signup email, or wrap-up guides ask), that question must be the very last line of the message, on its own, and bolded.
+While working, keep every response to one short line — no summaries, no menus, no extra questions unless a step fails. The only exceptions are the opening encouragement + account ask (step 1), the workflow proposals, a prior-confirmation restatement (2–3 lines max), the implementation confirmation ask, the import-users id ask, the wrap-up signup-email ask (only when whoami has no email), the final wrap-up output, the ChatGPT and Codex plugin surfacing in `rules/connect-codex.md`, and the Claude connector instructions in `rules/connect-claude.md` (directory link + connected ask), which have their own formats. When you end with a confirmation question (account, workflows, implementation, import-users id, wrap-up signup email, or wrap-up guides ask), that question must be the very last line of the message, on its own, and bolded.
 
 ## How to use this skill
 
 **Grok Bot:** if this is Grok Bot (desktop/iOS teammate, Agent Computer, or `/workspace`), stop here and follow `rules/connect-grok-bot.md` instead of the steps below.
 
 1. **Open with encouragement, then confirm Knock account** (required first action — do this before anything else)
+   - **ChatGPT and Codex IDE/app:** skip this whole step. Do not ask about a Knock account. Do not install skills on ChatGPT. Go to step 2 and follow `rules/connect-codex.md`. Plugin sign-in covers signup.
    - **Opening (first message only).** Before the account ask, say a short word of encouragement (about 2–3 sentences): they are going to save a lot of time building notifications with Knock, this was a good call, and we will give it our best shot to get them set up as fast as possible. Keep it warm and plain — not a feature pitch, not a menu of next steps.
    - **Default: always ask.** That same first message must then ask whether they have a Knock account. Do not add MCP, run OAuth, install skills, discover workflows, or call Knock tools until they answer.
-   - **Skip only if** the user's message explicitly says they started from the Knock dashboard (e.g. pasted a dashboard setup prompt, or says "from the Knock dashboard"). MCP already configured, a prior chat, or guessing they might have an account does **not** count — still ask. Still include the opening encouragement in that first message.
+   - **Skip the ask only if** the user's message explicitly says they started from the Knock dashboard (e.g. pasted a dashboard setup prompt, or says "from the Knock dashboard"). MCP already configured, a prior chat, or guessing they might have an account does **not** count — still ask. Still include the opening encouragement in that first message.
    - If they say no: do **not** send them to the dashboard to sign up separately. Tell them in one line that they'll create their account during the sign-in step — signup, onboarding, and returning here all happen in that one browser flow — then continue to Connect Knock tooling.
    - End the ask as the last line, bolded, e.g. **Do you already have a Knock account?**
 
@@ -24,7 +25,7 @@ While working, keep every response to one short line — no summaries, no menus,
    - Route by tool family, then follow the **surface check at the top of that rule** (app vs CLI) — do not pick a path from this list alone:
      - **Cursor** (editor or Cursor CLI) → `rules/connect-cursor.md` — editor uses MCP; Cursor CLI is routed to `rules/connect-knock-cli.md`
      - **Claude** (app or Claude Code) → `rules/connect-claude.md` — app adds Knock from the connectors directory (give the user the directory link and wait); Claude Code is routed to `rules/connect-knock-cli.md`
-     - **ChatGPT or Codex** (ChatGPT, Codex IDE/app, or Codex CLI) → `rules/connect-codex.md` — ChatGPT and Codex app use the Knock plugin; Codex CLI is routed to `rules/connect-knock-cli.md`
+     - **ChatGPT or Codex** (ChatGPT, Codex IDE/app, or Codex CLI) → `rules/connect-codex.md` — ChatGPT surfaces the Knock plugin inline (no skill install); Codex app uses the plugin; Codex CLI is routed to `rules/connect-knock-cli.md`
      - **Any other terminal/CLI agent** → `rules/connect-knock-cli.md` — install the Knock CLI and auth with `knock login`
    - If the tool is unknown, ask which one, then follow the matching rule.
    - On the Knock CLI path, do **not** set up MCP at any point in this skill — no `claude mcp add`, no `codex mcp add`, no `mcp.json` edits, no connector ask. Use `knock` CLI equivalents wherever later steps mention Knock MCP tools.
@@ -55,7 +56,7 @@ Use these when preparing for production or when the user asks — they are optio
 
 - `rules/connect-cursor.md` — Cursor: surface check, then editor MCP + skills install (Cursor CLI routes to `connect-knock-cli.md`)
 - `rules/connect-claude.md` — Claude: surface check, then app directory connector (Claude Code routes to `connect-knock-cli.md`)
-- `rules/connect-codex.md` — ChatGPT and Codex: surface check, then app plugin (Codex CLI routes to `connect-knock-cli.md`)
+- `rules/connect-codex.md` — ChatGPT and Codex: surface check, then inline Knock plugin (no skills on ChatGPT; Codex CLI routes to `connect-knock-cli.md`)
 - `rules/connect-grok-bot.md` — Grok Bot escape hatch: intro, MCP connect, then route
 - `rules/connect-knock-cli.md` — shared Knock CLI path: install + `knock login` auth for CLI-based tools
 - `rules/discover-workflows.md` — Product discovery and workflow proposals
