@@ -22,7 +22,7 @@ Use this rule for ChatGPT or Codex. First determine which surface you are on —
 
 ## Plugin path (ChatGPT / Codex IDE / app)
 
-Do **not** ask whether they have a Knock account. Plugin sign-in covers signup. Do not send them to settings or a custom MCP URL. Do not paste `https://mcp.knock.app/mcp`. Do not run `codex mcp add`.
+Do **not** ask whether they have a Knock account. Plugin sign-in covers signup. Do not send them to settings or a custom MCP URL. Do not paste `https://mcp.knock.app/mcp`. Do not run `codex mcp add`. Do not paste an unverified plugin URL. The verified Knock listing URL may be provided only after searches by both provider name and exact plugin ID fail.
 
 **ChatGPT only:** do not install skills. Do not run `npx skills add` or any other skill installer. The plugin already includes them.
 
