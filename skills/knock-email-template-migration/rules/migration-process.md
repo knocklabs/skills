@@ -56,20 +56,20 @@ Record the existing workflow, layout, and partial keys in `MIGRATION.md`. Any ke
 
 Offer to run the whole migration in one (`knock branch create email-migration`) so it stays isolated from other work in the development environment.
 
-### Intake questions
+### Intake
 
-Ask the user these up front. Record the answers in `MIGRATION.md`:
+Six answers are needed before phase 1. Take any the user's prompt already gave; for the rest, present **one confirmation card** and wait for an explicit reply — never fill them in silently, whether from the skill's defaults or from what the files suggest. A "just do it", "test run", or "use your judgment" framing does not skip the card; it only means the user will probably reply "go".
 
-1. **Source directory**: where are the template files? Anything in it to skip?
-2. **Knock project location**: where should `knock.json`, `knock/`, and `knock-migration/` live? Default: a new directory next to the source files; the customer's app repo only if they name it. Every `knock` command in this skill runs from that directory — the CLI resolves `knock.json` from the current directory.
-3. **Target shape**: new workflow per email (default), or add email steps to existing workflows? If existing, which ones?
-4. **Composition mode**: block-first (default: visual blocks + partials, editable by non-technical users) or pixel-perfect HTML mode (raw HTML bodies + `{% render %}` partials)? Explain the tradeoff in one sentence each.
-5. **Environment**: development (default), or a branch?
-6. **Naming**: any key prefix or naming conventions to follow?
+1. **Source directory**: where the template files are, and anything in it to skip.
+2. **Knock project location**: where `knock.json`, `knock/`, and `knock-migration/` live. Default: a new directory next to the source files; the customer's app repo only if they name it. Every `knock` command in this skill runs from that directory — the CLI resolves `knock.json` from the current directory.
+3. **Target shape**: a new workflow per email (default), or email steps added to existing workflows — which ones?
+4. **Composition mode**: block-first (default: visual blocks + partials, editable by non-technical users) or pixel-perfect HTML mode (raw HTML bodies + `{% render %}` partials). State the tradeoff in one sentence each.
+5. **Environment**: development (default), or a branch.
+6. **Naming**: any key prefix or naming conventions to follow.
 
-Verification depth is not an intake question: it is asked explicitly as the last plan-checkpoint question, where the corpus size is known (see Phase 2).
+The card lists only the answers the prompt did not give, one line each: the proposed value and its basis — `(default)`, or `(from the files: …)` when the corpus suggested it, e.g. "skip `drafts/` and `.DS_Store` (from the files: 3 files in `drafts/` are unfinished copies)". End with "reply go, or change any". Record every answer in `MIGRATION.md` with its basis (given, default, or confirmed inference). Verification depth is not an intake answer: it is asked explicitly as the last plan-checkpoint question, where the corpus size is known (see Phase 2).
 
-Do not ask questions the files can answer (e.g., format detection). Do ask when a decision changes their API contract or overwrites anything. In an additional pass over the same workspace, reuse the recorded intake answers unless the user's prompt changes one, and write "inherited from pass N" in the new pass's intake section.
+Do not ask about things the files settle outright (format detection, chrome families); those are findings, not decisions, and belong in the analysis. In an additional pass over the same workspace, reuse the recorded intake answers unless the user's prompt changes one, and write "inherited from pass N" in the new pass's intake section.
 
 ## Additive migrations (adding to an existing Knock setup)
 
