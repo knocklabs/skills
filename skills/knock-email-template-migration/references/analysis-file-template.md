@@ -44,7 +44,7 @@
 
 ## Suspected source mistakes
 
-- (none) | one line each — `what · where · default: reproduce what the source rendered · alternative: fix it`. Anything that looks unintended and needs the user's eye: copy the source engine never rendered (text trailing a Mako control line, a section inside a condition that can never be true — default: dropped, with the text quoted here so restoring it is one word), malformed expressions, a duplicated or truncated sentence, an empty button or heading, a missing space before a link. Structural repairs stay under Markup defects; these are consolidated at the checkpoint as their own list.
+- (none) | one line each — `what · where · default: reproduce what the source rendered · alternative: fix it`. Anything that looks unintended and needs the user's eye: copy the source engine never rendered (text trailing a Mako control line, a section inside a condition that can never be true — default: dropped, with the text quoted here so restoring it is one word), malformed expressions, a duplicated or truncated sentence, an empty button or heading, a missing space before a link, an obvious misspelling in copy (obvious only: brand names, product terms, and deliberate casing or punctuation are not mistakes — default: reproduced as the source rendered it, with the corrected form offered). Structural repairs stay under Markup defects; these are consolidated at the checkpoint as their own list.
 
 ## Partial candidates
 
