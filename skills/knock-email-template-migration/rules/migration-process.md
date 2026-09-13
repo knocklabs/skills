@@ -35,7 +35,9 @@ Then check that the **Knock MCP server** is attached to this project: call one o
 
 Then run one **throwaway preview** through `execute_mapi_write`: `POST /v1/workflows/<any existing workflow>/steps/<its email step ref>/preview_template` with an empty `data` object and the test recipient (create `migration-test-user` first with the MCP `upsert_user` tool — every later render needs it), and assert that `res.result.template.html_content` is a non-empty string (request shape and guard in `references/verification-recipes.md`). One call proves that the session has write access (the write tool exists only for read-write sessions), that it carries the `workflows:run` permission the preview endpoint requires, and that the response has the field the recipes read. A failure here is a setup problem to fix now, not in phase 4. On an account with no workflow yet, run the same call right after the first workflow push in phase 3.
 
-**Service token.** Rendered previews and their checks run through the MCP without a token, so do not raise one when the MCP check passes. A token is needed in two cases only: the MCP cannot be attached (arrange it **now**, before phase 1), or the user chooses the render-archive option in the checkpoint's verification question (arrange it then, before phase 3). Check for `KNOCK_SERVICE_TOKEN` in the environment (test for its presence; never print it); if it is absent, also check for a git-ignored `.env` in the project or in `knock-migration/` that exports it and source that file in the scripts that need the token, but do not suggest the file route. If neither is present, the token has to enter the agent's environment from outside — an `export` inside a tool call does not persist between calls, and a token typed into the chat lands in the transcript — so never ask for it in the conversation. Instead: first record every checkpoint answer, including the verification choice, in the decision log so nothing is lost; then tell the user exactly how to proceed: an account owner or admin creates a dedicated token (dashboard: Settings → Service tokens → New token; shown once, starts with `knock_st_`); in the terminal they run the agent from, `export KNOCK_SERVICE_TOKEN=<token>`; then restart the agent in the same project directory and ask it to continue the migration. On that resume, `MIGRATION.md` shows the plan approved and the verification choice made: confirm the token targets the right account with `GET /v1/whoami` and the throwaway preview over curl (`references/verification-recipes.md`), then start phase 3.
+**Service token.** Rendered previews and their checks run through the MCP without a token, so do not raise one when the MCP check passes. A token is needed in two cases only: the MCP cannot be attached (arrange it **now**, before phase 1), or the user chooses at intake to review every email side by side (arrange it then, still before phase 1). Check for `KNOCK_SERVICE_TOKEN` in the environment (test for its presence; never print it); if it is absent, also check for a git-ignored `.env` in the project or in `knock-migration/` that exports it and source that file in the scripts that need the token, but do not suggest the file route. If neither is present, the token has to enter the agent's environment from outside — an `export` inside a tool call does not persist between calls, and a token typed into the chat lands in the transcript — so never ask for it in the conversation. Instead: first record every intake answer in `MIGRATION.md` so nothing is lost; then tell the user exactly how to proceed: an account owner or admin creates a dedicated token (dashboard: Settings → Service tokens → New token; shown once, starts with `knock_st_`); in the terminal they run the agent from, `export KNOCK_SERVICE_TOKEN=<token>`; then restart the agent in the same project directory and ask it to continue the migration. On that resume, `MIGRATION.md` holds the intake answers: confirm the token targets the right account with `GET /v1/whoami` and the throwaway preview over curl (`references/verification-recipes.md`), then start phase 1.
+
+**Report preflight in the user's terms.** A few lines they can act on: anything that failed, anything that limits a later choice (a limited sender that only reaches account members, no email channel), what already exists in the account that the plan must respect, and any data written (the test recipient). Do not narrate the skill's mechanics — which MCP tools exist, a deferred preview, workspace steps — the user does not need them and they bury the lines that matter.
 
 Run everything below from the Knock project directory chosen at intake. Then locate the Knock directory. If the project has no `knock.json`, **do not run `knock init`** — it is interactive-only (no flags to answer its prompt) and defaults to a hidden `.knock` directory. Write the config directly, exactly as init would:
 
@@ -58,7 +60,7 @@ Offer to run the whole migration in one (`knock branch create email-migration`) 
 
 ### Intake
 
-Six answers are needed before phase 1. Take any the user's prompt already gave; for the rest, present **one confirmation card** and wait for an explicit reply — never fill them in silently, whether from the skill's defaults or from what the files suggest. A "just do it", "test run", or "use your judgment" framing does not skip the card; it only means the user will probably reply "go".
+Eight answers are needed before phase 1. Take any the user's prompt already gave; ask for the rest **one question at a time**, each as a plain-language question with selectable options, and wait for the answer — never fill them in silently, whether from the skill's defaults or from what the files suggest. A "just do it", "test run", or "use your judgment" framing does not skip the questions; it only means the user will probably pick the recommended option each time.
 
 1. **Source directory**: where the template files are, and anything in it to skip.
 2. **Knock project location**: where `knock.json`, `knock/`, and `knock-migration/` live. Default: a new directory next to the source files; the customer's app repo only if they name it. Every `knock` command in this skill runs from that directory — the CLI resolves `knock.json` from the current directory.
@@ -66,8 +68,39 @@ Six answers are needed before phase 1. Take any the user's prompt already gave; 
 4. **Composition mode**: block-first (default: visual blocks + partials, editable by non-technical users) or pixel-perfect HTML mode (raw HTML bodies + `{% render %}` partials). State the tradeoff in one sentence each.
 5. **Environment**: development (default), or a branch.
 6. **Naming**: any key prefix or naming conventions to follow.
+7. **Review scope**: a side-by-side comparison for one email per layout (default), or for every email — which needs a service token, arranged before phase 1.
+8. **Test sends**: none (default), or test emails to a named inbox.
 
-The card lists only the answers the prompt did not give, one line each: the proposed value and its basis — `(default)`, or `(from the files: …)` when the corpus suggested it, e.g. "skip `drafts/` and `.DS_Store` (from the files: 3 files in `drafts/` are unfinished copies)". End with "reply go, or change any". Record every answer in `MIGRATION.md` with its basis (given, default, or confirmed inference). Verification depth is not an intake answer: it is asked explicitly as the last plan-checkpoint question, where the corpus size is known (see Phase 2).
+Write every question for someone who has never read this skill: none of the labels above ("target shape", "composition mode"), no internal mechanics, just the question in their terms and what each option means for them. Use the agent's structured question tool where it has one, one question per call: two to four options, the recommended one first and marked as such, and when the files suggest an answer, make it an option whose description says what was found ("Skip `migration-plan.html` and `knock.json` — they look like an earlier attempt's plan and config, not templates"). Answers that are free text (a path, a naming convention) go through the tool's custom-answer option. Without such a tool, ask the same question in text with lettered options and wait for the letter. For example, composition mode becomes: "How should the email bodies be built?" with options "From editable blocks (recommended) — your team can edit them in the dashboard" and "As the exact HTML — byte-faithful, but only engineers can change it". Record every answer in `MIGRATION.md` with its basis (given, default, or confirmed inference).
+
+**Verification is always asked explicitly** — questions 7 and 8 of intake, even when the user called the run a test or gave no preference; never inferred or folded into a default list. That reasoning, and the mechanics after the cards, are for you: the user sees only the questions, phrased as what they will get to look at and what they need to provide, with no counts of layouts, partials, or patterns and no mention of tiers, the MCP, or token mechanics. Every email is checked automatically whichever they choose; the questions decide what they review by eye and whether anything is sent.
+
+```
+Q7. How much would you like to review side by side before we finish?
+
+Options:
+  A. One email per layout (recommended). Every email is rendered and
+     compared to the original automatically; you review a comparison page
+     for one representative email per layout. Nothing else needed from you.
+  B. Every email. Same automatic checks, plus a comparison page for every
+     migrated email, with each rendered email saved in the project folder.
+     This one needs a service token; I'll explain how to provide it.
+
+Reply with a letter.
+```
+
+```
+Q8. Would you also like test emails sent to an inbox?
+
+Options:
+  A. No (recommended unless you want to check them in a real mail client).
+  B. Yes — tell me the inbox, and I'll send one per workflow for you to
+     confirm.
+
+Reply with a letter; for B, name the inbox.
+```
+
+Behind the options: both A and B of the first question are tier 1 plus tier 2 through the MCP; A adds the visual pass on one template per layout (for sets over ten templates the sample also covers each partial and control-flow pattern — the card says only how many emails the comparison covers, never what the sample is built from), while B renders every template through the direct path and builds comparison pages for all of them, which needs the service-token handoff **now**, before phase 1 (see the service-token step in preflight). Check for `KNOCK_SERVICE_TOKEN` before writing the card; if it is already set, replace option B's last sentence with "Your service token is already set up, so nothing else is needed." A "yes" to the second question adds tier 3 (a sandbox run first, then delivery). Record both answers in `MIGRATION.md`; they set the tier and scope `rules/verifying-the-migration.md` runs.
 
 Do not ask about things the files settle outright (format detection, chrome families); those are findings, not decisions, and belong in the analysis. In an additional pass over the same workspace, reuse the recorded intake answers unless the user's prompt changes one, and write "inherited from pass N" in the new pass's intake section.
 
@@ -109,6 +142,7 @@ knock-migration/
 - Source: ../emails/ (48 templates; skip: drafts/)
 - Target: new workflow per template | Mode: block-first | Env: development
 - Existing resources: 3 workflows (…), 1 layout (default — stock, unused), 0 partials
+- Review: one email per layout | Test sends: test@example.com
 
 ## Status
 
@@ -119,7 +153,6 @@ knock-migration/
 
 ## Decisions
 - 2026-08-11: "User comments" consolidated into one workflow with a batch step (user approved).
-- 2026-08-11: Verification: MCP previews + visual pass per layout; test sends to test@example.com added by the user at the checkpoint.
 
 ## Open questions
 - ❓ `Deleted Item.html` has no discoverable subject line; drafted "Your item was removed" — needs approval.
@@ -151,27 +184,9 @@ Minimal skeleton per plan file (headings in this order, so the checkpoint and th
 
 Then present the plan to the user as a short summary, the **blocking** ❓ questions asked one at a time, then the default, suspected-mistake, and opt-in lists, and **stop**. Two recurring cases are `default`, not blocking, so they do not multiply the question count: a sibling of a workflow that is already live becomes its own workflow (extending the live one is offered, not asked); byte-identical source files become one workflow keyed on the first file, with the others recorded as aliases in the plan and the report.
 
-**Verification is always an explicit question** — the last one in the checkpoint, in the same card shape, even when the user called the run a test or gave no preference; it is never inferred or folded into the default list, because it decides what "done" means and whether a service token or an inbox is needed:
 
-```
-Q<n>. How should the migration be verified?
 
-Options:
-  A. Readback, rendered previews through the Knock MCP, and a side-by-side
-     visual pass for one template per layout. No token, no sends.
-  B. A, plus live test sends to <inbox> (sandbox run first, then delivery).
-  C. A, plus a full archive of every render on disk. Needs a service token
-     (arranged before phase 3); through the MCP alone each archived render
-     costs about twice its size in output tokens.
-
-Recommendation: A. For sets over ten templates the visual pass samples one
-template per layout, partial, and control-flow pattern.
-Reply with a letter; for B, name the inbox.
-```
-
-Record the answer in the decision log; it sets the tier `rules/verifying-the-migration.md` runs.
-
-Present blocking questions **in the chat, not by pointing at plan files**: the plan is the record, the chat is the interface. Ask them **one at a time**, each waiting for its answer before the next, so every question is read before it is answered and later questions can build on earlier answers; never batch them, and where the agent has a structured question tool use it with one question per call. The verification question is always the last. Each is written for a reader who has **not** opened the workspace and follows one shape:
+Present blocking questions **in the chat, not by pointing at plan files**: the plan is the record, the chat is the interface. Ask them **one at a time**, each waiting for its answer before the next, so every question is read before it is answered and later questions can build on earlier answers; never batch them, and where the agent has a structured question tool use it with one question per call. Each is written for a reader who has **not** opened the workspace and has not read this skill — no internal terms (question levels, chrome families, tiers, preflight mechanics); say what each option means for their email and their trigger payload — and follows one shape:
 
 ```
 Q1. Consolidate the three "plan changed" emails into one workflow?
@@ -189,7 +204,7 @@ Recommendation: A — the sending code already knows which file it picked.
 Reply with a letter, or "A but call the field change_type".
 ```
 
-That is: a one-line question; **Source** (which template(s) and what the source does today, in a sentence); **Options**, lettered, each with its consequence for the trigger payload and for the email; **Recommendation** with the reason; and how to answer. Workspace ids (`B1`, `L2`) belong in the plan files, never in the prompt. After the last question, present three lists in one message, each ending with its own reply instruction, and proceed on nothing less than an explicit reply: **Defaults** — one line each (`template → what I'll do → why`), ending "reply go, or name the ones to change"; **Suspected source mistakes** — consolidated from the analysis files, one line each (`what · where · default: reproduce what the source rendered · alternative: fix it`), ending "reply go, or name the ones to fix"; **Offered, not applied** — the opt-in remaps and simplifications the mapping rule produced (`actor.*`, `vars.*` for a constant, a finished-URL field), one line each (`what → what changes if you take it`), ending "name any to apply". Nothing in these lists is applied or skipped on silence. Required approvals before phase 3:
+That is: a one-line question; **Source** (which template(s) and what the source does today, in a sentence); **Options**, lettered, each with its consequence for the trigger payload and for the email; **Recommendation** with the reason; and how to answer. Workspace ids (`B1`, `L2`) belong in the plan files, never in the prompt. After the last question, present three lists **one at a time**, each in its own message ending with its own reply instruction, and wait for that reply before showing the next; proceed on nothing less than an explicit reply to each. In order: **Defaults** — one line each (`template → what I'll do → why`), ending "reply go, or name the ones to change"; then **Suspected source mistakes** — consolidated from the analysis files, one line each (`what · where · default: reproduce what the source rendered · alternative: fix it`), ending "reply go, or name the ones to fix" (skip this message when there are none, and say so in one line); then **Offered, not applied** — the opt-in remaps and simplifications the mapping rule produced (`actor.*`, `vars.*` for a constant, a finished-URL field), one line each (`what → what changes if you take it`), ending "name any to apply, or reply none". Nothing in these lists is applied or skipped on silence. Required approvals before phase 3:
 
 - The overall plan (layouts, partials, workflow topology, keys)
 - Every drafted subject line for templates that had none
@@ -228,7 +243,7 @@ In an isolated branch, bulk commits (`knock commit -m "Migration: partials" --fo
 
 ## Phase 4: verify and report
 
-Verify each workflow at the depth chosen in the checkpoint's verification question, per `rules/verifying-the-migration.md`, then write the final report (created resources, template → workflow map, per-workflow trigger payload contract, remaining TODOs, promotion instructions).
+Verify each workflow at the depth chosen at intake, per `rules/verifying-the-migration.md`, then write the final report (created resources, template → workflow map, per-workflow trigger payload contract, remaining TODOs, promotion instructions).
 
 ## Additional passes in the same workspace
 
@@ -259,6 +274,6 @@ Report back: your ❓blocking / ❓default / ❓fyi items, and any correction to
 ## Resuming and batching
 
 - On any new session, read `MIGRATION.md` first; it tells you the phase and the next unfinished template.
-- After a restart to supply a service token, the decision log already holds the approved plan and the verification choice: run preflight's service-token confirmation and go straight to phase 3 — do not re-ask the checkpoint.
+- After a restart to supply a service token, `MIGRATION.md` already holds the intake answers: run preflight's service-token confirmation and continue with phase 1 — do not re-ask intake.
 - Re-running a phase for a template is safe: analysis files are overwritten in place; builds re-push the same keys (idempotent upsert).
 - For large sets, process in batches of 5-10 templates per phase-1/phase-3 sitting, updating the status board between batches. The plan checkpoint (phase 2) still happens once, over the full set — partial and layout extraction only work well with the whole corpus analyzed.

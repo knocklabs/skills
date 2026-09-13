@@ -48,21 +48,21 @@ Read this file, then read only the rule files for the phase you are entering. Ev
 
 1. **Preflight and intake** (`rules/migration-process.md`, Phase 0 and Workspace sections)
    - Check the CLI, the email channel, and the MCP; run the throwaway preview; inventory existing resources by content, not just keys
-   - Record the intake answers and copy the whole source directory into the workspace
+   - Record the intake answers, including how the result will be reviewed, and copy the whole source directory into the workspace
 
 2. **Analyze** (`rules/analyzing-source-templates.md`, with `rules/mapping-variables-and-logic.md` for the proposed-mapping column)
    - Corpus scan first: chrome families, variant sets, corpus-wide conventions
    - One analysis file per template from `references/analysis-file-template.md`, body copy verbatim
 
 3. **Plan and checkpoint** (`rules/migration-process.md` Phase 2, with `rules/extracting-layouts.md`, `rules/extracting-partials.md`, and `rules/mapping-variables-and-logic.md`)
-   - Four plan files, then blocking questions one at a time with the verification question last, then the defaults, suspected-mistake, and opt-in lists
+   - Four plan files, then blocking questions one at a time, then the defaults, suspected-mistake, and opt-in lists
    - Hard stop until the user approves
 
 4. **Build** (`rules/extracting-partials.md`, then `rules/extracting-layouts.md`, then `rules/building-templates.md`)
    - Partials, then layouts, then workflows; each resource validated, pushed by key, read back, and committed before the next stage
 
 5. **Verify and report** (`rules/verifying-the-migration.md`)
-   - Tier 1 always; tier 2 rendered previews through the MCP with a visual pass per layout; tier 3 test sends when chosen
+   - Tier 1 always; tier 2 rendered previews through the MCP with a visual pass per layout, or for every email when chosen; tier 3 test sends when chosen
    - `REPORT.md` with trigger contracts and promotion instructions
 
 ### For an additional pass or a resumed migration
@@ -107,7 +107,7 @@ Read this file, then read only the rule files for the phase you are entering. Ev
 | **1 · Analyze** | `rules/analyzing-source-templates.md`, plus `rules/mapping-variables-and-logic.md` for the "Proposed mapping" column | `analysis/_chrome-families.md` and `analysis/_conventions.md` from the corpus scan, then one `analysis/<stem>.md` per template (or variant set) |
 | **2 · Plan and checkpoint** | `rules/migration-process.md` (Phase 2), `rules/extracting-layouts.md`, `rules/extracting-partials.md`, `rules/mapping-variables-and-logic.md` | `plan/layouts.md`, `plan/partials.md`, `plan/variables.md`, `plan/workflows.md` — then a **hard stop** until the user approves |
 | **3 · Build** | `rules/extracting-partials.md`, then `rules/extracting-layouts.md`, then `rules/building-templates.md` | `knock/partials/`, `knock/layouts/`, `knock/workflows/` — each stage validated, pushed, read back, and committed before the next |
-| **4 · Verify and report** | `rules/verifying-the-migration.md` | `knock-migration/previews/` (renders and the per-layout comparison page), `REPORT.md` with trigger contracts |
+| **4 · Verify and report** | `rules/verifying-the-migration.md` | `knock-migration/previews/` (renders and the side-by-side comparison page, offered in the browser), `REPORT.md` with trigger contracts |
 
 ### Critical guardrails
 
@@ -122,4 +122,4 @@ These invariants prevent broken or destructive migrations — never break them, 
 7. **Never overwrite existing Knock resources without explicit confirmation.** This includes the account's `default` email layout and any workflow/partial/layout key that already exists.
 8. **Never change the customer's trigger data contract without approval.** The default mapping is `data.*` with original variable names; any remap (e.g., to `recipient.*`) is opt-in at the plan checkpoint.
 9. **Never promote to production.** The migration targets the development environment (or a branch). The final report tells the user how to promote.
-10. **A template is not migrated until verified.** Every resource passes push + readback before it's marked built, and every template's rendered output is checked against source-derived assertions at the depth chosen at the plan checkpoint.
+10. **A template is not migrated until verified.** Every resource passes push + readback before it's marked built, and every template's rendered output is checked against source-derived assertions at the depth chosen at intake.

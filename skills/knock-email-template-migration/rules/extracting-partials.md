@@ -74,9 +74,9 @@ Every migrated partial gets an `input_schema` so editors see form fields instead
 | Link | `url` | |
 | Picture | `image` | `url` + `alt` + `action` subfields |
 | Structured object (user, order) | `json` | Optional validation schema; preserves structure |
-| Collection to iterate | `list` | Optional `itemSchema` per item |
+| Collection to iterate | `list` | Optional `item_schema` describing each item |
 
-Field shape: `{ "type", "key", "label", "settings": { "required", "default", "description", ... } }`. Keys must exactly match the `{{ key }}` variables in the content. Give required inputs `"required": true`; give cosmetic inputs sensible `default`s. Set `icon_name` and a `description` (≤280 chars) so the block is recognizable in the editor sidebar. `icon_name` is validated against a pinned set of Lucide icon names even though the API types it as a free string — an invalid name fails validation with an error that names the field but not the allowed values. Stick to known-good names (`BellDot`, `Flag`, `LayoutList`, `LayoutGrid`, `MessageCircle`, `Megaphone`, `Lightbulb`, `Package`, `Tag`) and note the set uses **current** Lucide naming (`CircleAlert`, not the legacy `AlertCircle`).
+Field shape: `{ "type", "key", "label", "settings": { "required", "default", "description", ... } }`. Keys must exactly match the `{{ key }}` variables in the content. Give required inputs `"required": true`; give cosmetic inputs sensible `default`s. Set `icon_name` and a `description` (≤280 chars) so the block is recognizable in the editor sidebar. `icon_name` is validated against a pinned set of Lucide icon names even though the API types it as a free string — an invalid name fails validation with an error that names the field but not the allowed values. Stick to known-good names (`BellDot`, `Flag`, `LayoutList`, `LayoutGrid`, `MessageCircle`, `Megaphone`, `Lightbulb`, `Package`, `Tag`, `Minus`, `MapPin`) and note the set uses **current** Lucide naming (`CircleAlert`, not the legacy `AlertCircle`); for any other name, `knock partial validate <key>` rejects an unknown icon before anything is pushed, so try it and validate rather than guess.
 
 For structured inputs, callers pass Liquid references: a `list` field bound to `{{ data.items }}`, a `json` field bound to `{{ recipient }}` — then the partial iterates `{% for item in items %}` directly.
 
@@ -112,14 +112,25 @@ knock/partials/<partial-key>/
   "icon_name": "LayoutGrid",
   "content@": "content.html",
   "input_schema": [
-    { "type": "image", "key": "image", "label": "Product image", "settings": { "required": true } },
+    { "type": "image", "key": "image", "label": "Product image", "settings": { "required": true },
+      "url":    { "type": "url",  "key": "url",    "label": "Image URL", "settings": { "required": true } },
+      "alt":    { "type": "text", "key": "alt",    "label": "Alt text",  "settings": { "required": true } },
+      "action": { "type": "text", "key": "action", "label": "Link",      "settings": { "required": false } } },
     { "type": "text", "key": "title", "label": "Title", "settings": { "required": true } },
     { "type": "text", "key": "price", "label": "Price", "settings": { "required": false } }
   ]
 }
 ```
 
-Composite fields (`image`, `button`) accept the simple form above — their subfields (`url`/`alt`/`action`; `text`/`action`) are auto-populated with defaults. In content, reference their parts as `{{ image.url }}`, `{{ image.alt }}`, `{{ button.text }}`, `{{ button.action }}`.
+Composite fields (`image`, `button`) carry their subfields as **required top-level keys** on the field, each a full field definition: a button needs `text` and `action`, an image needs `url`, `alt`, and `action`. Write them out — the short form above does not validate for these types:
+
+```json
+{ "type": "button", "key": "cta", "label": "Button", "settings": { "required": true },
+  "text":   { "type": "text", "key": "text",   "label": "Button text",   "settings": { "required": true } },
+  "action": { "type": "text", "key": "action", "label": "Button link",   "settings": { "required": true } } }
+```
+
+In content, reference their parts as `{{ image.url }}`, `{{ image.alt }}`, `{{ button.text }}`, `{{ button.action }}`.
 
 Rules:
 
