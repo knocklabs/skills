@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | SendGrid design editor (v2) | `class="sg-campaigns"`, `data-editor-version="2"`, `role="module" data-type="text\|button\|divider\|image\|preheader\|code\|columns"` | every `role="module"` table is one section — module boundaries are block boundaries; the hidden `data-type="preheader"` module is the `{{ preview_text }}` slot; button modules carry the brand color on the `<a>`; the `<!--[if (gte mso 9)\|(IE)]>` conditional that closes a `columns` module emits `<tr>` where `</tr>` was meant (editor bug, harmless) |
 | SendGrid legacy editor | `span.sg-image` with a `data-imagelibrary` attribute around images; `<%body%>` / `<%subject%>` slots; `:name` substitutions | strip `data-imagelibrary` (editor metadata); the slots are filled by the API call, not variables |
-| BEE / Stripo | `row-content`, `block-` classes, `bee.io` assets | rows are sections; `.row-content` width is the card width |
+| BEE / Stripo | `row-content`, `block-` classes, `bee.io` assets | rows are sections; `.row-content` width is the card width; the visible rule of a divider lives on a `td.divider_inner` with `border-top` (inside `table.divider_block` in newer exports, `table.divider_content` in older ones) — anchor divider detection on that cell, not on the table's class, or the newer exports lose their rules |
 | Compiled MJML | `mj-column-per-*`, `mj-outlook-group-fix` classes | the HTML is the ground truth; note it came from MJML |
 
 ## Splicing a layout out of the representative file
