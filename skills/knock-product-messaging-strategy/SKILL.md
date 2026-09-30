@@ -10,8 +10,8 @@ Turn a product into a coordinated messaging system — not a pile of one-off not
 Complementary manuals:
 
 - [In-app messaging best practices](https://knock.app/manuals/in-app-messaging/best-practices-for-in-app-messaging)
-- [Transactional email](https://knock.app/manuals/transactional-email)
-- [Notification infrastructure](https://knock.app/manuals/notification-infrastructure)
+- [Transactional email](https://knock.app/manuals/transactional-email/introduction-to-transactional-email)
+- [Notification infrastructure](https://knock.app/manuals/notification-infrastructure/introduction-to-notification-infrastructure)
 
 ## Output contract (hard)
 
