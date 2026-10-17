@@ -11,7 +11,7 @@ tags:
   - banners
   - modals
 category: knock-cli
-last_updated: 2026-09-02
+last_updated: 2026-10-17
 ---
 
 # Guides and message types
@@ -202,6 +202,7 @@ guides/{guide-key}/
 |-------|-------------|----------|
 | `name` | Display name for the guide | Yes |
 | `channel_key` | The key of the `in_app_guide` channel. Discover with `knock channel list` and use the key where `Type` is `in_app_guide`. | Yes |
+| `goal_attachment` | Optional attached goal: `goal_key` and optional `attribution_window_days` (1–30). See `rules/goals.md`. | No |
 
 **Step fields:**
 

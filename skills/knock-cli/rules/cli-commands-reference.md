@@ -10,7 +10,7 @@ tags:
   - workflow
   - resources
 category: knock-cli
-last_updated: 2026-09-02
+last_updated: 2026-10-17
 ---
 
 # CLI commands reference
@@ -30,6 +30,11 @@ Many Knock CLI commands display interactive confirmation prompts that require us
 | `knock guide pull <key>` | `Create a new guide directory? (y/N)` | When the local directory doesn't exist yet |
 | `knock message-type pull <key>` | `Create a new message type directory? (y/N)` | When the local directory doesn't exist yet |
 | `knock partial pull <key>` | `Create a new partial directory? (y/N)` | When the local directory doesn't exist yet |
+| `knock goal pull <key>` | `Create a new goal directory? (y/N)` | When the local directory doesn't exist yet |
+| `knock reusable-request pull <key>` | `Create a new reusable request directory? (y/N)` | When the local directory doesn't exist yet |
+| `knock goal clone` | Confirmation prompt | Before cloning a goal |
+| `knock goal archive` | Confirmation prompt | Before archiving a goal in every environment |
+| `knock reusable-request archive` | Confirmation prompt | Before archiving a reusable request in every environment |
 | `knock pull` | Multiple directory creation prompts | When pulling resources that don't exist locally yet |
 | `knock commit promote` | Confirmation prompt | When promoting changes between environments |
 | `knock commit` | Confirmation prompt | When committing changes |
@@ -59,6 +64,7 @@ knock commit promote --to=production --force
 | `knock guide new` | Interactive message type selection. Use `--key` and `--message-type` flags to skip prompts. |
 | `knock message-type new` | Interactive setup. Use `--key` and `--name` flags to skip prompts. |
 | `knock partial new` | Interactive setup. Use `--key` and `--type` flags to skip prompts. |
+| `knock reusable-request new` | Prompts for name and key, then confirms the directory. Pass `-k`, `-n`, and `--force` to skip both. |
 
 **Commands that never prompt (safe for direct execution):**
 
@@ -87,6 +93,8 @@ The Knock CLI manages several resource types:
 | `translation` | Localization files | `knock translation` |
 | `partial` | Reusable template partials | `knock partial` |
 | `audience` | Audience definitions | `knock audience` |
+| `goal` | Outcome definitions. Push publishes them. They are not committed, promoted, or branched. | `knock goal` |
+| `reusable-request` | Shared HTTP fetch configurations | `knock reusable-request` |
 | `schema` | Item schemas for users, tenants, and objects | `knock schema` |
 | `commit` | Version control for changes | `knock commit` |
 
@@ -458,7 +466,7 @@ knock commit list --no-promoted --environment=staging
 | Flag | Description |
 |------|-------------|
 | `--environment` | Target environment (defaults to development) |
-| `--resource-type` | Filter by resource type: `workflow`, `email_layout`, `guide`, `message_type`, `partial`, `translation` |
+| `--resource-type` | Filter by resource type: `audience`, `email_layout`, `guide`, `message_type`, `partial`, `reusable_request`, `translation`, `workflow`. Goals are not a commit resource type. |
 | `--resource-id` | Filter by resource key. Must be used with `--resource-type` |
 | `--[no-]promoted` | Show only promoted or unpromoted changes |
 
@@ -596,6 +604,84 @@ knock audience archive <audience-key> --environment=<env>
 ```
 
 > **Warning:** Archiving affects **all** environments and cannot be undone. `--environment` is required on this command, and `--force` skips the confirmation prompt.
+
+## Goal commands
+
+Goals publish on save. `knock goal push` does not take `--commit`, and `knock commit --resource-type=goal` is invalid. Goals have no `--branch` flag. Copy a goal into another environment with `knock goal clone` rather than promoting it. See `rules/goals.md`.
+
+### List and get
+
+```bash
+knock goal list
+knock goal get <goal-key>
+```
+
+### Create, pull, validate, and push
+
+```bash
+knock goal new <goal-key>
+knock goal pull <goal-key> --force
+knock goal pull --all --force
+knock goal validate <goal-key>
+knock goal push <goal-key>
+knock goal push --all
+```
+
+`knock goal new` takes the key as an argument, does not prompt, and errors if the directory already exists. It does not push. `knock goal push` does not prompt and has no `--force` flag.
+
+### Clone and archive
+
+```bash
+knock goal clone <goal-key> <new-goal-key> --force
+knock goal clone <goal-key> <new-goal-key> \
+  --environment=development \
+  --dest-environment=production \
+  --force
+
+knock goal archive <goal-key> --force
+```
+
+Cloning copies the definition and not the resources attached to it. Archiving applies to every environment, cannot be undone, and fails while a workflow, guide, or broadcast is still attached. `--force` skips the confirmation prompt on both commands.
+
+### Other goal commands
+
+```bash
+knock goal open <goal-key>    # Open in the dashboard
+```
+
+## Reusable request commands
+
+Reusable requests are versioned. Push, commit with `--resource-type=reusable_request`, and promote them like workflows. See `rules/reusable-requests.md`.
+
+### List and get
+
+```bash
+knock reusable-request list
+knock reusable-request get <key>
+```
+
+### Create, pull, validate, and push
+
+```bash
+knock reusable-request new -k <key> -n "Name" --method=get --url=https://example.com --force
+knock reusable-request pull <key> --force
+knock reusable-request pull --all --force
+knock reusable-request validate <key>
+knock reusable-request push <key>
+knock reusable-request push <key> --commit -m "Updated reusable request"
+```
+
+`knock reusable-request new` prompts for a name and key, and again before writing the directory, unless you pass `-n`, `-k`, and `--force`. Pass `-p` to push after scaffolding.
+
+### Archive a reusable request
+
+```bash
+knock reusable-request archive <key> --environment=<env> --force
+```
+
+> **Warning:** Archiving affects **all** environments and cannot be undone. `--environment` is required. When a local directory exists under `<knockDir>/reusable-requests/<key>`, the command deletes it so a later push does not recreate the request. `--json` requires `--force`.
+
+There is no `open` command for reusable requests.
 
 ## Schema commands
 

@@ -17,6 +17,8 @@ The Knock CLI skill includes detailed rule sets covering:
 4. **Workflow templates** - Structures, patterns, and best practices for workflows and templates
 5. **Guides and message types** - Working with in-app guides for lifecycle messaging and message types as their schema
 6. **Partials** - Reusable template building blocks for email design systems
+7. **Goals** - Outcome definitions that publish on save, and how to attach them to workflows and guides
+8. **Reusable requests** - Shared HTTP fetch configurations used by workflow fetch steps
 
 ## How to use this skill
 
@@ -74,6 +76,17 @@ When building reusable email components (callouts, quote blocks, comment cards):
    - Run `knock partial new -k <key> -n "Name" -t html --force` to scaffold
    - Add `input_schema` and edit content; validate and push with `knock partial push <key>`
 
+### For goals and reusable requests
+
+1. **Goals publish on save** (`rules/goals.md`)
+   - `knock goal push` does not create a commit, and goals cannot be promoted or edited on a branch
+   - Clone a goal into another environment with `knock goal clone`
+   - Attach a goal by setting `goal_attachment` on the workflow or guide, then commit that resource
+
+2. **Reusable requests are versioned** (`rules/reusable-requests.md`)
+   - Scaffold with `knock reusable-request new`, then push and commit with `--resource-type=reusable_request`
+   - Bulk `knock push` writes reusable requests before workflows that reference them
+
 ### For modifying workflows and templates
 
 When making changes to workflows or templates:
@@ -92,6 +105,8 @@ When making changes to workflows or templates:
 - `rules/workflow-templates.md` - Workflow and template structures and best practices
 - `rules/guides-and-message-types.md` - Guides and message types for lifecycle messaging
 - `rules/partials.md` - Partials and reusable template building blocks
+- `rules/goals.md` - Goals, including publish-on-save behavior, clone, and archive
+- `rules/reusable-requests.md` - Reusable fetch requests used by workflow fetch steps
 
 ## Quick reference
 
@@ -132,6 +147,17 @@ knock partial pull <key> --force # Pull a partial from Knock
 knock partial push <key>         # Push a partial after modifying
 knock partial validate <key>     # Validate a partial locally
 
+# Goal commands (push publishes; there is no commit step for the goal)
+knock goal list
+knock goal new <goal-key>
+knock goal push <goal-key>
+knock goal clone <goal-key> <new-goal-key> --dest-environment=<env> --force
+
+# Reusable request commands (commit with --resource-type=reusable_request)
+knock reusable-request list
+knock reusable-request new -k <key> -n "Name" --force
+knock reusable-request push <key> --commit -m "message"
+
 # Commit and promote a specific resource only (safe when other resources have pending changes)
 knock commit -m "message" --resource-type=workflow --resource-id=<key> --force
 knock commit list --resource-type=workflow --resource-id=<key>   # get the commit ID
@@ -141,7 +167,8 @@ knock commit promote --only=<commit-id> --force
 ### Key concepts
 
 - **knockDir**: The directory where Knock resources are stored (configured in knock.json)
-- **Resource types**: workflows, layouts, guides, message-types, translations, partials, audiences, schemas
+- **Resource types**: workflows, layouts, guides, message-types, translations, partials, audiences, reusable requests, goals, schemas
+- **Goals vs other resources**: goals publish on save. Do not commit, promote, or branch them. Clone them across environments instead.
 - **Guides vs workflows**: Guides are for lifecycle messaging (banners, modals); workflows are for notifications
 - **Template modes**: Visual blocks (default for new emails) vs HTML (only when explicitly requested)
 - **Variable namespaces**: `data` (trigger payload), `vars` (environment variables), `recipient`, `actor`, `tenant`

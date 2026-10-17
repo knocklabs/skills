@@ -10,7 +10,7 @@ tags:
   - workflows
   - layouts
 category: knock-cli
-last_updated: 2026-09-02
+last_updated: 2026-10-17
 ---
 
 # Knock directory structure
@@ -52,6 +52,8 @@ When `knock.json` is absent, there is no configured root. Resource subcommands f
 | `knock message-type pull/push/validate` | `--message-types-dir` |
 | `knock translation pull/push/validate` | `--translations-dir` |
 | `knock audience pull/push/validate` | `--audiences-dir` |
+| `knock goal pull/push/validate` | `--goals-dir` |
+| `knock reusable-request pull/push/validate` | `--reusable-requests-dir` |
 | `knock schema pull/push` | `--schemas-dir` |
 
 These directory flags exist only on the `pull`, `push`, and `validate` subcommands; `get`, `list`, `open`, and `new` do not accept them. `knock schema` has only `pull` and `push`, so `--schemas-dir` is limited to those.
@@ -67,6 +69,14 @@ The knock directory contains subdirectories for each resource type. These names 
 ├── audiences/                    # Audiences
 │   └── {audience-key}/
 │       └── audience.json         # Audience configuration
+│
+├── goals/                        # Outcome definitions (publish on save)
+│   └── {goal-key}/
+│       └── goal.json             # Name, description, and condition
+│
+├── reusable-requests/            # Shared HTTP fetch configurations
+│   └── {reusable-request-key}/
+│       └── reusable_request.json
 │
 ├── partials/                     # Reusable template partials
 │   └── {partial-key}/
@@ -106,7 +116,9 @@ The knock directory contains subdirectories for each resource type. These names 
         └── {collection}.json
 ```
 
-`knock pull` and `knock push` operate on audiences, partials, layouts, workflows, message types, guides, and translations. Schemas are managed separately with `knock schema pull` and `knock schema push`.
+`knock pull` and `knock push` operate on audiences, goals, reusable requests, partials, layouts, workflows, message types, guides, and translations. Schemas are managed separately with `knock schema pull` and `knock schema push`.
+
+Goals publish on save, so a bulk push writes them without a commit. If goals are not enabled for the account, bulk pull and push skip `goals/` and continue. Reusable requests are pushed before workflows that reference them.
 
 Commit history lives in Knock and is reached with `knock commit list` and related commands.
 

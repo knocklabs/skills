@@ -11,7 +11,7 @@ tags:
   - gotchas
   - best-practices
 category: knock-cli
-last_updated: 2026-09-02
+last_updated: 2026-10-17
 ---
 
 # Workflow templates
@@ -64,6 +64,21 @@ Before creating workflows that use channels:
 - **Guides** power lifecycle UI (banners, modals, cards) and are configured separately via `knock guide` commands.
 
 There is no `guide` or `message-type` step type in `workflow.json`. If a user asks for in-app lifecycle messaging (announcements, upgrade prompts, onboarding), use guides (`rules/guides-and-message-types.md`), not workflows. If they want in-app notifications (e.g., "Someone commented on your post"), use a workflow with an `in_app_feed` step.
+
+### Attaching a goal
+
+A workflow can measure one outcome by setting `goal_attachment` on `workflow.json`. The goal is a separate resource. Create and push it with `knock goal` before relying on the attachment, and see `rules/goals.md`. Pushing the workflow commits the attachment with the workflow. Pushing the goal publishes the goal and does not create a commit.
+
+```json
+{
+  "goal_attachment": {
+    "goal_key": "trial-conversion",
+    "attribution_window_days": 7
+  }
+}
+```
+
+`attribution_window_days` is optional and must be from 1 to 30. Omit `goal_attachment`, or set it to `null`, to detach the goal. The goal's key has to exist in each environment you promote the workflow to. Clone it with `knock goal clone` rather than promoting the goal.
 
 ## Email template modes
 
