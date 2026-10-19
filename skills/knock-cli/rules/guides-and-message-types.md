@@ -11,7 +11,7 @@ tags:
   - banners
   - modals
 category: knock-cli
-last_updated: 2026-09-02
+last_updated: 2026-10-19
 ---
 
 # Guides and message types
@@ -263,7 +263,7 @@ Example:
 | `knock message-type validate [key]` | Validate message type(s) locally |
 | `knock message-type open <key>` | Open message type in dashboard |
 
-**Note:** Message type push and validate operate only in the development environment.
+**Note:** Message type push and validate accept any available environment. When `--environment` is omitted, they target the account's default environment.
 
 ## Key gotchas
 
@@ -344,8 +344,10 @@ knock message-type new -k my-type -n "My type" --force
 # Edit the message_type.json with your fields and variants
 knock message-type push my-type
 
-# 3. Commit the message type (required before guides can reference it)
-knock commit -m "Add my-type message type" --force
+# 3. Commit only the message type (required before guides can reference it).
+#    On a production-only account, this publishes it live; get user approval first.
+knock commit -m "Add my-type message type" \
+  --resource-type=message_type --resource-id=my-type --force
 
 # 4. Find the schema_semver after pushing
 knock message-type pull my-type --force

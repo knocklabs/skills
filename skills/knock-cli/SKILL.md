@@ -20,6 +20,14 @@ The Knock CLI skill includes detailed rule sets covering:
 
 ## How to use this skill
 
+### Before managing resources
+
+Run `knock environment list` before choosing an environment:
+
+- If the account has one environment, environments are not enabled. Commands without `--environment` target the account's default environment (production on new accounts), `knock push` creates drafts there, and `knock commit` publishes those drafts live. Do not use promotion or branch commands.
+- If the account has multiple environments, environments are enabled. Commands without `--environment` still target the account's default environment; pass an explicit environment when needed. Branch commands apply to development, and commits can be promoted through the environment sequence.
+- In either model, scope commits to the resource being changed with `--resource-type` and `--resource-id`. Leave drafts uncommitted unless the user asked to publish them.
+
 ### For initial setup
 
 When setting up a new project with Knock:
@@ -132,9 +140,11 @@ knock partial pull <key> --force # Pull a partial from Knock
 knock partial push <key>         # Push a partial after modifying
 knock partial validate <key>     # Validate a partial locally
 
-# Commit and promote a specific resource only (safe when other resources have pending changes)
+# Commit a specific resource only (publishes it live when the target is production)
 knock commit -m "message" --resource-type=workflow --resource-id=<key> --force
-knock commit list --resource-type=workflow --resource-id=<key>   # get the commit ID
+
+# With environments enabled, get the commit ID and promote only that commit
+knock commit list --resource-type=workflow --resource-id=<key>
 knock commit promote --only=<commit-id> --force
 ```
 
@@ -156,7 +166,7 @@ knock commit promote --only=<commit-id> --force
 6. **Read existing files before modifying** to preserve structure
 7. **Discover channel keys before creating workflows** - Run `knock channel list` to get valid `channel_key` values
 8. **Discover message type keys before creating guides** - Run `knock message-type list` to get valid message type keys
-9. **Scope commits and promotes when working on a single resource** - `knock commit promote --to=<env>` promotes ALL unpromoted commits across all resources. When working on one resource, use `--resource-type` and `--resource-id` to commit only that resource, then use `knock commit promote --only=<commit-id>` to promote only that commit. See the "Promote a specific resource only" workflow below.
+9. **Scope every commit when working on a single resource** - Use `--resource-type` and `--resource-id`; on a production-only account, that commit publishes the resource live. When environments are enabled, use `knock commit promote --only=<commit-id>` to promote only that commit. Never run promotion commands on a production-only account.
 
 ## Best practices summary
 
@@ -167,4 +177,4 @@ knock commit promote --only=<commit-id> --force
 5. **Visual blocks by default** - Use visual blocks for new emails; preserve existing mode when editing
 6. **Verify paths** - File references are relative to the containing file
 7. **Test changes** - Validate workflows after pushing changes
-8. **Scope commits and promotes** - Default to `--resource-type`/`--resource-id` on commit and `--only` on promote when working on a single resource. Only use `knock commit promote --to=<env>` when you intend to promote all pending changes across every resource.
+8. **Respect the account's environment model** - On a production-only account, leave pushed changes as drafts unless the user asks to publish; a scoped commit publishes live. Only use branches and promotion when `knock environment list` shows that environments are enabled.

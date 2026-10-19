@@ -6,7 +6,7 @@ tags:
   - plan
   - phases
 category: knock-migrate-to-knock
-last_updated: 2026-07-24
+last_updated: 2026-10-19
 ---
 
 # Migration plan
@@ -42,7 +42,7 @@ Within that technical order, ship product value in slices:
 
 | Phase | Work | Done when |
 | --- | --- | --- |
-| 0. Foundations | Knock account, environments, channel providers | Channels send a test in development |
+| 0. Foundations | Knock account, environment model, channel providers | Channels send a test in the account's default environment |
 | 1. Critical transactional | Password reset, verify email, invites, receipts | Parity with old sends; dual-run or feature flag |
 | 2. Product / collaboration | Mentions, assignments, digests | Batching defined; workflow categories assigned |
 | 3. Lifecycle | Onboarding, trial, win-back | Stop / exit criteria documented |

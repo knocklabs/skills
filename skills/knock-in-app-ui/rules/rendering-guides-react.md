@@ -7,7 +7,7 @@ tags:
   - react
   - hooks
 category: knock-in-app-ui
-last_updated: 2026-04-23
+last_updated: 2026-10-19
 ---
 
 # Rendering guides in React with useGuide and useGuides
@@ -61,9 +61,24 @@ Each entry includes the guide's `key`, `name`, `channel_key`, and `steps[]`. Eac
        --force
      ```
 
-     Use a clearly test-ish `--key` / `--name` like `hello-knock-guide` so the guide is easy to find and delete later. `--message-type` is the built-in chosen in step 1 (`card`, `banner`, or `modal`). `--force` skips the "create this directory?" confirmation. The command writes the scaffold to `./guides/<guide-key>/` (or the project's configured guides directory). Edit the generated files to fill in the message type's required fields with placeholder content and confirm `channel_key` matches the guide channel the app is pointing at (the default is `knock-guide`; cross-check against the `channelId` picked during provider setup). Leave targeting at the default "All users" and omit activation rules so it renders on any page. Push **and publish** it with `knock guide push <guide-key> --environment <env-slug> --commit --commit-message "scaffold test guide"`. The `--commit` flag is required — without it the guide is uploaded but not published, so the guide API (and therefore `useGuide`) will not return it. After the push succeeds, **delete the local scaffold directory** (`rm -rf ./guides/<guide-key>`) — the guide now lives in Knock and the local files are scaffolding artifacts, not source-of-truth.
+     Use a clearly test-ish `--key` / `--name` like `hello-knock-guide` so the guide is easy to find and delete later. `--message-type` is the built-in chosen in step 1 (`card`, `banner`, or `modal`). `--force` skips the "create this directory?" confirmation. The command writes the scaffold to `./guides/<guide-key>/` (or the project's configured guides directory). Edit the generated files to fill in the message type's required fields with placeholder content and confirm `channel_key` matches the guide channel the app is pointing at (the default is `knock-guide`; cross-check against the `channelId` picked during provider setup). Omit page activation rules, but target the guide only to the developer's test user — never leave a production test guide targeted to "All users."
 
-  4. **Activate** the new guide in the chosen environment with `knock guide activate <guide-key> --environment <env-slug> --status true` (add `--force` to skip the confirmation prompt). Rendering requires an active guide — a created-but-inactive guide will silently not appear and send you back to debugging.
+     Push it as a draft first:
+
+     ```bash
+     knock guide push <guide-key> --environment <env-slug>
+     ```
+
+     Check the environment model before publishing. On a production-only account, explain that a commit publishes the guide live and ask for explicit confirmation. After confirmation, commit only this guide:
+
+     ```bash
+     knock commit -m "Scaffold test guide" --resource-type=guide \
+       --resource-id=<guide-key> --environment=<env-slug> --force
+     ```
+
+     When environments are enabled, commit in the selected non-production environment and promote only if the user asks. After the push succeeds, **delete the local scaffold directory** (`rm -rf ./guides/<guide-key>`) — the guide now lives in Knock and the local files are scaffolding artifacts, not source-of-truth.
+
+  4. **Activate** the new guide only after its developer-only targeting is confirmed. Use `knock guide activate <guide-key> --environment <env-slug> --status true --force`. Rendering requires an active guide. After the first successful render, deactivate it with the same command and `--status false`, then offer to delete the test guide.
 
   5. Re-run `knock guide list --environment <env-slug> --json` to confirm the new guide appears, then continue to step 3 with its `key`.
 
@@ -88,7 +103,7 @@ Use the variant's fields (e.g., `title`, `body`, CTA fields) to define the type 
 
 - `pk_...` public API key from **Platform → API keys** for the chosen environment, pasted into `.env` (not discoverable via CLI).
 - The chosen guide must be **active** in this environment (dashboard toggle).
-- The current user and current route must match the guide's targeting and activation rules. The defaults ("All users", no page rules) are usually permissive enough for the first render.
+- The current user must be the developer test user targeted by the guide, and the current route must match any activation rules.
 - Restart the dev server if `.env` was just edited.
 
 If nothing renders after all of the above, go to `debugging-guides.md` and work the triage checklist.

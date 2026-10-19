@@ -7,7 +7,7 @@ tags:
   - mcp
   - cli
 category: knock-setup
-last_updated: 2026-07-30
+last_updated: 2026-10-19
 ---
 
 # Wrap up
@@ -48,7 +48,7 @@ Use this path only when Knock MCP was connected earlier. Do not fall back to the
 Example prompt shape (substitute the whoami / provided email and name):
 
 ```text
-Test workflow `[workflow_key]` in the development environment. Run this not in sandbox mode. Use inline identify for the recipient: `{"id": "1", "email": "USER_EMAIL", "name": "USER_NAME"}`. Use a minimal valid data payload for the workflow templates. If the message from address looks internal or generic, set a realistic from name for this test. Report the run result and a link or run id if available.
+Test workflow `[workflow_key]` in the account's default environment. Run this not in sandbox mode. Use inline identify for the recipient: `{"id": "1", "email": "USER_EMAIL", "name": "USER_NAME"}`. Use a minimal valid data payload for the workflow templates. If the message from address looks internal or generic, set a realistic from name for this test. Report the run result and a link or run id if available.
 ```
 
 ### Knock CLI path
@@ -56,7 +56,7 @@ Test workflow `[workflow_key]` in the development environment. Run this not in s
 Use this path only when tooling was connected via `rules/connect-knock-cli.md`. Do **not** add MCP, edit MCP config, or call `start_knock_agent` / `get_knock_agent`.
 
 1. Resolve the recipient per **Recipient (both paths)** above (`knock whoami`).
-2. Trigger the test with `knock workflow run` (see the `knock-cli` skill), using the same inline-identify recipient and a minimal valid `--data` payload for the workflow templates. Prefer the development environment.
+2. Trigger the test with `knock workflow run` (see the `knock-cli` skill), using the same inline-identify recipient and a minimal valid `--data` payload for the workflow templates. Use the account's default environment unless the user selected another available environment.
 3. **From name:** if you can set a from name via CLI/workflow config for this test and the current from looks internal or generic, set a realistic human-readable from name. Otherwise leave it.
 4. Report the run result (run id / link if available). Do not hand off to MCP for the test send.
 
@@ -68,7 +68,7 @@ Then output the following in this exact order:
    - **Set up in-app notifications** (notification feed / inbox) in the product.
    - If guides were created or mentioned in the plan/build list: note that guide **resources** alone are not enough — app wiring (providers, rendering, engagement) is done with `knock-in-app-ui`. Do **not** start that skill yet; you will ask below.
    - Then pick other relevant items as needed: send test runs of your workflows, create more workflows, add more channels (email, SMS, push, Slack), let users manage their notification preferences, add translations for localized notifications.
-2. **Immediate steps to complete this implementation** — only if any remain, a short bulleted list, e.g.: commit the workflows and promote them to production, import or identify your users in Knock (see `rules/import-users.md` when ready — not required on first pass), configure production channel credentials and API keys, verify the trigger path end to end.
+2. **Immediate steps to complete this implementation** — only if any remain, a short bulleted list, e.g.: review and publish the workflow drafts, import or identify your users in Knock (see `rules/import-users.md` when ready — not required on first pass), configure channel credentials and API keys, verify the trigger path end to end. On a production-only account, explain that a scoped commit publishes the resource live and do not suggest promotion. Mention promotion only when environments are enabled.
 3. If the user provided a return URL, render this markdown link on its own line (substitute the provided URL):
 
 [View setup in Knock dashboard](RETURN_URL)
