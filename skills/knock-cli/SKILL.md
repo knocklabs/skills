@@ -13,7 +13,7 @@ The Knock CLI skill includes detailed rule sets covering:
 
 1. **CLI installation and authentication** - How to install and authenticate with the Knock CLI
 2. **Knock directory structure** - Understanding the knock directory layout and configuration
-3. **CLI commands reference** - Pull, push, and resource management commands
+3. **CLI commands reference** - Pull, push, resource management, variable, and asset commands
 4. **Workflow templates** - Structures, patterns, and best practices for workflows and templates
 5. **Guides and message types** - Working with in-app guides for lifecycle messaging and message types as their schema
 6. **Partials** - Reusable template building blocks for email design systems
@@ -74,6 +74,15 @@ When building reusable email components (callouts, quote blocks, comment cards):
    - Run `knock partial new -k <key> -n "Name" -t html --force` to scaffold
    - Add `input_schema` and edit content; validate and push with `knock partial push <key>`
 
+### For managing variables and assets
+
+When working with `vars.<key>` values or hosted images:
+
+1. **Use the variable and asset command sections** (`rules/cli-commands-reference.md`)
+   - Run `knock variable list` to see existing keys before referencing `vars.<key>` in templates
+   - Set secret values with `--value-stdin` or `--value-file`, never as a command-line argument
+   - Run `knock asset upload <file>` and use the returned URL in templates
+
 ### For modifying workflows and templates
 
 When making changes to workflows or templates:
@@ -88,7 +97,7 @@ When making changes to workflows or templates:
 
 - `rules/cli-installation-authentication.md` - Installation and authentication setup
 - `rules/knock-directory-structure.md` - Directory structure and configuration
-- `rules/cli-commands-reference.md` - CLI commands for resource management
+- `rules/cli-commands-reference.md` - CLI commands for resource management, variables, and assets
 - `rules/workflow-templates.md` - Workflow and template structures and best practices
 - `rules/guides-and-message-types.md` - Guides and message types for lifecycle messaging
 - `rules/partials.md` - Partials and reusable template building blocks
@@ -132,6 +141,16 @@ knock partial pull <key> --force # Pull a partial from Knock
 knock partial push <key>         # Push a partial after modifying
 knock partial validate <key>     # Validate a partial locally
 
+# Variable commands (account-wide `vars.<key>` values; not included in knock pull/push)
+knock variable list              # List variables and overrides (secret values are never shown)
+knock variable set <key> --type=public --value=<value>   # Create or update a variable
+knock variable pull --force      # Pull variables into variables.json
+knock variable push --force      # Push variables from variables.json
+
+# Asset commands (account-wide image hosting)
+knock asset upload ./logo.png    # Upload a JPEG, PNG, or GIF and get a hosted URL
+knock asset archive <asset-id> --force
+
 # Commit and promote a specific resource only (safe when other resources have pending changes)
 knock commit -m "message" --resource-type=workflow --resource-id=<key> --force
 knock commit list --resource-type=workflow --resource-id=<key>   # get the commit ID
@@ -142,6 +161,7 @@ knock commit promote --only=<commit-id> --force
 
 - **knockDir**: The directory where Knock resources are stored (configured in knock.json)
 - **Resource types**: workflows, layouts, guides, message-types, translations, partials, audiences, schemas
+- **Variables and assets**: Account-wide, with no branch or commit. `knock variable` commands use a single `variables.json` file, and `knock pull`/`knock push` skip both. Secret variable values are never returned or written locally
 - **Guides vs workflows**: Guides are for lifecycle messaging (banners, modals); workflows are for notifications
 - **Template modes**: Visual blocks (default for new emails) vs HTML (only when explicitly requested)
 - **Variable namespaces**: `data` (trigger payload), `vars` (environment variables), `recipient`, `actor`, `tenant`

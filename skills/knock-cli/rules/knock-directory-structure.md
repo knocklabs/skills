@@ -10,7 +10,7 @@ tags:
   - workflows
   - layouts
 category: knock-cli
-last_updated: 2026-09-02
+last_updated: 2026-10-21
 ---
 
 # Knock directory structure
@@ -99,14 +99,16 @@ The knock directory contains subdirectories for each resource type. These names 
 │       ├── {locale}.json         # e.g. en.json
 │       └── {namespace}.{locale}.json  # e.g. admin.en.json
 │
-└── schemas/                      # Item schemas for users, tenants, objects
-    ├── user.json
-    ├── tenant.json
-    └── objects/
-        └── {collection}.json
+├── schemas/                      # Item schemas for users, tenants, objects
+│   ├── user.json
+│   ├── tenant.json
+│   └── objects/
+│       └── {collection}.json
+│
+└── variables.json                # Account-wide variables, keyed by variable key
 ```
 
-`knock pull` and `knock push` operate on audiences, partials, layouts, workflows, message types, guides, and translations. Schemas are managed separately with `knock schema pull` and `knock schema push`.
+`knock pull` and `knock push` operate on audiences, partials, layouts, workflows, message types, guides, and translations. Schemas are managed separately with `knock schema pull` and `knock schema push`, and variables with `knock variable pull` and `knock variable push`.
 
 Commit history lives in Knock and is reached with `knock commit list` and related commands.
 
