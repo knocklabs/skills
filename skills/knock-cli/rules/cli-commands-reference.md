@@ -9,8 +9,10 @@ tags:
   - push
   - workflow
   - resources
+  - variables
+  - assets
 category: knock-cli
-last_updated: 2026-09-02
+last_updated: 2026-10-21
 ---
 
 # CLI commands reference
@@ -35,6 +37,10 @@ Many Knock CLI commands display interactive confirmation prompts that require us
 | `knock commit` | Confirmation prompt | When committing changes |
 | `knock workflow activate` | Confirmation prompt | When activating/deactivating a workflow |
 | `knock guide activate` | Confirmation prompt | When activating/deactivating a guide |
+| `knock variable pull` | Confirmation prompt | When pulling all variables into `variables.json`, or removing an entry that is not in Knock |
+| `knock variable push` | Confirmation prompt | When pushing variables (unlike other `push` commands) |
+| `knock variable delete <key>` | Confirmation prompt | When deleting a variable or clearing an environment override |
+| `knock asset archive <asset-id>` | Confirmation prompt | When archiving an asset. `--force` is required with `--json` |
 
 **Handling prompts:** Pass `--force` to skip all confirmation prompts. Always use `--force` when running commands from agents or automated scripts:
 
@@ -59,11 +65,12 @@ knock commit promote --to=production --force
 | `knock guide new` | Interactive message type selection. Use `--key` and `--message-type` flags to skip prompts. |
 | `knock message-type new` | Interactive setup. Use `--key` and `--name` flags to skip prompts. |
 | `knock partial new` | Interactive setup. Use `--key` and `--type` flags to skip prompts. |
+| `knock variable new` | Prompts only when it creates `variables.json`. Pass `--force` to skip the prompt. `--key` and `--type` are required. |
 
 **Commands that never prompt (safe for direct execution):**
 
 - All `list` commands (`knock workflow list`, `knock channel list`, etc.)
-- All `push` commands (`knock workflow push <key>`, `knock push`, etc.)
+- All `push` commands (`knock workflow push <key>`, `knock push`, etc.), except `knock variable push`
 - All `validate` commands (`knock workflow validate <key>`, etc.)
 - `knock whoami`
 - `knock workflow run` (trigger)
@@ -89,6 +96,8 @@ The Knock CLI manages several resource types:
 | `audience` | Audience definitions | `knock audience` |
 | `schema` | Item schemas for users, tenants, and objects | `knock schema` |
 | `commit` | Version control for changes | `knock commit` |
+| `variable` | Account-wide variables (`vars.<key>`) | `knock variable` |
+| `asset` | Account-wide image assets | `knock asset` |
 
 ### Global options
 
@@ -634,6 +643,140 @@ knock schema push object --collection=<collection-key>
 
 Schemas are not covered by the top-level `knock pull` and `knock push`. Use `knock schema pull` and `knock schema push` for them.
 
+## Variable commands
+
+Variables are account-wide values referenced in templates as `vars.<key>`. Each variable has a default value and optional per-environment overrides. They are not scoped to a branch, and they are not included in `knock pull` or `knock push`. Variables are saved when you push or set them, and there is no commit step.
+
+Local variables live in a single `variables.json` file, in the knock directory when `knock.json` is present and otherwise in the current directory. Each property name is a variable key. Keys must start with a letter or underscore and contain only letters, numbers, and underscores.
+
+```json
+{
+  "base_url": {
+    "type": "public",
+    "value": "https://example.com",
+    "environment_values": { "development": "https://dev.example.com" }
+  },
+  "api_token": {
+    "type": "secret",
+    "value_set": true
+  }
+}
+```
+
+**Secret variables.** Knock never returns secret values. Pulled and listed secrets show only whether a value is set (`value_set`, `environment_values_set`). Do not put a secret value in `variables.json` or pass it on the command line. Set secret values with `--value-stdin` or `--value-file`, and secret environment overrides with `--environment-value-file`.
+
+### List and get variables
+
+```bash
+knock variable list
+knock variable list --environment=production   # Value that applies in one environment
+knock variable list --type=secret
+knock variable get <key>                        # Default value and every override
+```
+
+`--environment` on `list` filters the output. `get` does not accept `--environment`.
+
+### Create a new variable entry
+
+Adds an entry to the local `variables.json`. Does not push unless `--push` is passed.
+
+```bash
+knock variable new --key=base_url --type=public --value=https://example.com --force
+knock variable new --key=api_token --type=secret --force
+```
+
+| Flag | Description |
+|------|-------------|
+| `--key` | The variable key (required) |
+| `--type` | `public` or `secret` (required) |
+| `--value` | Default value. Public variables only |
+| `--description` | Optional description |
+| `--knock-dir` | Directory used to locate `variables.json` |
+| `--push` | Push the entry after writing it |
+| `--force` | Skip the prompt when creating the file |
+
+### Set a variable
+
+Creates or updates a variable in Knock directly. `--type` is required when creating a variable and must match the existing type otherwise. Pass only one of `--value`, `--value-file`, `--value-stdin`, or `--unset-value`.
+
+```bash
+# Public variable with a development override
+knock variable set base_url --type=public --value=https://example.com \
+  --environment-value=development=https://dev.example.com
+
+# Secret variable (never pass the value as an argument)
+printf '%s' "$API_TOKEN" | knock variable set api_token --type=secret --value-stdin
+
+# Clear an override or the description
+knock variable set base_url --unset-environment=development
+knock variable set base_url --unset-description
+```
+
+| Flag | Description |
+|------|-------------|
+| `--value-file` | Read the default value from a file (bytes are not trimmed) |
+| `--value-stdin` | Read the default value from stdin (bytes are not trimmed) |
+| `--unset-value` | Clear the default value |
+| `--unset-description` | Clear the description |
+| `--environment-value` | `<slug>=<value>` override. Repeatable. Public variables only |
+| `--environment-value-file` | `<slug>=<path>` override read from a file. Repeatable |
+| `--unset-environment` | Clear the override for an environment slug. Repeatable |
+
+### Pull and push variables
+
+```bash
+# Pull every variable, replacing variables.json
+knock variable pull --force
+
+# Update one entry
+knock variable pull <key> --force
+
+# Push every entry, or one entry
+knock variable push --force
+knock variable push <key> --force
+```
+
+- `pull` always fetches the full catalog and does not accept `--environment`. Without a key, entries missing from Knock are removed from the local file.
+- `push` does not delete remote variables that are missing from the file. A new variable needs a string `value`, and a variable's type cannot change after creation. A `null` or omitted value is skipped, and an empty string clears it.
+- Both accept `--knock-dir` to locate `variables.json`.
+
+### Delete a variable
+
+```bash
+# Delete the variable and every override (cannot be undone)
+knock variable delete <key> --force
+
+# Clear one environment's override only
+knock variable delete <key> --environment=development --force
+```
+
+## Asset commands
+
+Assets are account-wide image files hosted by Knock. Asset commands take no environment or branch, and there are only `upload` and `archive` commands.
+
+### Upload an asset
+
+```bash
+knock asset upload ./logo.png
+knock asset upload ./logo.png --filename="Company logo"
+cat ./logo.png | knock asset upload - --filename=logo.png
+```
+
+| Flag | Description |
+|------|-------------|
+| `--filename` | Display name. Defaults to the file name. Required when reading stdin (`-`) |
+| `--mime-type` | `image/jpeg`, `image/png`, or `image/gif`. Use it when the type cannot be detected or the extension and file contents disagree |
+
+Files must be JPEG, PNG, or GIF, between 1 byte and 5,000,000 bytes. Pass `--json` to get the asset's `id` and hosted `url` as JSON, then use the URL in templates.
+
+### Archive an asset
+
+```bash
+knock asset archive <asset-id> --force
+```
+
+> **Warning:** Archiving applies to the whole account. The asset id must be a UUID, which `knock asset upload` prints. `--force` is required with `--json`.
+
 ## Initialization and configuration
 
 ### Initialize project
@@ -765,7 +908,7 @@ Validate a resource locally to surface structural errors before pushing:
 knock workflow validate <key>
 ```
 
-Pass `--json` for machine-readable output on the commands that support it — all `get` and `list` commands, `knock whoami`, and `knock branch list` / `create` / `rebase`. This makes error details easier to inspect:
+Pass `--json` for machine-readable output on the commands that support it — all `get` and `list` commands, `knock whoami`, `knock branch list` / `create` / `rebase`, `knock variable set` / `delete`, and `knock asset upload` / `archive`. This makes error details easier to inspect:
 
 ```bash
 knock workflow get <key> --json
