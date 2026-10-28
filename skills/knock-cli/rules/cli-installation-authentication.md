@@ -9,7 +9,7 @@ tags:
   - service-token
   - setup
 category: knock-cli
-last_updated: 2026-09-02
+last_updated: 2026-10-28
 ---
 
 # CLI installation and authentication
@@ -57,7 +57,7 @@ Many Knock CLI commands use interactive prompts (y/N confirmations, multi-step w
 ```bash
 knock workflow pull <workflow-key> --force
 knock pull --force
-knock commit promote --to=production --force
+knock commit -m "Update workflow" --resource-type=workflow --resource-id=<workflow-key> --force
 ```
 
 Some commands like `knock init`, `knock login`, and `knock workflow new` are fully interactive and don't support `--force`. Where a command has explicit flags (e.g., `--key`, `--steps` on `knock workflow new`), use them to avoid prompts. `knock init` takes no such flags, so either have the user run it or write `knock.json` directly.
@@ -124,23 +124,43 @@ knock logout
 
 ## Environment configuration
 
-### Working with multiple environments
+### Determine the account's environment model
 
-Knock accounts have a **development** environment and a **production** environment by default. Additional intermediate environments (e.g., staging) can be configured between them. Specify the environment when running commands:
+List environments before choosing a target:
 
 ```bash
-# Pull from development environment
-knock pull --environment=development
-
-# Push local changes (development only)
-knock push
-
-# Commit, then promote up the chain to production
-knock commit -m "Update resources"
-knock commit promote --to=production
+knock environment list
 ```
 
-`knock push` writes to the development environment only — its `--environment` flag accepts `development` and nothing else. Non-development environments are updated by committing and promoting, never by pushing directly. `knock push` also accepts `--commit` and `-m` to push and commit in one step.
+When `--environment` is omitted, Knock CLI v1.3.0 and later use the account's default environment. New accounts have one production environment until environments are enabled.
+
+**Production-only account (one environment):**
+
+```bash
+# These target the default production environment and create drafts
+knock pull
+knock push
+
+# A commit publishes the scoped draft live; run only when the user asks to publish
+knock commit -m "Update workflow" \
+  --resource-type=workflow --resource-id=<workflow-key> --force
+```
+
+Do not use branch or promotion commands on a production-only account. Leave pushed resources as drafts when the user has not approved publication.
+
+**Environments enabled (multiple environments):**
+
+```bash
+knock pull --environment=<env-slug>
+knock push --environment=<env-slug>
+knock commit -m "Update workflow" \
+  --resource-type=workflow --resource-id=<workflow-key> \
+  --environment=<env-slug> --force
+```
+
+Branch commands operate in development. Promotion moves committed changes through the configured environment sequence; scope a single-resource promotion with `knock commit promote --only=<commit-id> --force`.
+
+`push`, `commit`, and `validate` accept any available environment. Avoid `push --commit` in agent workflows because a commit may publish live when the target is production; push first, then use an explicitly scoped commit after user approval.
 
 ### Environment variables
 
@@ -187,4 +207,4 @@ Run this command to verify your setup is working:
 knock whoami
 ```
 
-This displays the authenticated account and available environments.
+This displays the authenticated account and user or token. Run `knock environment list` separately to list available environments.

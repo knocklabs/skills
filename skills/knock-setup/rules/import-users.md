@@ -7,7 +7,7 @@ tags:
   - identify
   - production
 category: knock-setup
-last_updated: 2026-07-09
+last_updated: 2026-10-28
 ---
 
 # Import users into Knock
@@ -73,7 +73,7 @@ Add a script that matches the repo’s conventions (language, package manager, l
 4. Call bulk identify in batches of **at most 1,000** users ([API reference](https://docs.knock.app/api-reference/users/bulk/identify)).
 5. Default to a **dry-run** that prints batch counts and a sample payload **without** calling the API.
 6. Only perform live API calls when an explicit flag is passed (e.g. `--execute`) **and** the user has asked to run it.
-7. Target development first unless the user explicitly names production.
+7. Target the account's default environment. If that is production, keep the script in dry-run mode unless the user explicitly asks to execute the import.
 
 Example Node shape (adapt to the stack):
 
@@ -94,8 +94,8 @@ Also document the ongoing production pattern: identify on signup / profile updat
 ## 5. Production safety
 
 - **Do not run the import against production** unless the user explicitly asks to.
-- Prefer dry-run → development execute → production execute (only on explicit request).
-- Remind them users are **per environment**; a development import does not populate production ([Users FAQ](https://docs.knock.app/concepts/users)).
+- On a production-only account, use dry-run → production execute (only on explicit request). When environments are enabled, prefer dry-run → non-production execute → production execute (only on explicit request).
+- Remind them users are **per environment**; importing into one environment does not populate another ([Users FAQ](https://docs.knock.app/concepts/users)).
 - After a successful import, suggest verifying a few users in the Knock dashboard under Users.
 
 ## Reference docs
