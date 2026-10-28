@@ -7,7 +7,7 @@ tags:
   - react
   - setup
 category: knock-in-app-ui
-last_updated: 2026-10-19
+last_updated: 2026-10-28
 ---
 
 # Setting up the Knock guide providers in a React app

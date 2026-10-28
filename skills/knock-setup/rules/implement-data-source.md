@@ -7,7 +7,7 @@ tags:
   - identify
   - mcp
 category: knock-setup
-last_updated: 2026-10-19
+last_updated: 2026-10-28
 ---
 
 # Implement a Knock data source

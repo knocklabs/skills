@@ -9,7 +9,7 @@ tags:
   - service-token
   - setup
 category: knock-cli
-last_updated: 2026-10-19
+last_updated: 2026-10-28
 ---
 
 # CLI installation and authentication

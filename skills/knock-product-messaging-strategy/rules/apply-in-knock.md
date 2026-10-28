@@ -9,7 +9,7 @@ tags:
   - preferences
   - audiences
 category: knock-product-messaging-strategy
-last_updated: 2026-10-19
+last_updated: 2026-10-28
 ---
 
 # Apply in Knock

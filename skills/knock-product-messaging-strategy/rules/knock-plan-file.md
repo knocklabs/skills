@@ -6,7 +6,7 @@ tags:
   - output
   - plan
 category: knock-product-messaging-strategy
-last_updated: 2026-10-19
+last_updated: 2026-10-28
 ---
 
 # Knock plan file

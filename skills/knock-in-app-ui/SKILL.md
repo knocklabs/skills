@@ -85,7 +85,7 @@ The examples below are React. For any other client SDK, see the note at the top 
 
 ### Where to source each value
 
-- **Auth first, then environment** — Knock is environment-scoped. Before environment-scoped CLI commands, verify authentication with `knock whoami`; if it errors, run `knock login` and wait for the browser flow. Then run `knock environment list`. Use its only environment automatically, or ask the user to choose when several exist. Pass `--environment <env-slug>` on every subsequent environment-scoped command; otherwise the CLI uses the account's default environment.
+- **Auth first, then environment** — Knock is environment-scoped. Before environment-scoped CLI commands, verify authentication with `knock whoami`; if it errors, run `knock login` and wait for the browser flow. Then run `knock environment list`. When a single environment is returned use it automatically, or ask the user to choose when several exist. Pass `--environment <env-slug>` on every subsequent environment-scoped command; otherwise the CLI uses the account's default environment.
 - `apiKey` — Knock dashboard → **Platform → API keys** → public `pk_...` key **from the tab for the chosen environment** (switch envs via the dashboard's environment selector first; remind the user to copy the key for the right env)
 - `user.id` — your auth context; must match the id used when identifying the user from your backend
 - `channelId` — the **UUID** of the guide channel, not its key. Channels are account-scoped, so `knock channel list` does **not** take `--environment`. **Always attempt CLI discovery before asking the user:**

@@ -10,7 +10,7 @@ tags:
   - workflow
   - resources
 category: knock-cli
-last_updated: 2026-10-19
+last_updated: 2026-10-28
 ---
 
 # CLI commands reference
@@ -98,7 +98,7 @@ These options work with most commands:
 
 | Option | Description |
 |--------|-------------|
-| `--environment` | Target environment slug. When omitted, use the account's default environment |
+| `--environment` | Target environment slug. When omitted, uses the account's default environment |
 | `--branch` | Slug of the branch to use |
 | `--service-token` | Service token for authentication |
 | `--help` | Show help for the command |

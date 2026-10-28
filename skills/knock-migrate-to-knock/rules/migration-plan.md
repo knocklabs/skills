@@ -6,7 +6,7 @@ tags:
   - plan
   - phases
 category: knock-migrate-to-knock
-last_updated: 2026-10-19
+last_updated: 2026-10-28
 ---
 
 # Migration plan

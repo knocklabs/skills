@@ -6,7 +6,7 @@ tags:
   - workflows
   - discovery
 category: knock-setup
-last_updated: 2026-10-19
+last_updated: 2026-10-28
 ---
 
 # Discover workflows

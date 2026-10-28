@@ -11,7 +11,7 @@ tags:
   - banners
   - modals
 category: knock-cli
-last_updated: 2026-10-19
+last_updated: 2026-10-28
 ---
 
 # Guides and message types

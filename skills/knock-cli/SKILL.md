@@ -25,7 +25,7 @@ The Knock CLI skill includes detailed rule sets covering:
 Run `knock environment list` before choosing an environment:
 
 - If the account has one environment, environments are not enabled. Commands without `--environment` target the account's default environment (production on new accounts), `knock push` creates drafts there, and `knock commit` publishes those drafts live. Do not use promotion or branch commands.
-- If the account has multiple environments, environments are enabled. Commands without `--environment` still target the account's default environment; pass an explicit environment when needed. Branch commands apply to development, and commits can be promoted through the environment sequence.
+- If the account has multiple environments, environments are enabled. Commands without `--environment` still target the account's default environment (development when environments are enabled); pass an explicit environment when needed. Branch commands apply to development, and commits can be promoted through the environment sequence.
 - In either model, scope commits to the resource being changed with `--resource-type` and `--resource-id`. Leave drafts uncommitted unless the user asked to publish them.
 
 ### For initial setup
