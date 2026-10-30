@@ -9,12 +9,12 @@ tags:
   - workflows
   - templates
 category: knock-email-template-migration
-last_updated: 2026-09-08
+last_updated: 2026-10-30
 ---
 
 # Building templates and workflows
 
-> **Phase 3 stage 3 — Workflows and templates.** Inputs: the approved `plan/workflows.md`, `plan/variables.md`, and each template's analysis file (body copy verbatim). Outputs: `knock/workflows/<key>/` with `workflow.json` and `email_1/visual_blocks/*`, each validated, pushed, read back, and committed. Read alongside: `rules/extracting-layouts.md` for the block CSS the layout provides; the `knock-cli` skill for `workflow.json` shapes and `knock workflow` commands.
+> **Phase 3 stage 3 — Workflows and templates.** Inputs: the approved `plan/workflows.md`, `plan/variables.md`, and each template's analysis file (body copy verbatim). Outputs: `knock/workflows/<key>/` with `workflow.json` and `email_1/visual_blocks/*`, each validated, pushed, and read back, then committed when environments are enabled (a draft on a production-only account). Read alongside: `rules/extracting-layouts.md` for the block CSS the layout provides; the `knock-cli` skill for `workflow.json` shapes and `knock workflow` commands.
 
 Phase 3 turns each approved plan entry into a workflow with an email step. Consult the `knock-cli` skill's rules for file/path mechanics (the `@` suffix convention, path resolution, push semantics). This file covers what to build.
 
@@ -68,7 +68,7 @@ Decompose the body sections (from the analysis outline) into blocks. The email b
 
 | Source section | Block | Rule |
 | -------------- | ----- | ---- |
-| Simple prose (headings, paragraphs, basic lists/links) | `markdown` | Only when markdown can express it losslessly; typography comes from layout CSS. Prose that sits in a column narrower than the card (an inline-block narrower than the layout frame) is reproduced only by padding the block cell in the layout (`.block-row.block-row--markdown-v1 .block-row__cell { padding-left/right }`) — note it in the plan |
+| Simple prose (headings, paragraphs, basic lists/links) | `markdown` | Only when markdown can express it losslessly; typography comes from layout CSS. Prose that sits in a column narrower than the card (an inline-block narrower than the layout frame) is reproduced with that block's side padding (`layout_attrs.padding_left`/`padding_right`) — note it in the plan |
 | Standard CTA button | `button_set` | Set color, radius, border, and alignment **on the block** (`style_attrs`, `layout_attrs` — see below); layout CSS only for font family, size, and padding; a button partial only for shapes the block cannot express (gradients, icons in the label, nested Outlook tables) |
 | Standalone image | `image` | `url`, `alt`, `action` |
 | Horizontal rule/separator | `divider` | Styled via layout CSS |
@@ -107,7 +107,9 @@ Decompose the body sections (from the analysis outline) into blocks. The email b
 ```
 
 - Number extracted content files by block position (1-indexed): `visual_blocks/1.content.md`, `visual_blocks/5.content.html`. Paths are relative to the file containing the reference.
-- `button_set` blocks default to **left** alignment (`layout_attrs.horizontal_align: "left"`); almost every migrated email centers its CTA, so set `"center"` explicitly. Per-button `style_attrs` (`background_color`, `text_color`, `border_color`, `border_radius`, `border_width`) and `size_attrs` (`size`: always `sm`) are what the editor shows and edits — put the brand color there, not in layout CSS, which covers only what the attributes cannot (font, size, line height, letter spacing, padding — see `rules/extracting-layouts.md`). Labels and actions are Liquid-enabled — output *and* tags: `"label": "{{ data.button_text }}"` and `"label": "{% if data.is_admin %}Manage team{% else %}View team{% endif %}"` both render.
+- `button_set` blocks default to **left** alignment (`layout_attrs.horizontal_align: "left"`); almost every migrated email centers its CTA, so set `"center"` explicitly. Per-button `style_attrs` (`background_color`, `text_color`, `border_color`, `border_radius`, `border_width`) and `size_attrs` (`size` accepts `sm`, `md`, or `lg`; the migration always uses `sm`) are what the editor shows and edits — put the brand color there, not in layout CSS, which covers only what the attributes cannot (font, size, line height, letter spacing, padding — see `rules/extracting-layouts.md`). Labels and actions are Liquid-enabled — output *and* tags: `"label": "{{ data.button_text }}"` and `"label": "{% if data.is_admin %}Manage team{% else %}View team{% endif %}"` both render.
+- **Markdown quirks that pass every text and style check.** A line that starts with an inline tag (`<a href…>`, `<strong>`) is parsed as raw HTML, not a paragraph, so it misses the layout's paragraph styles — wrap it in `<p>` or start it with text. Markdown blocks strip the first child's top margin, so a source paragraph that relied on the browser's default top margin (it set only `margin-bottom`) needs that space as the block's `padding_top`. Knock converts a markdown block to HTML *before* Liquid runs, so Liquid output is never parsed as markdown: a `{% for %}` can't build a markdown list (loop in an html block or partial instead). Tags also shape the HTML before they run: a tag on its own line becomes an empty `<span>`, and a false guard around a paragraph can leave an empty `<p>` that keeps its margin, so render conditional paragraphs in both states.
+- **Spacing lives on each block.** Set `layout_attrs.padding_top/right/bottom/left` on markdown, button_set, divider, and image blocks to the source's spacing (defaults: 8px vertical / 4px horizontal, and 0 for images). Never set it in layout CSS, where only `!important` wins and that disables the editor's padding controls. Html blocks don't accept padding settings and partial blocks have no cell, so both carry their spacing in their own markup.
 - Partial block `attrs` keys must match the partial's `input_schema` keys; values may be literals or Liquid evaluated in workflow scope (`{{ data.x }}`, `{{ recipient.name }}`).
 - Block content is Liquid-enabled: inline conditionals and loops from the variable/logic mapping live inside markdown/html content files.
 - Preserve `<!--[if mso]>…<![endif]-->` conditionals byte-for-byte inside html block content.
@@ -137,7 +139,7 @@ For standard-MJML sources being kept as MJML:
 - Under an MJML layout (`is_mjml: true`), the body is an **MJML fragment** (`<mj-section>`s, no `<mjml>` root).
 - With `"layout_key": null`, the body must be a **complete MJML document**.
 - An MJML template requires an MJML layout (or no layout) — never pair MJML bodies with an HTML layout.
-- Visual-block mode also works under MJML layouts (blocks render as MJML components), so block-first composition applies to MJML migrations too; plain-HTML `html` blocks and partials are auto-wrapped in `mjml-raw`.
+- Visual-block mode also works under MJML layouts (blocks render as MJML components), so block-first composition applies to MJML migrations too; plain-HTML `html` blocks and partials are auto-wrapped in `<mj-raw>`.
 
 ## Consolidated workflows (approved variants only)
 
@@ -166,12 +168,18 @@ When analysis found per-template sender metadata, set step-level `channel_overri
 Per workflow:
 
 ```bash
-knock workflow validate <key>
-knock workflow push <key>
-knock workflow get <key> --json     # readback: confirm subject, layout_key, step/block structure
-knock commit -m "Migration: <key> workflow" --resource-type=workflow --resource-id=<key> --force
+knock workflow validate <key> <target-flags>
+knock workflow push <key> <target-flags>
+knock workflow get <key> <target-flags> --json     # readback: confirm subject, layout_key, step/block structure
+# environments enabled only:
+knock commit -m "Migration: add <key> workflow" --resource-type=workflow --resource-id=<key> <target-flags> --force
+knock commit list --resource-type=workflow --resource-id=<key> <target-flags> --json   # confirm the commit; record its id
 ```
 
-**`validate` is a local shape check — `push` is the real gate.** Some server-side checks (the preference-category catalog among them) run only on push, so a green validate is not a go signal. After every push, run the readback (`get`); commit only after push and readback both succeed — a scoped commit for a resource that never pushed still reports success and records nothing.
+`<target-flags>` is the flags string recorded in `MIGRATION.md` at phase 0 (`--environment=…`, plus `--branch=…` on a branch).
 
-Fix validation errors before pushing. Common ones: invalid `channel_key` (re-run `knock channel list`), `layout_key` not found (layout not pushed/committed), missing button `variant`, doubled step-directory paths in `content@` references. Common push-time rejections validate misses: workflow `categories` not in the preference-category catalog (omit categories — see above), invalid partial `icon_name`.
+**`validate` checks the schema; `push` is the real gate.** Validate runs on the server but only runs the resource's schema checks; push also checks the account's catalogs and a few content rules, so a green validate is not a go signal. After every push, run the readback (`get`); commit only after push and readback both succeed, and confirm the commit with `knock commit list` — a scoped commit reports success even when it commits nothing, and `get` returns uncommitted changes by default.
+
+**Commit the workflow only when environments are enabled.** On a production-only account it stays a draft, which previews and test sends still exercise (commit strategy in `rules/migration-process.md`).
+
+Fix validation errors before pushing. Common ones: invalid `channel_key` (re-run `knock channel list`), `layout_key` not found (layout not pushed/committed), missing button `variant`, doubled step-directory paths in `content@` references. Push-time rejections that validate misses: workflow `categories` not in the preference-category catalog (omit categories — see above); workflow or partial `tags` not in the account's tag catalog; a layout without `{{ content }}` (outside an HTML comment) in its `text_layout` as well as its `html_layout`; and an HTML partial whose content has a `<head>` with `<style>` tags outside it. Validate does catch an invalid partial `icon_name`.

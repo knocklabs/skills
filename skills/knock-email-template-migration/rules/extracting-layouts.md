@@ -9,7 +9,7 @@ tags:
   - css
   - mjml
 category: knock-email-template-migration
-last_updated: 2026-09-08
+last_updated: 2026-10-29
 ---
 
 # Extracting layouts
@@ -49,14 +49,14 @@ Group templates by chrome family (from `analysis/_chrome-families.md`). Then:
 
 Target a small set — most migrations land on 1-3 layouts. Record the mapping in `plan/layouts.md`: layout key, member templates, and how variants are handled.
 
-In an additive migration, the account's existing layouts join this comparison as reuse candidates — see "Additive migrations" in `rules/migration-process.md`. Tiebreak for a partial match (same logo, card, and footer spec but different markup): reuse a live layout only when every live template on it renders identically afterwards — re-render one live template per candidate layout to prove it — otherwise create the new layout and record the shared pieces (logo row, card frame, footer) as follow-up partial candidates in `plan/partials.md`. A new layout that keeps live emails byte-identical is not the "near-duplicate" failure the additive rule warns about; a silently changed live email is. If a reused live layout already sets button colors with `!important` (an older migration, or a hand-built layout), a new template's `style_attrs` will be masked: prefer removing those properties from the layout when a re-render of one live template per layout shows no change (its buttons carried the same colors on the block, or the layout value was the only source and you move it onto each live block); otherwise carry the new template's CTA as a small `html` block and record the loss of editor-level button editing as a `❓default`.
+In an additive migration, the account's existing layouts join this comparison as reuse candidates — see "Additive migrations" in `rules/migration-process.md`. Tiebreak for a partial match (same logo, card, and footer spec but different markup): reuse a live layout as-is when the new templates fit it unchanged. If fitting them means changing the layout, that's an extension — always a `❓blocking` question with the affected workflows listed (additive migrations in `rules/migration-process.md`) — so propose it only when the change is small; otherwise create the new layout and record the shared pieces (logo row, card frame, footer) as follow-up partial candidates in `plan/partials.md`. A new layout that leaves live emails untouched is not the "near-duplicate" failure the additive rule warns about; a silently changed live email is. If a reused live layout already sets button colors with `!important` (an older migration, or a hand-built layout), a new template's `style_attrs` will be masked: removing those properties from the layout changes the live emails on it, so it's the same `❓blocking` extension question (renders on request); if the user declines, carry the new template's CTA as a small `html` block and record the loss of editor-level button editing as a `❓default`.
 
 ### Default layout policy
 
-Every account starts with a stock layout keyed `default`, and out of the box it is the layout a template gets unless it names another — including templates the customer creates in the dashboard after the migration. So the migrated layout that should carry that key is the one used most often: the chrome family with the most member templates. Decide from the preflight inventory, and record the decision in `plan/layouts.md`:
+Every account starts with a stock layout keyed `default`, and out of the box it is the layout a template gets unless it names another — including templates the customer creates in the dashboard after the migration. So the migrated layout that should carry that key is the one used most often: the chrome family with the most member templates. Decide from the phase 0 inventory, which covers production too when environments are enabled, and record the decision in `plan/layouts.md`:
 
-- `default` is **stock and unused** (no non-stock colors, fonts, or `{% render %}` tags in its `html_layout`, and no existing workflow on it — every fresh account): replace it with the dominant family's layout as a `❓default`, applied unless vetoed at the checkpoint, with the reason on the plan line ("dashboard-created templates will use it"). Other families get keyed layouts (e.g. `marketing`).
-- `default` is **customized, or in use by a live workflow**: `❓blocking` — list the workflows it would change and offer a keyed layout for the dominant family as the alternative.
+- `default` is **stock and unused** (no non-stock colors, fonts, or `{% render %}` tags in its `html_layout`, and no workflow using it in the target environment or, with environments enabled, in production — every fresh account): replace it with the dominant family's layout as a `❓default`, applied unless vetoed at the checkpoint, with the reason on the plan line ("dashboard-created templates will use it"). Other families get keyed layouts (e.g. `marketing`).
+- `default` is **customized, or in use** by a workflow in the target environment or, with environments enabled, in production: `❓blocking` — list the workflows it would change and where (with environments enabled, development's `default` is a copy of production's, so replacing it changes production's on promotion), and offer a keyed layout for the dominant family as the alternative.
 
 Either way it is never overwritten silently (guardrail 7): the checkpoint's accepted default list is the confirmation.
 
@@ -76,7 +76,7 @@ Note the naming asymmetry: the directory is `layouts/`, the CLI topic is `knock 
   "name": "Transactional",
   "html_layout@": "html_layout.html",
   "text_layout@": "text_layout.txt",
-  "footer_links": [{ "label": "Unsubscribe", "url": "{{ vars.commercial_unsubscribe_url }}" }]
+  "footer_links": [{ "text": "Unsubscribe", "url": "{{ vars.commercial_unsubscribe_url }}" }]
 }
 ```
 
@@ -101,7 +101,7 @@ Three CSS layers must end up in the layout `<head>`:
 .block-row--markdown-v1 .block-markdown a { color: #1f4b99; text-decoration: underline; }
 ```
 
-3. **Button typography and padding for button_set blocks.** Colors, radius, and border belong on the block's `style_attrs` and alignment on `layout_attrs` (see `rules/building-templates.md`); layout CSS covers only what those attributes cannot express — font family, size, line height, letter spacing, and padding — and needs `!important` to win over Knock's runtime-injected sizes. **Never set `background-color`, `color`, `border-color`, `border-radius`, or `border-width` in layout CSS**: an `!important` there silently masks every template's own button color, validation does not catch it, and only a render does.
+3. **Button typography and padding for button_set blocks.** Colors, radius, and border belong on the block's `style_attrs` and alignment on `layout_attrs` (see `rules/building-templates.md`); layout CSS covers only what those attributes cannot express — font family, size, line height, letter spacing, and the button's inner padding — and needs `!important` to win over Knock's runtime-injected sizes. **Never set `background-color`, `color`, `border-color`, `border-radius`, or `border-width` in layout CSS**: an `!important` there silently masks every template's own button color, validation does not catch it, and only a render does.
 
 ```css
 .block-row.block-row--button_set-v1 .block-button--solid {
@@ -110,7 +110,7 @@ Three CSS layers must end up in the layout `<head>`:
 }
 ```
 
-**Match Knock's base block selectors.** At render time Knock injects its own block CSS at the top of the `<head>`, then inlines everything into the blocks. Its selectors are more specific than a bare `.block-row--<type>-v1` override, so a lower-specificity rule *adds* to the base rule instead of replacing it. Write overrides as `.block-row.block-row--<type>-v1 …`, and **render one preview before writing any block CSS** — the injected base rules are visible at the top of the rendered head. The per-block selector table, the cell padding every block carries (overriding it needs `!important` — Knock appends its own padding to the inlined style after yours), and the quirks of the image, html, and partial blocks are in `references/knock-blocks.md`.
+**Match Knock's base block selectors.** At render time Knock injects its own block CSS at the top of the `<head>`, then inlines everything into the blocks. Its selectors are more specific than a bare `.block-row--<type>-v1` override, so a lower-specificity rule *adds* to the base rule instead of replacing it. Write overrides as `.block-row.block-row--<type>-v1 …`, and **render one preview before writing any block CSS** — the injected base rules are visible at the top of the rendered head. The per-block selector table, how block spacing is set (per block, through each block's padding settings — never layout CSS), and the quirks of the image, html, and partial blocks are in `references/knock-blocks.md`.
 
 **Where CSS lives: partial by default, layout for what's shared.** CSS that only matters when one component is present (an item card's grid, a callout's colors, their mobile media queries) defaults to that partial's own `<style>` blocks — Knock hoists partial styles into the layout `<head>` at compile time, deduplicated, only for emails that actually use the partial (see `rules/extracting-partials.md`). The layout keeps everything shared: the document skeleton, typography, fonts, the block base-style overrides above, **cross-component design tokens** (dedupe collapses only identical style blocks — overlapping rules spread across different partials all ship, so shared tokens need one home), and **dark mode / theming overrides** (hoisted partial styles insert at the *top* of the head, so later layout rules — dark-mode `!important` overrides, `vars.branding.*` theming — win at equal specificity).
 
@@ -125,17 +125,23 @@ For standard-MJML sources, keep the layout in MJML:
 - Set `"is_mjml": true` in `layout.json`; the layout file becomes `html_layout.mjml`.
 - The layout must be a **complete MJML document** with a root `<mjml>` tag.
 - `{{ content }}` goes where body sections were (template fragments and visual blocks render as MJML components inside it).
-- Plain HTML inside an MJML layout (e.g. a `{{ footer_links }}` slot) must be wrapped in `mjml-raw`.
+- Plain HTML inside an MJML layout (e.g. a `{{ footer_links }}` slot) must be wrapped in `<mj-raw>`.
 - Source `<mj-attributes>`, `<mj-style>`, and font setup stay in `<mj-head>` — that's the MJML equivalent of the CSS strategy above.
 
-MJML layouts pair with MJML or visual-block templates. HTML partials still work inside them (Knock auto-wraps partial output in `mjml-raw`).
+MJML layouts pair with MJML or visual-block templates. HTML partials still work inside them (Knock auto-wraps partial output in `<mj-raw>`).
 
 ## Validation and push
 
 ```bash
-knock layout validate <key>      # command topic is `layout`; files live in knock/layouts/
-knock layout push <key>          # by key, never --all: the pulled `default` layout sits in the same directory
-knock commit -m "Migration: email layouts" --resource-type=email_layout --resource-id=<key> --force
+knock layout validate <key> <target-flags>      # command topic is `layout`; files live in knock/layouts/
+knock layout push <key> <target-flags>          # by key, never --all
+knock layout get <key> <target-flags> --json    # readback: confirm html_layout, text_layout, footer_links
+knock commit -m "Migration: add <key> layout" --resource-type=email_layout --resource-id=<key> <target-flags> --force
+knock commit list --resource-type=email_layout --resource-id=<key> <target-flags> --json   # confirm the commit; record its id
 ```
 
-Layouts must be committed before workflow templates that reference them will render with them. A template's `settings.layout_key` must name a layout that exists in the environment, or the workflow push fails validation.
+`<target-flags>` is the flags string recorded in `MIGRATION.md` at phase 0 (`--environment=…`, plus `--branch=…` on a branch).
+
+Layouts must be committed before workflow templates that reference them will render with them, on either environment model. A template's `settings.layout_key` must name a layout that exists in the environment, or the workflow push fails validation.
+
+Committing a replaced or extended layout that live emails use changes them — immediately on a production-only account, on promotion with environments enabled — so commit it only after the checkpoint approved the change (default-layout policy above; additive migrations and commit strategy in `rules/migration-process.md`). A stock, unused `default` has no live emails to change.

@@ -49,6 +49,12 @@
 | `{{#each items}}…{{this.name}}…{{/each}}` | `{% for item in data.items %}…{{ item.name }}…{% endfor %}` |
 | `{{@index}}` | `{{ forloop.index0 }}` |
 | `{{#if (eq a b)}}` and other helpers | `{% if data.a == data.b %}` — translate helper semantics case by case; unmappable helpers are ❓ items |
+| SendGrid `{{#equals a b}}…{{else}}…{{/equals}}` / `{{#notEquals a b}}` | `{% if data.a == data.b %}…{% else %}…{% endif %}` / `!=` |
+| SendGrid `{{#greaterThan a b}}` / `{{#lessThan a b}}` | `{% if data.a > data.b %}` / `<` — compare numbers, not strings (`\| plus: 0` converts) |
+| SendGrid `{{#and a b}}` / `{{#or a b}}` | `{% if data.a and data.b %}` / `or` — apply the truthiness rule to each operand |
+| SendGrid `{{length items}}` | `{{ data.items \| size }}` |
+| SendGrid `{{insert name "default=Customer"}}` | `{{ data.name \| default: "Customer" }}` |
+| SendGrid `{{formatDate ts "MM/DD/YYYY"}}` | `{{ data.ts \| date: "%m/%d/%Y" }}` — SendGrid uses Moment-style tokens and Liquid uses strftime, so translate every token |
 
 See the truthiness rule in `rules/mapping-variables-and-logic.md` before translating `{{#if}}` — Handlebars treats empty strings as falsy and Liquid does not, so an optional string needs `!= blank`.
 
@@ -56,7 +62,7 @@ See the truthiness rule in `rules/mapping-variables-and-logic.md` before transla
 
 | Source | Knock Liquid |
 | ------ | ------------ |
-| `*|FNAME|*` | `{{ data.first_name }}` (or `{{ recipient.first_name }}` if remap approved) |
+| `*|FNAME|*` | `{{ data.first_name }}` |
 | `*|EMAIL|*` | `{{ recipient.email }}` |
 | `*|IF:X|*…*|ELSE:|*…*|END:IF|*` | `{% if %}…{% else %}…{% endif %}` |
 | `*|UNSUB|*`, `*|UPDATE_PROFILE|*` | See provider artifacts below |

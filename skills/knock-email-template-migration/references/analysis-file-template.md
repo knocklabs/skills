@@ -55,7 +55,7 @@
 
 | Source expression | Syntax | Where | Meaning | Example value | Proposed mapping |
 | ----------------- | ------ | ----- | ------- | ------------- | ---------------- |
-| {{first_name}} | Handlebars | body §2 | recipient first name | "Ada" | data.first_name (or recipient.first_name ❓default) |
+| {{first_name}} | Handlebars | body §2 | recipient first name | "Ada" | data.first_name |
 | {{reset_url}} | Handlebars | body §3 | action link | https://… | data.reset_url |
 | {{unsubscribe_url}} | Handlebars | chrome (footer) | preference-center link | https://… | data.unsubscribe_url — consumed by the layout |
 | items (loop source: `{{#each items}}`) | Handlebars | body §4 | collection of cart items | see data shape | data.items (list) |

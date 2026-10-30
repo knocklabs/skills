@@ -9,7 +9,7 @@ tags:
   - handlebars
   - analysis
 category: knock-email-template-migration
-last_updated: 2026-09-08
+last_updated: 2026-10-29
 ---
 
 # Analyzing source templates
@@ -31,7 +31,7 @@ Knock supports MJML natively (MJML layouts, MJML template bodies, visual blocks 
 - **HTML sources** → migrate as HTML.
 - **Mixed directories** → decide per template set, not per file; templates sharing chrome should land on the same layout and therefore the same format. Flag mixed-format chrome as a ❓ for the plan checkpoint.
 
-Verify "standard MJML" by compiling: `npx mjml <file> -o /dev/null`. Unknown-tag errors mean custom components. For HTML builder exports, open the representative file of each family in a browser once (serve the source copy with a static file server — browser tools refuse `file://` URLs; see the visual-pass recipe in `references/verification-recipes.md`) to confirm it renders standalone — a file that depends on the provider injecting `<head>` content or images will look wrong here and needs a layout decision before analysis proceeds. Record the verdict as a `renders standalone: yes | no` line in the family's entry in `analysis/_chrome-families.md`.
+Verify "standard MJML" by compiling with strict validation: `npx mjml <file> --config.validationLevel=strict -o /dev/null`. Unknown-tag errors mean custom components; the default (soft) validation only warns and still produces output, so it can't tell. `<mj-include>` is standard MJML but pulls in other files at compile time, and Knock compiles each layout and template on its own with no access to them: inline the included files before migrating (an include is usually the layout or partial boundary anyway) and note it in the analysis file. For HTML builder exports, open the representative file of each family in a browser once (serve the source copy with a static file server — browser tools refuse `file://` URLs; see the visual-pass recipe in `references/verification-recipes.md`) to confirm it renders standalone — a file that depends on the provider injecting `<head>` content or images will look wrong here and needs a layout decision before analysis proceeds. Record the verdict as a `renders standalone: yes | no` line in the family's entry in `analysis/_chrome-families.md`.
 
 ## Corpus scan: chrome families and variant sets (do this first)
 
@@ -93,7 +93,7 @@ Knock requires a subject on every email template. Search in order; record the so
 3. The preheader/preview text (often mirrors the subject)
 4. **Draft one** from the email's main heading and purpose, marked `DRAFTED — needs approval ❓default`. Write drafted subjects in Knock Liquid on the `data.*` contract as the source implies it (`Order {{ data.order_id }} has shipped`), variables allowed; the plan rewrites them to the approved namespaces at the checkpoint (`{{ actor.name }}` once an actor remap is approved) so `workflow.json` always matches the final contract. Mirror a conditional heading only if the user asks for it.
 
-Step 1 assumes access to the sending code or a provider export; when neither is available, say so in the analysis file and move on to step 2.
+Step 1 assumes access to the sending code or a provider export; when neither is available, say so in the analysis file and move on to step 2. When a whole set has no subjects in the files (an HTML-only provider export), ask the user once — for the subject list, or for the provider's JSON export — before drafting every subject.
 
 ### Preview text
 

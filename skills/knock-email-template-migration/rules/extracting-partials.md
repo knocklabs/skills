@@ -9,7 +9,7 @@ tags:
   - design-system
   - input-schema
 category: knock-email-template-migration
-last_updated: 2026-09-08
+last_updated: 2026-10-29
 ---
 
 # Extracting partials
@@ -63,8 +63,8 @@ Every migrated partial gets an `input_schema` so editors see form fields instead
 
 | Content | Field type | Notes |
 | ------- | ---------- | ----- |
-| Short label, heading | `text` | `minLength`/`maxLength` in settings |
-| Rich copy | `markdown` | Rendered as HTML |
+| Short label, heading | `text` | `min_length`/`max_length` in settings |
+| Rich copy | `markdown` | Rendered as HTML; unlike a markdown block, every newline in the input becomes a line break, so keep `<br>` runs and paragraphs on one line |
 | Long plain text | `textarea` | |
 | Toggle a section | `boolean` | Preserves real true/false |
 | Numeric (counts, prices) | `number` | Optional min/max, unit |
@@ -76,13 +76,14 @@ Every migrated partial gets an `input_schema` so editors see form fields instead
 | Structured object (user, order) | `json` | Optional validation schema; preserves structure |
 | Collection to iterate | `list` | Optional `item_schema` describing each item |
 
-Field shape: `{ "type", "key", "label", "settings": { "required", "default", "description", ... } }`. Keys must exactly match the `{{ key }}` variables in the content. Give required inputs `"required": true`; give cosmetic inputs sensible `default`s. Set `icon_name` and a `description` (≤280 chars) so the block is recognizable in the editor sidebar. `icon_name` is validated against a pinned set of Lucide icon names even though the API types it as a free string — an invalid name fails validation with an error that names the field but not the allowed values. Stick to known-good names (`BellDot`, `Flag`, `LayoutList`, `LayoutGrid`, `MessageCircle`, `Megaphone`, `Lightbulb`, `Package`, `Tag`, `Minus`, `MapPin`) and note the set uses **current** Lucide naming (`CircleAlert`, not the legacy `AlertCircle`); for any other name, `knock partial validate <key>` rejects an unknown icon before anything is pushed, so try it and validate rather than guess.
+Field shape: `{ "type", "key", "label", "settings": { "required", "default", "description", ... } }`. Always include `settings`: a field without it defaults to `{ "required": true }`. Write setting names in snake_case (`min_length`, `item_schema`); Knock converts camelCase on write and always reads back snake_case, so camelCase shows up as a false difference at readback. Keys must exactly match the `{{ key }}` variables in the content. Give required inputs `"required": true`; give cosmetic inputs sensible `default`s. Set `icon_name` and a `description` (≤280 chars) so the block is recognizable in the editor sidebar. `icon_name` is validated against a pinned set of Lucide icon names even though the API types it as a free string — an invalid name fails validation with an error that names the field but not the allowed values. Stick to known-good names (`BellDot`, `Flag`, `LayoutList`, `LayoutGrid`, `MessageCircle`, `Megaphone`, `Lightbulb`, `Package`, `Tag`, `Minus`, `MapPin`) and note the set uses **current** Lucide naming (`CircleAlert`, not the legacy `AlertCircle`); for any other name, `knock partial validate <key>` rejects an unknown icon before anything is pushed, so try it and validate rather than guess.
 
 For structured inputs, callers pass Liquid references: a `list` field bound to `{{ data.items }}`, a `json` field bound to `{{ recipient }}` — then the partial iterates `{% for item in items %}` directly.
 
 ## Partial content rules
 
 - **Email-safe HTML only**: table-based layout, no external stylesheets, no flex/grid. Copy the source markup exactly — including Outlook conditional comments (`<!--[if mso]>…<![endif]-->`) — then replace hardcoded copy/URLs with `{{ input }}` variables.
+- **A partial carries its own spacing.** A partial block renders with no wrapper row and ignores padding settings, so the space around the component belongs in its own markup: inline padding on its outer table or cell, or a rule in its `<style>` block. When the component is spaced the same way everywhere in the source, that spacing is part of the partial, and every email that uses it gets it.
 - **Component CSS travels with the partial.** Inline styles are the baseline, but a partial can also include `<style>` blocks — at compile time Knock hoists them to the top of the layout's `<head>`, deduplicated so they appear at most once per email. Use them for the component's class-based rules and, critically, its **responsive media queries** (which can never be inlined). Rules of the road:
   - Scope selectors narrowly (prefix with a partial-specific class like `.item-card`) — these styles land in the shared head.
   - Hoisted styles insert at the *top* of the head, so layout rules can override them at equal specificity; keep cascade order in mind.
@@ -91,7 +92,7 @@ For structured inputs, callers pass Liquid references: a `list` field bound to `
   - Multiple `<style>` tags are fine as long as they share the same parent element.
   - Keep only *this component's* rules here. Tokens shared across components, and dark-mode/theming overrides, belong in the layout (dedupe collapses only identical style blocks, never merges overlapping rules) — see `rules/extracting-layouts.md` for the split and for when a tangled source stylesheet should stay in the layout entirely.
   - Prefer static CSS in style blocks; blocks whose CSS depends on Liquid may not deduplicate across uses.
-- **Partials cannot contain MJML.** For MJML sources, obtain the compiled HTML of the template (the paired `.html` export, or compile with `npx mjml`), locate the section corresponding to the component, and use that compiled HTML as the partial content. Knock auto-wraps HTML partials in `mjml-raw` when they render inside MJML templates/layouts, so the same partial works in both worlds.
+- **Partials cannot contain MJML.** For MJML sources, obtain the compiled HTML of the template (the paired `.html` export, or compile with `npx mjml`), locate the section corresponding to the component, and use that compiled HTML as the partial content. Knock auto-wraps HTML partials in `<mj-raw>` when they render inside MJML templates/layouts, so the same partial works in both worlds.
 - Use Liquid defaults only for cosmetic fallbacks (`{{ align | default: "center" }}`), never to invent transactional data.
 - Guard optional inputs with `{% if subtitle != blank %}…{% endif %}` — `blank` matches missing keys, nulls, and empty strings alike; guard a list with `{% if items.size > 0 %}`.
 
@@ -141,9 +142,15 @@ Rules:
 ## Validate, push, commit — before any template uses them
 
 ```bash
-knock partial validate <key>
-knock partial push <key>         # by key, never --all: pulled live partials sit in the same directory
-knock commit -m "Migration: partials" --resource-type=partial --resource-id=<key> --force
+knock partial validate <key> <target-flags>
+knock partial push <key> <target-flags>          # by key, never --all
+knock partial get <key> <target-flags> --json    # readback: confirm content and input_schema
+knock commit -m "Migration: add <key> partial" --resource-type=partial --resource-id=<key> <target-flags> --force
+knock commit list --resource-type=partial --resource-id=<key> <target-flags> --json   # confirm the commit; record its id
 ```
 
-Templates always render the **published** version of a partial. An uncommitted partial renders as missing in template previews and sends — this is why partials are stage 1 of the build order.
+`<target-flags>` is the flags string recorded in `MIGRATION.md` at phase 0 (`--environment=…`, plus `--branch=…` on a branch).
+
+Templates always render the **published** version of a partial. An uncommitted partial renders as missing in template previews and sends — this is why partials are stage 1 of the build order, and why they are committed on either environment model.
+
+Committing an existing partial that the migration extends or replaces changes every live email that uses it — immediately on a production-only account, on promotion with environments enabled — so commit it only after the checkpoint approved the change (additive migrations and commit strategy in `rules/migration-process.md`).
