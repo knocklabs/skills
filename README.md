@@ -113,6 +113,23 @@ Investigate existing messaging infrastructure and recommend how it maps to Knock
 - Platform concept mapping (campaigns, lists, topics, brands → Knock)
 - Resource migration order and phased cutover plan
 
+### knock-email-template-migration
+
+Migrate a directory of existing email templates (HTML, MJML, React Email, or provider exports from SendGrid, Mailchimp, Braze, and others) into Knock as an editable email design system: shared chrome becomes email layouts, repeated components become partials, bodies become block-based templates, and each email gets a workflow with a documented trigger payload contract. Runs as a phased process with a durable on-disk workspace, a hard checkpoint before anything is written to Knock, and source-derived verification of every rendered template.
+
+**Use when:**
+- Moving, importing, or migrating existing email templates into Knock
+- Turning an existing set of emails into reusable Knock layouts and partials
+- Continuing or extending a previous template migration in the same account
+
+**Categories covered:**
+- Migration process (phases, workspace, checkpoints, build order, commit strategy)
+- Analyzing source templates (format detection, chrome families, verbatim body copy, syntax families)
+- Mapping variables and logic (namespace policy, Liquid translation, control flow, provider artifacts)
+- Extracting layouts and partials (deduplication, block CSS strategy, isolated scope, input schemas)
+- Building templates and workflows (visual blocks, HTML mode, consolidation, channel overrides)
+- Verifying the migration (readback, rendered previews through the Knock MCP, visual pass, test sends, final report)
+
 ### knock-lifecycle-opportunities
 
 Scan product code for activation, engagement, expansion, and churn signals; recommend precise lifecycle messaging opportunities. Does not modify Knock resources. Writes its opportunity briefs to a shared `knock-plan.md` file and keeps chat output minimal.
@@ -172,6 +189,7 @@ Add Knock guides to my React app
 Each skill contains:
 - `SKILL.md` - Human-readable guide and usage instructions (with frontmatter)
 - `rules/` - Individual rule files in markdown format
+- `references/` (some skills) - Tables, templates, and recipes the rules point at, read only when a step needs them
 
 ## Adding new skills
 
