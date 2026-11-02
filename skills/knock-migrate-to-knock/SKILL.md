@@ -37,7 +37,7 @@ Always ground recommendations in Knock docs. Prefer these:
 | --- | --- |
 | Braze → Knock | https://docs.knock.app/tutorials/migrate-from-braze |
 | Courier → Knock | https://docs.knock.app/tutorials/migrate-from-courier |
-| Email templates via MCP (only if user asks to execute) | https://docs.knock.app/tutorials/migrate-email-with-mcp-server |
+| Migrating email templates (only if user asks to execute): use the `knock-email-template-migration` skill | https://docs.knock.app/tutorials/migrate-email-with-mcp-server |
 | Workflows | https://docs.knock.app/concepts/workflows |
 | Channels | https://docs.knock.app/concepts/channels |
 | Users | https://docs.knock.app/concepts/users |
