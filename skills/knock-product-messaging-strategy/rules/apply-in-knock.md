@@ -9,7 +9,7 @@ tags:
   - preferences
   - audiences
 category: knock-product-messaging-strategy
-last_updated: 2026-07-24
+last_updated: 2026-10-28
 ---
 
 # Apply in Knock
@@ -81,7 +81,7 @@ Identify users consistently. Import or identify users before production sends. U
 
 1. Convert each approved plan item into a Knock resource sketch (workflow and/or guide) **inside `knock-plan.md`** — do not paste sketches into chat.
 2. Chat: one line that the plan file was updated with Knock shapes.
-3. Create via MCP or CLI only if the user explicitly asks to build now; confirm development environment first. Do not invent dashboard-only steps when tools can do the work.
+3. Create via MCP or CLI only if the user explicitly asks to build now. Check available environments first and use the account's default environment unless the user chooses another. On a production-only account, create drafts and leave publishing to the user; a commit publishes live, and branches and promotion are unavailable. Do not invent dashboard-only steps when tools can do the work.
 4. For copy inside templates, apply `knock-notification-best-practices`.
 5. After building, put happy-path and cancel-path test notes in the plan file; chat stays one line.
 6. If the user wants end-to-end install + trigger wiring next, hand off to `knock-setup` with an explicit build list and pointer to `knock-plan.md`. Do not invite rediscovery or re-ranking.

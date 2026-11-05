@@ -36,7 +36,7 @@ While working, keep every response to one short line — no summaries, no menus,
    - Otherwise learn the product, propose high-value workflows, and confirm which to build.
 
 4. **Build workflows** (`rules/build-workflows.md`)
-   - Create confirmed workflows in the Knock development environment via MCP.
+   - Create confirmed workflows as drafts in the account's default environment via MCP. On new accounts this is production; do not publish them.
 
 5. **Recommend an implementation approach** (`rules/recommend-implementation.md`)
    - Pick one trigger path, ask the user to confirm, then create branch `knock-implementation` before file changes.

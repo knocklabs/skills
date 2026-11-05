@@ -10,7 +10,7 @@ tags:
   - visual-blocks
   - templates
 category: knock-cli
-last_updated: 2026-09-02
+last_updated: 2026-10-28
 ---
 
 # Partials
@@ -242,7 +242,7 @@ knock partial open <partial-key>   # Open in Knock dashboard
    knock partial push callout-card
    ```
 
-6. **Commit** (optional) — Use `knock commit -m "Add callout-card partial" --force` to commit the change in Knock.
+6. **Commit** (optional) — When the user asks to publish, scope the commit to this partial: `knock commit -m "Add callout-card partial" --resource-type=partial --resource-id=callout-card --force`. On a production-only account, this publishes the partial live.
 
 ## Using partials in templates
 

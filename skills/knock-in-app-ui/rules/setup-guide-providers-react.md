@@ -7,7 +7,7 @@ tags:
   - react
   - setup
 category: knock-in-app-ui
-last_updated: 2026-04-23
+last_updated: 2026-10-28
 ---
 
 # Setting up the Knock guide providers in a React app
@@ -28,7 +28,7 @@ npm install @knocklabs/react
 
 ## Confirm the target Knock environment before running any CLI commands
 
-Knock is environment-scoped: the public API key, the "active" state of each guide, and most CLI operations all differ between environments (typically `development` and `production`, sometimes `staging` or custom slugs). **Before running any `knock` command, confirm with the user which environment they're setting guides up for.** The CLI defaults to `development`, but most real integrations target `production` — do not assume, ask.
+Knock is environment-scoped: the public API key, the "active" state of each guide, and most CLI operations all differ between environments. **Before running environment-scoped commands, inspect the account's environments.** When `--environment` is omitted, the CLI uses the account's default environment (production on new accounts).
 
 **Step 0 — Verify the CLI is authenticated.** The Knock CLI persists a user session locally, but a fresh machine (or a teammate who hasn't used the CLI before) will have none. Run `knock whoami` first:
 
@@ -44,7 +44,7 @@ If it errors (e.g., "not authenticated," "no user session"), run `knock login` a
 knock environment list
 ```
 
-Present the slugs to the user and ask which one this setup is for. Remember their choice as `<env-slug>` for the rest of the session.
+If there is one environment, environments are not enabled; use that environment and do not suggest branches or promotion. If there are multiple, present the slugs and ask which one this setup is for. Remember the selected slug as `<env-slug>` for the rest of the session.
 
 **Step 2 — Pass `--environment <env-slug>` on every subsequent Knock CLI command that is environment-scoped** (guide list, guide push, guide activate, message-type get, etc.). Do not rely on the CLI's default. Example:
 
@@ -57,9 +57,9 @@ Note: `knock channel list` is **account-scoped** and does not accept `--environm
 This single choice drives:
 
 - Which `pk_...` public API key the user should paste (each environment has its own — see **Where to get `apiKey`**)
-- Which environment subsequent guide pushes, activations, and promotions target
+- Which environment subsequent guide pushes and activations target
 
-If the user changes environments later (e.g., promoting from dev to prod), re-run the environment-scoped discovery commands with the new `--environment` slug and update the `.env` values that are environment-specific (the `pk_` API key; the `channelId` stays the same across envs since channels are account-scoped).
+If the user changes environments later, re-run the environment-scoped discovery commands with the new `--environment` slug and update environment-specific `.env` values (the `pk_` API key; `channelId` stays the same because channels are account-scoped). Promotion applies only when environments are enabled.
 
 See the `knock-cli` skill for broader CLI setup and authentication.
 
@@ -200,7 +200,7 @@ Keep the *shape* of this data stable across environments; `"true"` (string) and 
 
 ## Checklist before moving on to rendering
 
-- [ ] Target Knock environment (`development` / `production` / …) confirmed with the user before running any CLI commands.
+- [ ] `knock environment list` checked; its only environment was used, or the user chose among multiple environments.
 - [ ] `KnockProvider` wraps everything that could render a guide.
 - [ ] `apiKey` is the public `pk_` key for the chosen environment.
 - [ ] `user.id` matches the id you use on the server when identifying users.

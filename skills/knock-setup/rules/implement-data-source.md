@@ -7,7 +7,7 @@ tags:
   - identify
   - mcp
 category: knock-setup
-last_updated: 2026-07-09
+last_updated: 2026-10-28
 ---
 
 # Implement a Knock data source
@@ -20,7 +20,7 @@ Docs overview: [Sources in Knock](https://docs.knock.app/integrations/sources/ov
 
 ## What good looks like
 
-A solid source setup does all of the following in the **development** environment first:
+A solid source setup does all of the following in the account's **default environment** (production on new production-only accounts):
 
 1. **Source exists** for the right integration path (prebuilt provider when available, otherwise custom HTTP).
 2. **Identify user is configured** so recipients exist in Knock before (or as) workflows run.
@@ -58,7 +58,7 @@ For each confirmed workflow:
 
 Field mappings use dot-notation paths into the payload (custom sources: paths under `body.*`; preprocess outputs under `preprocess.*`). See [custom source field mapping](https://docs.knock.app/integrations/sources/custom#field-mapping).
 
-After trigger mappings change, the affected workflows may need a **commit** in that environment before the trigger is live — confirm with the agent/status output.
+After trigger mappings change, the affected workflows may need a **commit** in that environment before the trigger is live — confirm with the agent/status output. On a production-only account, a commit publishes live, so leave it to the user unless they explicitly ask to publish.
 
 ## Use Knock agent MCP (efficient prompts)
 
@@ -67,7 +67,7 @@ Do the setup through Knock MCP — call `start_knock_agent` (then poll with `get
 **Create / connect a source + wire workflows** (adapt names):
 
 ```text
-In the development environment, set up a Knock source for [system or provider name].
+In the account's default environment, set up a Knock source for [system or provider name].
 
 Requirements:
 1. List available preconfigured providers first. Use a prebuilt provider when one matches; otherwise create a custom HTTP source (any HTTP POST JSON webhook is supported).
@@ -113,7 +113,7 @@ Via MCP, ask the Knock agent to inspect source logs (with actions) for the event
 
 ## Checklist before moving on
 
-- [ ] Source created in development
+- [ ] Source created in the account's default environment
 - [ ] Identify user mapping (or equivalent) in place
 - [ ] Each built workflow has an active trigger mapping from a real event
 - [ ] External system configured with the ingestion URL

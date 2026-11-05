@@ -6,7 +6,7 @@ tags:
   - output
   - plan
 category: knock-product-messaging-strategy
-last_updated: 2026-07-29
+last_updated: 2026-10-28
 ---
 
 # Knock plan file
@@ -35,7 +35,7 @@ Example after user confirms:
 
 Updated `knock-plan.md` handoff: confirmed 1–4, 6; skipped 5.
 
-**Hand off to knock-setup to build these in Knock development?**
+**Hand off to knock-setup to build these as drafts in your default Knock environment?**
 
 ## File structure
 
