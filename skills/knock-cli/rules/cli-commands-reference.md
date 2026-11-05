@@ -684,12 +684,13 @@ knock variable get <key>                        # Default value and every overri
 
 ### Create a new variable entry
 
-Adds an entry to the local `variables.json`. Does not push unless `--push` is passed.
+Adds an entry to the local `variables.json`. Does not push unless `--push` is passed. Pushing creates the variable only when the entry has a string `value`.
 
 ```bash
 knock variable new --key=base_url --type=public --value=https://example.com --force
-knock variable new --key=api_token --type=secret --force
 ```
+
+To create a secret variable, use `knock variable set <key> --type=secret --value-stdin` (see below). `knock variable new --type=secret` only writes a placeholder entry, which cannot be pushed until the variable exists in Knock.
 
 | Flag | Description |
 |------|-------------|

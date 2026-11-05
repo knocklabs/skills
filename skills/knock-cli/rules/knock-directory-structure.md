@@ -10,7 +10,7 @@ tags:
   - workflows
   - layouts
 category: knock-cli
-last_updated: 2026-10-21
+last_updated: 2026-11-05
 ---
 
 # Knock directory structure
