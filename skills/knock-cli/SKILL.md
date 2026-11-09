@@ -1,6 +1,6 @@
 ---
 name: knock-cli
-description: Guidelines for working with the Knock CLI to manage workflows, templates, and other notification resources in a Knock project.
+description: Guidelines for working with the Knock CLI to manage workflows, templates, and other notification resources, and to run a prompt with the Knock agent.
 ---
 
 # Knock CLI skill
@@ -13,7 +13,7 @@ The Knock CLI skill includes detailed rule sets covering:
 
 1. **CLI installation and authentication** - How to install and authenticate with the Knock CLI
 2. **Knock directory structure** - Understanding the knock directory layout and configuration
-3. **CLI commands reference** - Pull, push, resource management, variable, and asset commands
+3. **CLI commands reference** - Pull, push, resource management, variable, asset, and Knock agent commands
 4. **Workflow templates** - Structures, patterns, and best practices for workflows and templates
 5. **Guides and message types** - Working with in-app guides for lifecycle messaging and message types as their schema
 6. **Partials** - Reusable template building blocks for email design systems
@@ -91,6 +91,16 @@ When working with `vars.<key>` values or hosted images:
    - Set secret values with `--value-stdin` or `--value-file`, never as a command-line argument
    - Run `knock asset upload <file>` and use the returned URL in templates
 
+### For running the Knock agent
+
+When the user wants the hosted Knock agent to answer a question or change resources in the account:
+
+1. **Read the agent command section** (`rules/cli-commands-reference.md`)
+   - Pass a prompt. With no prompt, `knock agent` opens an interactive chat and waits for a terminal.
+   - Pass `--json`, and keep `session_id` for a follow-up with `--session`.
+   - The agent writes to Knock. Pull afterward when the user needs those changes in local files.
+   - Committing and promoting stay separate commands.
+
 ### For modifying workflows and templates
 
 When making changes to workflows or templates:
@@ -105,7 +115,7 @@ When making changes to workflows or templates:
 
 - `rules/cli-installation-authentication.md` - Installation and authentication setup
 - `rules/knock-directory-structure.md` - Directory structure and configuration
-- `rules/cli-commands-reference.md` - CLI commands for resource management, variables, and assets
+- `rules/cli-commands-reference.md` - CLI commands for resource management, variables, assets, and the Knock agent
 - `rules/workflow-templates.md` - Workflow and template structures and best practices
 - `rules/guides-and-message-types.md` - Guides and message types for lifecycle messaging
 - `rules/partials.md` - Partials and reusable template building blocks
@@ -159,6 +169,10 @@ knock variable push --force      # Push variables from variables.json
 knock asset upload ./logo.png    # Upload a JPEG, PNG, or GIF and get a hosted URL
 knock asset archive <asset-id> --force
 
+# Knock agent (writes to the account; local files stay unchanged until you pull)
+knock agent "Add an email step to the welcome workflow" --json
+knock agent --session <session-id> "Now shorten the subject line" --json
+
 # Commit a specific resource only (publishes it live when the target is production)
 knock commit -m "message" --resource-type=workflow --resource-id=<key> --force
 
@@ -172,6 +186,7 @@ knock commit promote --only=<commit-id> --force
 - **knockDir**: The directory where Knock resources are stored (configured in knock.json)
 - **Resource types**: workflows, layouts, guides, message-types, translations, partials, audiences, schemas
 - **Variables and assets**: Account-wide, with no branch or commit. `knock variable` commands use a single `variables.json` file, and `knock pull`/`knock push` skip both. Secret variable values are never returned or written locally
+- **Knock agent**: `knock agent` runs a prompt in a hosted agent session. It can create or update resources in the account. Local files stay unchanged until you pull, and committing or promoting is a separate command
 - **Guides vs workflows**: Guides are for lifecycle messaging (banners, modals); workflows are for notifications
 - **Template modes**: Visual blocks (default for new emails) vs HTML (only when explicitly requested)
 - **Variable namespaces**: `data` (trigger payload), `vars` (environment variables), `recipient`, `actor`, `tenant`
@@ -187,6 +202,7 @@ knock commit promote --only=<commit-id> --force
 7. **Discover channel keys before creating workflows** - Run `knock channel list` to get valid `channel_key` values
 8. **Discover message type keys before creating guides** - Run `knock message-type list` to get valid message type keys
 9. **Scope every commit when working on a single resource** - Use `--resource-type` and `--resource-id`; on a production-only account, that commit publishes the resource live. When environments are enabled, use `knock commit promote --only=<commit-id>` to promote only that commit. Never run promotion commands on a production-only account.
+10. **Pass a prompt to `knock agent`** - With no prompt, the command opens an interactive chat and waits. From an agent, pass the prompt and `--json`. Pull afterward when the user needs the agent's changes in the repo.
 
 ## Best practices summary
 
