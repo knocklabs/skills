@@ -1,7 +1,7 @@
 {
   "name": "knock",
   "version": "1.1.1",
-  "description": "Message users across channels",
+  "description": "Notify users across email, in-app, and more",
   "author": {
     "name": "Knock Labs",
     "email": "support@knock.app"
