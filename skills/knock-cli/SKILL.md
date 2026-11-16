@@ -34,7 +34,7 @@ When setting up a new project with Knock:
 
 1. **Start with installation and authentication** (`rules/cli-installation-authentication.md`)
    - Verify the CLI is installed
-   - Authenticate with a service token or dashboard account
+   - Authenticate with `knock login`
    - Initialize the project with `knock init`
 
 2. **Understand the directory structure** (`rules/knock-directory-structure.md`)

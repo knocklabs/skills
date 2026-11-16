@@ -7,7 +7,7 @@ tags:
   - identify
   - production
 category: knock-setup
-last_updated: 2026-10-28
+last_updated: 2026-11-16
 ---
 
 # Import users into Knock
@@ -42,32 +42,17 @@ Map how users exist in this app:
 
 Keep findings short. Prefer reusing existing data-access helpers over inventing a parallel query path.
 
-## 3. Secret API key in an env var
+## 3. Secret API key
 
-Bulk identify needs a **secret** API key (`sk_*`) for the target Knock environment — not a public `pk_*` key. Create/copy it from the Knock dashboard (Developer → API keys for that environment).
+Bulk identify needs a **secret** API key (`sk_*`) for the target Knock environment, not a public `pk_*` key. The user creates or copies it from the Knock dashboard (Developer → API keys for that environment) and stores it in the app's existing secrets setup.
 
-Use env var name: `KNOCK_API_KEY`.
-
-Offer a command that opens the dashboard and waits for the user to paste the key into `.env.local` (create the file if needed). Prefer running this automatically when the shell allows interactive input:
-
-```bash
-open "https://dashboard.knock.app/" && \
-  printf "Paste your Knock secret API key (sk_…) for the target environment, then press Enter:\n" && \
-  read -r KNOCK_API_KEY && \
-  touch .env.local && \
-  grep -q '^KNOCK_API_KEY=' .env.local 2>/dev/null \
-    && sed -i.bak "s|^KNOCK_API_KEY=.*|KNOCK_API_KEY=${KNOCK_API_KEY}|" .env.local \
-    || echo "KNOCK_API_KEY=${KNOCK_API_KEY}" >> .env.local && \
-  echo "Saved KNOCK_API_KEY to .env.local"
-```
-
-If `open` is unavailable, print the dashboard URL and still run the `read` + write steps. Never commit `.env.local` or echo the key back in chat.
+Do not read the key from the environment, a dotenv file, or the chat. Do not write it into a file. Do not pass it to a client. If the repo already has a server-side Knock client, reuse that. Otherwise leave a clearly named placeholder the user fills in themselves, and tell them where.
 
 ## 4. Write a prepare / bulk-identify script
 
 Add a script that matches the repo’s conventions (language, package manager, lint style). It should:
 
-1. Load `KNOCK_API_KEY` from the environment (fail clearly if missing).
+1. Reuse the app's existing Knock server client. Do not construct one from a key you read.
 2. Load users from the app’s real data source (reuse existing patterns).
 3. Map each row to Knock’s identify shape: required `id` (the field they chose), plus `email` / `name` / other useful fields when present.
 4. Call bulk identify in batches of **at most 1,000** users ([API reference](https://docs.knock.app/api-reference/users/bulk/identify)).
@@ -75,16 +60,13 @@ Add a script that matches the repo’s conventions (language, package manager, l
 6. Only perform live API calls when an explicit flag is passed (e.g. `--execute`) **and** the user has asked to run it.
 7. Target the account's default environment. If that is production, keep the script in dry-run mode unless the user explicitly asks to execute the import.
 
-Example Node shape (adapt to the stack):
+Example Node shape (adapt to the stack). `knock` is the app's existing client:
 
 ```js
 // dry-run by default; pass --execute only when the user asks
-import Knock from "@knocklabs/node";
-
-const knock = new Knock({ apiKey: process.env.KNOCK_API_KEY });
 const BATCH = 1000;
 
-async function identifyBatch(users) {
+async function identifyBatch(knock, users) {
   await knock.users.bulk.identify(users);
 }
 ```

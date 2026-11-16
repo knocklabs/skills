@@ -8,7 +8,7 @@ tags:
   - process
   - workflow
 category: knock-email-template-migration
-last_updated: 2026-10-29
+last_updated: 2026-11-16
 ---
 
 # Migration process
@@ -40,7 +40,7 @@ If there's more than one email channel, ask which one the workflows use, recomme
 
 **Key inventory.** List the existing workflows, layouts, and partials (`knock workflow list`, `knock layout list`, `knock partial list`) in the environment the migration will build in — production on a production-only account, development otherwise, since a branch starts from development's content — and, with environments enabled, again with `--environment=production`. These reads tell intake whether there are workflows to extend (question 3) and tell the plan which keys are taken.
 
-**Knock MCP server.** Call a read-only tool such as `list_environments` or `search_mapi` to confirm the server is attached to this project, then confirm the session has the two capabilities the migration uses: **Manage resources**, which provides `execute_mapi_write` (the preview endpoints are POSTs), and **Manage data**, which provides `upsert_user` for the test recipient and is off by default on the OAuth consent screen. If the server or either tool is missing, stop and help the user reconnect with both enabled before intake, so they reconnect only once — the Knock MCP docs give the configuration for each coding agent. Most agents configure MCP servers per project directory, so a server that works in a sibling project is not automatically available here. If the user cannot enable Manage data, they create the test recipient in the dashboard instead (step 4); if the MCP cannot be attached at all, previews need a service token (step 4).
+**Knock MCP server.** Call a read-only tool such as `list_environments` or `search_mapi` to confirm the server is attached to this project, then confirm the session has the two capabilities the migration uses: **Manage resources**, which provides `execute_mapi_write` (the preview endpoints are POSTs), and **Manage data**, which provides `upsert_user` for the test recipient and is off by default on the OAuth consent screen. If the server or either tool is missing, stop and help the user reconnect with both enabled before intake, so they reconnect only once — the Knock MCP docs give the configuration for each coding agent. Most agents configure MCP servers per project directory, so a server that works in a sibling project is not automatically available here. If the user cannot enable Manage data, they create the test recipient in the dashboard instead (step 4). If the MCP cannot be attached at all, stop and help the user attach it before continuing. Do not call the management API with a token from the machine.
 
 ### Step 2: intake
 
@@ -52,7 +52,7 @@ Eight answers are needed before phase 1. Take any the user's prompt already gave
 4. **Composition mode**: block-first (default: visual blocks + partials, editable by non-technical users) or pixel-perfect HTML mode (raw HTML bodies + `{% render %}` partials). State the tradeoff in one sentence each.
 5. **Environment**: depends on the environment model found in preflight — development or a branch when environments are enabled; on a production-only account, build there as drafts or turn on environments first (see the environment question below).
 6. **Naming**: any key prefix or naming conventions to follow.
-7. **Review scope**: a side-by-side comparison for one representative email per layout (default); every email, approved one at a time as each is verified; or every email on one comparison page at the end. Both every-email options need a service token, arranged before phase 1.
+7. **Review scope**: a side-by-side comparison for one representative email per layout (default); every email, approved one at a time as each is verified; or every email on one comparison page at the end. Both every-email options render through the MCP and save each render in the workspace.
 8. **Test sends**: none (default), or test emails to a named inbox.
 
 Write every question for someone who has never read this skill: none of the labels above ("target shape", "composition mode"), no internal mechanics, just the question in their terms and what each option means for them. Use the agent's structured question tool where it has one, one question per call: two to four options, the recommended one first and marked as such, and when the files suggest an answer, make it an option whose description says what was found ("Skip `migration-plan.html` and `knock.json` — they look like an earlier attempt's plan and config, not templates"). Answers that are free text (a path, a naming convention) go through the tool's custom-answer option. Without such a tool, ask the same question in text with lettered options and wait for the letter. For example, composition mode becomes: "How should the email bodies be built?" with options "From editable blocks (recommended) — your team can edit them in the dashboard" and "As the exact HTML — byte-faithful, but only engineers can change it". Record every answer in `MIGRATION.md` with its basis (given, default, or confirmed inference).
@@ -73,8 +73,8 @@ Options:
   C. Every email at the end. Same automatic checks, plus one comparison
      page covering every migrated email once they're all done.
 
-B and C save each rendered email in the project folder, which needs a
-service token and one restart of this session; I'll explain how.
+B and C save each rendered email in the project folder. Nothing else
+needed from you.
 
 Reply with a letter.
 ```
@@ -91,7 +91,7 @@ Options:
 Reply with a letter; for B, name the inbox.
 ```
 
-Behind the options: all three options of the first question are tier 1 plus tier 2 through the MCP. A adds the visual pass on one template per layout (for sets over ten templates the sample also covers each partial and control-flow pattern — the card says only how many emails the comparison covers, never what the sample is built from). B and C render every template through the direct path and build a comparison for each, which needs the service-token handoff **now**, before phase 1 (see the service-token step in preflight); B pauses after each template for the user's approval (the one-at-a-time loop in `rules/verifying-the-migration.md`), and C presents them all at the end. Check for `KNOCK_SERVICE_TOKEN` before writing the card; if it is already set, replace the note under the options with "Your service token is already set up, so B and C need nothing else from you." When the user chose B, word the second card's option B as "Yes — tell me the inbox, and each email's test arrives as part of approving it." On a production-only account, add to the second card's option B that the test emails go out through the live email provider. A "yes" to the second question adds tier 3 (a sandbox run first, then delivery). Record both answers in `MIGRATION.md`; they set the tier and scope `rules/verifying-the-migration.md` runs.
+Behind the options: all three options of the first question are tier 1 plus tier 2 through the MCP. A adds the visual pass on one template per layout (for sets over ten templates the sample also covers each partial and control-flow pattern — the card says only how many emails the comparison covers, never what the sample is built from). B and C render every template through the MCP, fetching a full render in slices when it exceeds the cap, and build a comparison for each. B pauses after each template for the user's approval (the one-at-a-time loop in `rules/verifying-the-migration.md`), and C presents them all at the end. When the user chose B, word the second card's option B as "Yes — tell me the inbox, and each email's test arrives as part of approving it." On a production-only account, add to the second card's option B that the test emails go out through the live email provider. A "yes" to the second question adds tier 3 (a sandbox run first, then delivery). Record both answers in `MIGRATION.md`; they set the tier and scope `rules/verifying-the-migration.md` runs.
 
 **The environment question follows the environment model.** With environments enabled, ask whether to build in development (recommended — the account's default) or in a branch of development (`knock branch create email-migration`, then `--branch=email-migration` on every environment-scoped command), which keeps the migration isolated from other work in progress there. Never offer production. On a production-only account, offer both paths below **without marking either as recommended** — the one exception to the recommended-first rule, because the right model depends on who will own these emails, not on anything the files show:
 
@@ -153,19 +153,12 @@ Create the test recipient in the target environment: `migration-test-user`, with
 
 Then run one **throwaway preview** through `execute_mapi_write`, against the target environment and never another: `POST /v1/templates/preview` with a minimal inline email template (a `subject` and a one-line `html_body`), `channel_type: "email"`, and the test recipient, and assert that `res.result.template.html_body` is a non-empty string (request shape in `references/verification-recipes.md`). It needs no existing workflow, so it always runs here, and one call proves that the session has write access (the write tool exists only for read-write sessions), and that it carries the `workflows:run` permission the template, layout, and step previews require. It does not prove the recipient exists — an unknown id renders too — so confirm the test user with the MCP `get_user` tool. A failure here is a setup problem to fix now, not in phase 4. The step preview's own response field (`template.html_content`) is checked by the guard the first time phase 4 renders a workflow.
 
-**Service token.** Rendered previews and their checks run through the MCP without a token, so do not raise one when the MCP check passes. A token is needed in two cases only, and in both it is arranged before phase 1: the MCP cannot be attached, or the user chose at intake to review every email (one at a time or at the end). Never ask for the token in the conversation — a token typed into the chat lands in the transcript. First record every intake answer in `MIGRATION.md`, since the handoff restarts the session; then walk the user through the handoff in `references/verification-recipes.md` ("Providing a service token safely"). On the resumed session, `MIGRATION.md` holds the intake answers: confirm the token with `GET /v1/whoami` and the throwaway preview over curl, then start phase 1.
-
 **Report preflight in the user's terms.** Write for someone who doesn't know Knock's internals and doesn't need the skill's: only what they must do, what limits a later choice, and what was written to their Knock account, in at most five short lines plus any steps they have to take. No file or folder names (`knock.json`, `knock/`, `MIGRATION.md`), no tool, CLI, or API names, no account or environment slugs, and nothing that went as expected (an empty account, nothing to reuse). For example:
 
 ```
 Setup's done. Two things before I start on your templates:
 - I'll build everything in your development environment; nothing touches your live emails.
 - Test emails can only go to people on your Knock account, so I'll send them to you.
-
-To review every email side by side, I need a key from your Knock account:
-1. In the dashboard, go to Settings → Service tokens → New token. (Revoke it when we're done.)
-2. In your terminal, run: export KNOCK_SERVICE_TOKEN=<the token>  — don't paste it here.
-3. Restart me from the same folder and say "continue the email migration".
 ```
 
 Anything else — the test user, the files created, which copy of the skill to resume with — goes in `MIGRATION.md`, not the message.
@@ -380,6 +373,5 @@ Report back: your ❓blocking / ❓default / ❓fyi items, and any correction to
 - Do not rerun phase 0. Re-check only what can change between sessions, read-only — `knock whoami` and the MCP tools — and use the recorded target flags for every command.
 - Never enter phase 3 unless `Checkpoint approved` is recorded; without it, the plan is still waiting on the user.
 - Never pull into the project's knock directory: it can hold built files that were never pushed. Refresh the inventory directory instead.
-- After a restart to supply a service token, `MIGRATION.md` already holds the intake answers: run preflight's service-token confirmation and continue with phase 1 — do not re-ask intake.
 - Re-running a phase for a template is safe: analysis files are overwritten in place; builds re-push the same keys (idempotent upsert).
 - For large sets, process in batches of 5-10 templates per phase-1/phase-3 sitting, updating `MIGRATION.md` between batches. The plan checkpoint (phase 2) still happens once, over the full set — partial and layout extraction only work well with the whole corpus analyzed.

@@ -32,7 +32,7 @@ Required before starting:
 - Knock CLI installed and authenticated (`knock whoami` succeeds)
 - The account's environment model known (`knock environment list`): one environment means production-only, several means environments are enabled. It decides where the migration writes and what it commits — see the environment model step in `rules/migration-process.md` preflight
 - A configured email channel in the target Knock account (`knock channel list` shows one)
-- The Knock MCP server attached to this project with the **Manage resources** and **Manage data** capabilities — rendered previews run through it, and the test recipient is created with it. Without the MCP, previews need a service token (see preflight)
+- The Knock MCP server attached to this project with the **Manage resources** and **Manage data** capabilities — rendered previews run through it, and the test recipient is created with it. If the MCP cannot be attached, stop and help the user attach it. Do not call the management API with a token from the machine
 - The user's source template files on disk
 
 ## When to apply
@@ -99,7 +99,7 @@ Read this file, then read only the rule files for the phase you are entering. Ev
 - `references/provider-artifacts.md` - Unsubscribe links, tracking, UTM parameters, inline images, provider metadata (phases 1 and 2)
 - `references/builder-exports.md` - Builder export markers and the layout splicing recipe (phases 1 and 3)
 - `references/knock-blocks.md` - Block selectors and per-block spacing, branch workflows, channel overrides (phase 3)
-- `references/verification-recipes.md` - Preview endpoints, MCP recipes, service-token handoff, text oracle, style fingerprint, visual pass (phase 4)
+- `references/verification-recipes.md` - Preview endpoints, MCP recipes, text oracle, style fingerprint, visual pass (phase 4)
 
 ## Quick reference
 

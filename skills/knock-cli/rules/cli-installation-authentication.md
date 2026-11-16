@@ -1,15 +1,14 @@
 ---
 title: CLI installation and authentication
-description: How to install the Knock CLI and authenticate using service tokens or dashboard accounts
+description: How to install the Knock CLI and authenticate with a dashboard login
 tags:
   - knock
   - cli
   - installation
   - authentication
-  - service-token
   - setup
 category: knock-cli
-last_updated: 2026-10-28
+last_updated: 2026-11-16
 ---
 
 # CLI installation and authentication
@@ -66,41 +65,7 @@ See the CLI commands reference (`rules/cli-commands-reference.md`) for a full ta
 
 ## Authentication
 
-The Knock CLI supports two authentication methods: service tokens (recommended for CI/CD and automation) and interactive dashboard login (for local development).
-
-### Method 1: Service token authentication (recommended)
-
-Service tokens are the preferred method for automated workflows and CI/CD pipelines.
-
-**Setting up a service token:**
-
-1. Generate a service token from the Knock dashboard under Developer settings
-2. Set the environment variable:
-
-```bash
-export KNOCK_SERVICE_TOKEN=<your-service-token>
-```
-
-**Using in commands:**
-
-```bash
-# The CLI automatically uses KNOCK_SERVICE_TOKEN if set
-knock pull
-
-# Or pass explicitly
-knock pull --service-token=<your-service-token>
-```
-
-**Best practices for service tokens:**
-
-- Store tokens securely in environment variables or secrets management
-- Use different tokens for different environments (development, staging, production)
-- Rotate tokens periodically
-- Never commit tokens to version control
-
-### Method 2: Dashboard account authentication
-
-For local development, you can authenticate using your Knock dashboard account.
+Authenticate with an interactive dashboard login. Do not read a token from the environment, a dotenv file, or the chat, and do not pass one on the command line. The CLI stores the session itself after login.
 
 **Interactive login (requires browser — cannot be automated by agents):**
 
@@ -108,7 +73,7 @@ For local development, you can authenticate using your Knock dashboard account.
 knock login
 ```
 
-This opens a browser window for authentication. Once authenticated, credentials are stored locally. Because this requires browser interaction, it must be run manually by the user—agents cannot complete this flow.
+This opens a browser window for authentication. Once authenticated, the CLI stores the session locally. Because this requires browser interaction, it must be run manually by the user. Agents cannot complete this flow.
 
 **Check authentication status:**
 
@@ -166,7 +131,6 @@ Branch commands operate in development. Promotion moves committed changes throug
 
 | Variable | Description |
 |----------|-------------|
-| `KNOCK_SERVICE_TOKEN` | Service token for authentication |
 | `KNOCK_API_ORIGIN` | Custom API origin (rarely needed) |
 
 ## Project initialization
@@ -188,12 +152,11 @@ This creates a `knock.json` configuration file in your project root. See the dir
 - Try reinstalling: `npm install -g @knocklabs/cli`
 
 **"Authentication required"**
-- Set the `KNOCK_SERVICE_TOKEN` environment variable
-- Or run `knock login` for interactive authentication
+- Run `knock login` and wait for the user to finish the browser flow
 
-**"Invalid service token"**
-- Verify the token is correct and hasn't been revoked
-- Check if the token has access to the target environment
+**Authentication failed**
+- Run `knock logout`, then `knock login` again
+- Confirm the dashboard account can access the target environment
 
 **"Permission denied"**
 - The authenticated user/token may lack permissions for the operation

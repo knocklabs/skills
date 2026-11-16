@@ -101,7 +101,7 @@ Use the variant's fields (e.g., `title`, `body`, CTA fields) to define the type 
 
 **Step 6 — Flag what still needs the user.** After the component compiles, some things cannot be automated — call these out explicitly rather than letting the user discover them by absence:
 
-- `pk_...` public API key from **Platform → API keys** for the chosen environment, pasted into `.env` (not discoverable via CLI).
+- `pk_...` public API key from **Platform → API keys** for the chosen environment. The user adds it to the app's public config. Do not read it from a dotenv file.
 - The chosen guide must be **active** in this environment (dashboard toggle).
 - The current user must be the developer test user targeted by the guide, and the current route must match any activation rules.
 - Restart the dev server if `.env` was just edited.

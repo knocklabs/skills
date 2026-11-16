@@ -50,7 +50,7 @@ While working, keep every response to one short line — no summaries, no menus,
 
 Use these when preparing for production or when the user asks — they are optional after the main flow:
 
-- **Import users** (`rules/import-users.md`) — choose a stable Knock user id, research how users are stored, set `KNOCK_API_KEY`, and write a dry-run-first bulk-identify script. Do not run against production unless the user explicitly asks.
+- **Import users** (`rules/import-users.md`) — choose a stable Knock user id, research how users are stored, and write a dry-run-first bulk-identify script. Do not read or pass an API key. Do not run against production unless the user explicitly asks.
 
 ## Rule files reference
 

@@ -70,7 +70,7 @@ The examples below are React. For any other client SDK, see the note at the top 
 
 ```tsx
 <KnockProvider
-  apiKey={process.env.NEXT_PUBLIC_KNOCK_API_KEY}
+  apiKey={publicApiKey}
   user={{ id: currentUser.id }}
 >
   <KnockGuideProvider
