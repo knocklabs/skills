@@ -1,7 +1,7 @@
 {
   "name": "knock",
-  "version": "1.1.0",
-  "description": "Skills and MCP tools for building notifications with Knock",
+  "version": "1.1.1",
+  "description": "Notify users across email, in-app, and more",
   "author": {
     "name": "Knock Labs",
     "email": "support@knock.app",
@@ -29,7 +29,7 @@
   },
   "interface": {
     "displayName": "Knock",
-    "shortDescription": "Build and manage notifications with Knock",
+    "shortDescription": "Notify users across email, in-app, and more",
     "longDescription": "Skills and MCP tools for designing notification workflows, writing channel copy, and managing Knock resources from ChatGPT and Codex.",
     "developerName": "Knock Labs",
     "category": "Developer Tools",
