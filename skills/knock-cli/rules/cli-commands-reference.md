@@ -1,6 +1,6 @@
 ---
 title: CLI commands reference
-description: Reference for Knock CLI commands including pull, push, and resource management
+description: Reference for Knock CLI commands including pull, push, resource management, and the Knock agent
 tags:
   - knock
   - cli
@@ -11,8 +11,9 @@ tags:
   - resources
   - variables
   - assets
+  - agent
 category: knock-cli
-last_updated: 2026-11-05
+last_updated: 2026-11-09
 ---
 
 # CLI commands reference
@@ -68,6 +69,7 @@ knock commit promote --only=<commit-id> --force
 | `knock message-type new` | Interactive setup. Use `--key` and `--name` flags to skip prompts. |
 | `knock partial new` | Interactive setup. Use `--key` and `--type` flags to skip prompts. |
 | `knock variable new` | Prompts only when it creates `variables.json`. Pass `--force` to skip the prompt. `--key` and `--type` are required. |
+| `knock agent` with no prompt | Opens an interactive chat and waits for terminal input. Pass the prompt as an argument from an agent or script. `--json` and `--response-only` require a prompt too. |
 
 **Commands that never prompt (safe for direct execution):**
 
@@ -77,6 +79,8 @@ knock commit promote --only=<commit-id> --force
 - `knock whoami`
 - `knock workflow run` (trigger)
 - Pull commands when the local directory already exists (updates in place without prompting)
+
+`knock agent "<prompt>"` runs immediately, with no confirmation prompt. It starts a hosted Knock agent that can change resources in the account. Read [Agent command](#agent-command) before running it.
 
 ### Push required after changes
 
@@ -783,6 +787,79 @@ knock asset archive <asset-id> --force
 ```
 
 > **Warning:** Archiving applies to the whole account. The asset id must be a UUID, which `knock asset upload` prints. `--force` is required with `--json`.
+
+## Agent command
+
+`knock agent` runs a prompt with the hosted Knock agent in the account. The agent can read resources and create or update them. It writes those changes to Knock. Local files stay as they are until you pull, and committing or promoting is a separate command.
+
+Use it when the user asks for the Knock agent, or when the task is a question about the account or a change across many resources. When the user wants the change in the local project, edit the local files and push them. After the agent changes resources, pull if the user needs those changes locally, and tell the user what changed.
+
+### Run one prompt
+
+Always pass the prompt from an agent or a script. With no prompt, in a terminal, `knock agent` opens a chat and waits for the next line each time a run finishes.
+
+```bash
+knock agent "Add an email step to the welcome workflow" --json
+knock agent --session <session-id> "Now shorten the subject line" --json
+
+# Read the prompt from stdin. Put -- first when the prompt starts with a dash.
+cat prompt.txt | knock agent - --json
+knock agent -- "- Add an email step" --json
+```
+
+| Flag | Description |
+|------|-------------|
+| `--json` | Print one result object and no activity. Prefer this from an agent. |
+| `--response-only` | Print only the response text once the run finishes, then list changed resources. Requires a prompt. |
+| `--session` | Session id, or the session's dashboard URL. The agent keeps what it knows from that session. |
+| `--environment` | Environment slug. On a new session with no branch, omitting it uses the account's default environment. |
+| `--branch` | Branch slug. A new session uses the branch in `.knockbranch` when that file is present. |
+| `--timeout` | Seconds to wait. Defaults to 1800. The agent keeps running after the CLI stops waiting. |
+
+`--json` result fields:
+
+| Field | Description |
+|-------|-------------|
+| `session_id` | Pass this to `--session` to follow up |
+| `run_id` | The id of this prompt's run |
+| `session_url` | Dashboard link for the session |
+| `status` | `complete`, `error`, `timeout`, `interrupted`, or `lost` |
+| `text` | The agent's response |
+| `tool_calls` | Tools the agent called (`call_id`, `name`, `arguments`) |
+| `modified_resources` | Resources the agent changed (`type`, `key`, `action`) |
+| `error` | Present when `status` is anything other than `complete` |
+
+Exit code 0 means `complete`. Exit code 130 means `interrupted`. Exit code 2 means the run failed, timed out, or the command lost the connection. A failure before a session starts prints `{ "error": { "message": "..." } }` and exits 2.
+
+The prompt must contain text. `--json` and `--response-only` require a prompt, and so does a run without a terminal.
+
+Save `session_id` and pass `--session` to follow up, including after a failed run. When a session is still running, wait for it to finish. A second prompt against a running session fails.
+
+The default wait is 1800 seconds. Pass `--timeout` when the run needs a different limit. After a timeout, the agent may still be running, so wait before you follow up in that session.
+
+### Environment and branch
+
+A new session resolves its target in this order:
+
+1. `--branch`, when you pass it
+2. The branch in `.knockbranch`, when that file exists
+3. `--environment`, or the account's default environment when you omit it
+
+A branch can only be used with the development environment. If `.knockbranch` is set and you pass a different `--environment`, the command fails. Run `knock branch exit` before targeting that environment.
+
+A follow-up keeps the session's environment or branch. Pass `--environment` or `--branch` on the follow-up to move it. `.knockbranch` applies to a new session, and a follow-up leaves the session where it is.
+
+### Interactive chat
+
+In a terminal, `knock agent` with no prompt chats in one session. The session starts with the first prompt.
+
+- Esc or Ctrl-C stops the current run and returns to the prompt. Ctrl-C again while it is stopping exits.
+- Ctrl-D or `/exit` quits. At the prompt, Ctrl-C clears the current line, and quits when the line is empty.
+- End a line with `\` to continue on the next line. A paste is one prompt.
+- Quitting prints the command to resume: `knock agent --session <session-id>`.
+- A failed run stays in the chat. Closing the terminal stops the agent.
+
+Agents and scripts pass a prompt argument. Leave the chat form for a person at a terminal.
 
 ## Initialization and configuration
 

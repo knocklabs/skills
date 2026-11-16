@@ -72,6 +72,7 @@ Guidelines for working with the Knock CLI to manage workflows, templates, guides
 - Working with in-app guides (banners, modals, announcements)
 - Creating reusable email partials for design systems
 - Managing message types and their schema
+- Running a prompt with the Knock agent from the terminal
 
 **Categories covered:**
 - CLI installation and authentication (npm, Homebrew, service tokens)
