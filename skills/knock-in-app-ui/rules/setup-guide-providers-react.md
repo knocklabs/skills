@@ -7,7 +7,7 @@ tags:
   - react
   - setup
 category: knock-in-app-ui
-last_updated: 2026-10-28
+last_updated: 2026-11-16
 ---
 
 # Setting up the Knock guide providers in a React app
@@ -59,7 +59,7 @@ This single choice drives:
 - Which `pk_...` public API key the user should paste (each environment has its own — see **Where to get `apiKey`**)
 - Which environment subsequent guide pushes and activations target
 
-If the user changes environments later, re-run the environment-scoped discovery commands with the new `--environment` slug and update environment-specific `.env` values (the `pk_` API key; `channelId` stays the same because channels are account-scoped). Promotion applies only when environments are enabled.
+If the user changes environments later, re-run the environment-scoped discovery commands with the new `--environment` slug and ask them to update the public key in the app's config. `channelId` stays the same because channels are account-scoped. Promotion applies only when environments are enabled.
 
 See the `knock-cli` skill for broader CLI setup and authentication.
 
@@ -73,7 +73,7 @@ const MyApplication = () => {
 
   return (
     <KnockProvider
-      apiKey={process.env.NEXT_PUBLIC_KNOCK_API_KEY}
+      apiKey={publicApiKey}
       user={{ id: currentUser.id }}
     >
       <KnockGuideProvider
@@ -101,10 +101,10 @@ Place these as high in the tree as possible — typically inside your auth bound
 
 - Knock dashboard → **Platform → API keys**. Each environment has its own `pk_...` key — switch to the environment the user chose earlier (see "Confirm the target Knock environment") using the environment selector at the top of the dashboard, then copy the public key from that environment's tab. Remind the user explicitly: "copy the public key from the `<env-slug>` environment, not from `<other-env>`" — picking the wrong environment's key silently breaks guide rendering against the right env.
 - Use the **public** key (prefixed `pk_`), never a secret key, in client code.
-- Store it as an env var. Conventionally `NEXT_PUBLIC_KNOCK_API_KEY` (Next.js) or `VITE_KNOCK_API_KEY` (Vite). The `NEXT_PUBLIC_` / `VITE_` prefix is required so the bundler exposes it to the browser.
-- If the user is wiring up both dev and prod at once, use the development `pk_` key locally and the production `pk_` key in your production build, gated by your normal env-per-stage config.
+- Have the user put the public key in the app's existing public config and pass it as `publicApiKey`. Do not read it from the environment, a dotenv file, or the chat. A Next.js or Vite app needs the public prefix that bundler already uses so the browser can see the value.
+- If the user is wiring up both dev and prod at once, they use the development `pk_` key locally and the production `pk_` key in the production build, gated by their normal per-stage config.
 
-> Unlike `channelId`, the public API key is **not** discoverable from the Knock CLI — the CLI authenticates with a service token, not the public API key. You do need the user to paste this. If the value isn't already present in the project's `.env`, ask for it — but ask only for the API key, and be explicit about which environment's key (e.g., "paste your production `pk_...` key"). Do not bundle this ask with `channelId`; always try the CLI for `channelId` first (see below).
+> Unlike `channelId`, the public API key is not discoverable from the Knock CLI. Ask the user to add it. Do not look for an existing value in the project's dotenv files. Be explicit about which environment's key (for example, the production `pk_...` key). Do not bundle this ask with `channelId`; always try the CLI for `channelId` first (see below).
 
 ### Where to get `user`
 

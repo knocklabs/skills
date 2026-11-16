@@ -7,7 +7,7 @@ tags:
   - mcp
   - cli
 category: knock-setup
-last_updated: 2026-10-28
+last_updated: 2026-11-16
 ---
 
 # Wrap up
@@ -26,7 +26,7 @@ Resolve email and name the same way on either path:
 
 1. Load whoami (MCP: `execute_mapi_read` `GET /v1/whoami`; CLI: `knock whoami`).
 2. If `user_email` is present → use it as the recipient email. Use `user_name` for the recipient name when present and non-blank; otherwise fall back to `"Test User"`.
-3. If `user_email` is null (service token auth) → ask for the email they used to sign up for Knock. End as the last line, bolded:
+3. If `user_email` is null → ask for the email they used to sign up for Knock. End as the last line, bolded:
 
 **What email did you use to sign up for Knock?**
 

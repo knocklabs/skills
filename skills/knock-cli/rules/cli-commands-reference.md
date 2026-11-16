@@ -12,7 +12,7 @@ tags:
   - variables
   - assets
 category: knock-cli
-last_updated: 2026-11-05
+last_updated: 2026-11-16
 ---
 
 # CLI commands reference
@@ -109,7 +109,6 @@ These options work with most commands:
 |--------|-------------|
 | `--environment` | Target environment slug. When omitted, uses the account's default environment |
 | `--branch` | Slug of the branch to use |
-| `--service-token` | Service token for authentication |
 | `--help` | Show help for the command |
 
 Flags are matched by full name, so use `--environment=<env-slug>` rather than a short alias.
@@ -711,8 +710,9 @@ Creates or updates a variable in Knock directly. `--type` is required when creat
 knock variable set base_url --type=public --value=https://example.com \
   --environment-value=development=https://dev.example.com
 
-# Secret variable (never pass the value as an argument)
-printf '%s' "$API_TOKEN" | knock variable set api_token --type=secret --value-stdin
+# Secret variable. Have the user run this and type the value.
+# Do not read the value from the environment or pass it as an argument.
+knock variable set api_token --type=secret --value-stdin
 
 # Clear an override or the description
 knock variable set base_url --unset-environment=development
@@ -809,8 +809,8 @@ knock whoami
 ### Initial setup
 
 ```bash
-# 1. Authenticate
-export KNOCK_SERVICE_TOKEN=<your-token>
+# 1. Authenticate (the user completes the browser flow)
+knock login
 
 # 2. Initialize project (interactive; prompts for the resources directory)
 knock init

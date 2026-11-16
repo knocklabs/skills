@@ -1,6 +1,6 @@
 # Verification recipes
 
-> Consulted from `rules/verifying-the-migration.md` (tier 2) and `rules/migration-process.md` (the preflight smoke preview and service-token handoff).
+> Consulted from `rules/verifying-the-migration.md` (tier 2) and `rules/migration-process.md` (the preflight smoke preview).
 
 ## Rendering previews
 
@@ -14,7 +14,7 @@
 **Prefer the Knock MCP server's `execute_mapi_write` tool** (the preview endpoints are POSTs even though they only render). It is already authenticated against the account the user is working in and needs no token handling. Two consequences of how the MCP works shape the whole tier:
 
 - **Its result is capped at roughly 6,000 tokens, and one rendered email with inlined styles is 30–70 KB.** So run the tier-2 checks *inside* the call — the JavaScript you pass can fetch the render, apply the text oracle, style fingerprint, leaked-syntax grep, empty-href count, and branch/loop/optional-field matrix, and return **findings only** (missing segments, missing declarations, leaks, counts). Never return whole renders from a batch; a 20-variant matrix costs a few hundred tokens this way and is the default shape for automated verification.
-- **A render reaches disk only through the tool result.** The sandbox has no filesystem, so for the visual pass fetch one render per call and write the returned text to `previews/<key>.html` yourself. Return the HTML as a **raw string**, not inside an object — objects are pretty-printed before the cap is applied, which inflates them by a third or more — with whitespace collapsed (a 30–70 KB render becomes 10–15 KB; the cap is 6,000 tokens, applied server-side as 24,000 characters) and a one-line header carrying its length and an FNV-1a hash. After writing the file, recompute both locally and re-fetch once on a mismatch: the transcription is verified, not trusted. If the second copy mismatches too, note it in `MIGRATION.md` and judge that template from the in-call findings alone, or render it through the direct path when a service token is available. Do this only for the one-template-per-layout representatives; rendering every email for an every-email review is the direct path's job. A collapsed render longer than the cap (a long digest, heavy inlined CSS) comes back with a `--- TRUNCATED ---` line naming its size: fetch it in slices across calls (`out.slice(start, start + 20000)`, each call re-rendering the same payload and returning the whole-document length and hash in its header), concatenate locally, and verify the whole file — the cost is one call and about 5,000 output tokens per 20,000 characters, so past three or four slices per template the direct path is cheaper.
+- **A render reaches disk only through the tool result.** The sandbox has no filesystem, so for the visual pass fetch one render per call and write the returned text to `previews/<key>.html` yourself. Return the HTML as a **raw string**, not inside an object — objects are pretty-printed before the cap is applied, which inflates them by a third or more — with whitespace collapsed (a 30–70 KB render becomes 10–15 KB; the cap is 6,000 tokens, applied server-side as 24,000 characters) and a one-line header carrying its length and an FNV-1a hash. After writing the file, recompute both locally and re-fetch once on a mismatch: the transcription is verified, not trusted. If the second copy mismatches too, note it in `MIGRATION.md` and judge that template from the in-call findings alone. Do this for the one-template-per-layout representatives and, when the user chose an every-email review, for every template. A collapsed render longer than the cap (a long digest, heavy inlined CSS) comes back with a `--- TRUNCATED ---` line naming its size: fetch it in slices across calls (`out.slice(start, start + 20000)`, each call re-rendering the same payload and returning the whole-document length and hash in its header), concatenate locally, and verify the whole file. A long template costs one call and about 5,000 output tokens per 20,000 characters.
 
 The render call, with the shape guard every recipe opens with (`undefined` passes string checks silently, and the field name differs by endpoint). Pass the target environment recorded in `MIGRATION.md` at preflight — `production` on a production-only account, `development` (plus the branch slug on a branch) when environments are enabled — never a hardcoded default:
 
@@ -39,22 +39,7 @@ for i in range(0, len(u), 2): h ^= u[i] | (u[i + 1] << 8); h = (h * 0x01000193) 
 print(len(u) // 2, f"{h:08x}")   # must equal LEN and FNV from the header
 ```
 
-Use direct HTTP with a service token in two cases: the MCP is unavailable, or the user chose at intake to review every email (one at a time or at the end), which needs every render on disk (every template, every exercised variant). The token is arranged in preflight (`rules/migration-process.md`), never mid-verification:
-
-```bash
-# Use the target flags from MIGRATION.md; on a branch, append &branch=<branch-slug>
-curl -s -X POST "https://control.knock.app/v1/workflows/<key>/steps/<step_ref>/preview_template?environment=<env-slug>" \
-  -H "Authorization: Bearer $KNOCK_SERVICE_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{ "recipient": "<test-user-id>", "data": { … } }'
-```
-
-**Providing a service token safely** (see [service tokens](https://docs.knock.app/developer-tools/service-tokens)):
-
-1. An account owner or admin creates a **dedicated** token in the dashboard: Settings → Service tokens → "+ New token", named for this migration. It is shown once, starts with `knock_st_`, and grants full management-API access to the account, so it should be revoked from the token's menu once the migration is finished.
-2. The user provides it **out of band, never in the chat**: in the terminal they run the agent from, `export KNOCK_SERVICE_TOKEN=<token>`, then restart the agent from that terminal, in the same directory, and ask it to continue the migration. An `export` inside a tool call does not persist between calls, and a token typed into the conversation lands in the transcript. Check for the variable's presence without printing it; if it is absent, also check for a git-ignored `.env` in the project or `knock-migration/` that exports it and source it in the scripts that need it — accept that route, do not suggest it.
-3. Scripts read the variable and never echo it, log request headers, or write it into any file in the workspace.
-4. Before using it, confirm it targets the right account with `GET /v1/whoami` (the response carries `account_name` and `service_token_name`). Scripts must send a `User-Agent` header — a 403 whose body is `error code: 1010` is Cloudflare's bot filter rejecting a bare client, not an auth failure.
+Every preview goes through `execute_mapi_write`. Do not call these endpoints with a token from the environment, a dotenv file, or the chat. An every-email review uses the same tool and fetches full renders in slices when they exceed the cap.
 
 Two request-shape details: the response is `{ result: "success" | "error", content_type, template }` and the rendered output is in `template.html_content` (siblings: `text_content`, `subject_line`, `preview_text` — not `html_body`/`subject`), and `recipient` must be a **recipient reference** — an existing user ID string or `{id, collection}` object. An inline recipient object fails with an undetailed 422, so ensure the test user exists first. The Knock MCP `upsert_user` tool creates it in one call — set `name`, `email`, and any property a `recipient.*` remap reads (for example `name`) — and create a second user to pass as `actor` whenever templates use `actor.*`. Without the MCP, trigger any workflow once with an inline recipient (`knock workflow run <key> --recipients='[{"id":"migration-test-user","email":"…"}]' --sandbox-mode …`), which identifies the user, or create it via the dashboard.
 

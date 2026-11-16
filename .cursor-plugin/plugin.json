@@ -1,7 +1,7 @@
 {
   "name": "knock",
   "displayName": "Knock",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Notify users across email, in-app, and more",
   "author": {
     "name": "Knock Labs",
