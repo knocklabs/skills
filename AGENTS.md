@@ -204,6 +204,16 @@ See `skills/knock-notification-best-practices/` for a complete example:
 - `SKILL.md` with usage guide and frontmatter
 - All using sentence case consistently
 
+## Development checks
+
+After adding or editing a skill, confirm the directory structure:
+
+```bash
+python3 .cursor/validate-skills.py
+```
+
+The check requires each `knock-*` directory to include `SKILL.md` and `rules/`, matching frontmatter `name` and `category` values, and rule links that resolve. Cloud Agent setup also installs the Knock CLI via `.cursor/install.sh`. `knock --version` confirms the CLI. Authenticated Knock commands need a service token and are not required to edit these skills.
+
 ## Questions?
 
 When in doubt:
